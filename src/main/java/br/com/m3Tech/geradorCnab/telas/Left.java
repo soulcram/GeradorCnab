@@ -25,8 +25,8 @@ public class Left extends JPanel{
 		
 		this.add(new Botao("Cnab Aquisição", 10, 10, 180, 30, getActionGerarCnabAquisicao()));
 		this.add(new Botao("Cnab Aquisição Dinâmico", 10, 50, 180, 30, getActionGerarCnabAquisicaoDinamico()));
-		this.add(new Botao("Cadastrar Base", 10, 90, 180, 30, getActionCadastrarBase()));
-		
+		this.add(new Botao("Cnab Baixa", 10, 90, 180, 30, getActionGerarCnabBaixa()));
+		this.add(new Botao("Cadastrar Base", 10, 130, 180, 30, getActionCadastrarBase()));
 		this.add(new Label("Desenvolvido por m3Tech", 10, 670, 180, 20, 10, Color.RED));
 		
 	}
@@ -50,6 +50,18 @@ public class Left extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 
 				conteudo.atualizarConteudo(new GerarCnabAquisicaoDinamico());
+				
+			}
+		};
+	}
+	
+	private ActionListener getActionGerarCnabBaixa() {
+		// TODO Auto-generated method stub
+		return new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+
+				conteudo.atualizarConteudo(new GerarCnabBaixa());
 				
 			}
 		};
