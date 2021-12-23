@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -105,7 +106,7 @@ public class GerarCnabBaixa extends JPanel {
 			this.add(new Label("Fundo: ", 10, 70, 100, 20, 14, Color.BLACK));
 			cbFundo = ComboBoxFundoDto.novo(110, 70, 350, 20, getActionCbFundoDto());
 			this.add(new Label("Data Gravação: ", 470, 70, 100, 20, 14, Color.BLACK));
-			dataGravacao= new Text(580, 70, 100, 20);
+			dataGravacao= new Text(580, 70, 100, 20, true);
 			this.add(new Label("Layout: ", 690, 70, 50, 20, 14, Color.BLACK));
 			cbLayout = ComboBoxLayout.novo(750, 70, 200, 20);
 			
@@ -118,7 +119,7 @@ public class GerarCnabBaixa extends JPanel {
 			cbMovimento = ComboBoxMovimentoDto.novo(110, 130, 350, 20);
 			
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
-			path = new Text(130, 650, 500, 20);
+			path = new Text(130, 650, 500, 20, true);
 			this.add(new Botao("Gerar Cnab", 650, 650, 100, 20, getActionGerarCnab()));
 			
 			erro = new Label("", 10, 670, 1000, 20, 14, Color.RED);
@@ -339,6 +340,12 @@ public class GerarCnabBaixa extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
+					
+					if(cnab.getTitulos() == null || cnab.getTitulos().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Nenhum título foi adicionado.","Erro", 0);
+						return;
+					}
+					
 					cnab.setBanco((BancoDto)cbBanco.getSelectedItem());
 					cnab.setDataGravacao(LocalDate.parse(dataGravacao.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 					cnab.setFundo((FundoDto)cbFundo.getSelectedItem());

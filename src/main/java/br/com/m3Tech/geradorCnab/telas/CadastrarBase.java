@@ -45,9 +45,9 @@ public class CadastrarBase extends JPanel {
 		this.add(new Label("Usuário", 410, 50, 100, 20, 14, Color.BLACK));
 		this.add(new Label("Senha", 610, 50, 100, 20, 14, Color.BLACK));
 		
-		url = new Text(10, 80, 390, 20);
-		usuario = new Text(410, 80, 190, 20);
-		senha = new Text(610, 80, 190, 20);
+		url = new Text(10, 80, 390, 20,true);
+		usuario = new Text(410, 80, 190, 20,true);
+		senha = new Text(610, 80, 190, 20,true);
 		
 		this.add(url);
 		this.add(usuario);

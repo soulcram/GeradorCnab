@@ -43,7 +43,7 @@
       <field name="numDocumento" position="110" length="10" required="true" justify="right" trim="true"/>
       <field name="dataVencimento" position="120" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
       <field name="valorTitulo" position="126" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
-      <field name="especieTitulo" position="147" length="2" required="true" justify="right" trim="true"/>
+      <field name="especieTitulo" position="147" length="2" required="true" justify="right" trim="true" padding="0"/>
       <field name="dataEmissao" position="150" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
       <field name="tipoPessoaCedente" position="159" length="2" required="true" justify="right" trim="true"/>
       <field name="docCedente" position="380" length="14" required="true" justify="right" trim="true"/>

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.beanio.BeanWriter;
@@ -98,7 +99,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 
 	public GerarCnabAquisicaoDinamico() {
 		try {
-			
+
 			cnab = new CnabDto();	
 			titulo = new TituloDto();
 			
@@ -123,7 +124,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			this.add(new Label("Fundo: ", 10, 70, 100, 20, 14, Color.BLACK));
 			cbFundo = ComboBoxFundoDto.novo(110, 70, 350, 20, getActionCbFundoDto());
 			this.add(new Label("Data Gravação: ", 470, 70, 100, 20, 14, Color.BLACK));
-			dataGravacao= new Text(580, 70, 100, 20);
+			dataGravacao= new Text(580, 70, 100, 20, true);
 			this.add(new Label("Layout: ", 690, 70, 50, 20, 14, Color.BLACK));
 			cbLayout = ComboBoxLayout.novo(750, 70, 200, 20);
 			
@@ -141,10 +142,10 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			cbSacado = ComboBoxTipoSacado.novo(580, 180, 350, 20);
 			
 			this.add(new Label("Quantidade de titulos: ", 10, 210, 150, 20, 14, Color.BLACK));
-			quantTitulo = new Text(170, 210, 100, 20);
+			quantTitulo = new Text(170, 210, 100, 20, true);
 			
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
-			path = new Text(130, 650, 500, 20);
+			path = new Text(130, 650, 500, 20, true);
 			this.add(new Botao("Gerar Cnab", 650, 650, 100, 20, getActionGerarCnab()));
 			
 			erro = new Label("", 10, 670, 1000, 20, 14, Color.RED);
@@ -170,7 +171,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			this.repaint();
 		
 		} catch (Exception e) {
-			erro.setText(e.getMessage());
+			e.printStackTrace();
 			this.repaint();
 		};
 		
@@ -201,6 +202,11 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
+					
+					if(StringUtils.EmptyOrNull(quantTitulo.getText())) {
+						JOptionPane.showMessageDialog(null, "Quantidade de Títulos é obrigatório","Erro", 0);
+						return;
+					}
 					
 					cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
 					sacados = sacadoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());

@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -70,7 +69,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
 import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
 
-public class GerarCnabAquisicao extends JPanel {
+public class GerarCnabCsv extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -111,7 +110,7 @@ public class GerarCnabAquisicao extends JPanel {
 	private ITipoRecebivelService tipoRecebivelService;
 	private IConfGlobalService confGlobalService;
 
-	public GerarCnabAquisicao() {
+	public GerarCnabCsv() {
 		try {
 			
 			cnab = new CnabDto();	
@@ -306,12 +305,6 @@ public class GerarCnabAquisicao extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					
-					if(cnab.getTitulos() == null || cnab.getTitulos().isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Nenhum título foi adicionado.","Erro", 0);
-						return;
-					}
-					
 					cnab.setBanco((BancoDto)cbBanco.getSelectedItem());
 					cnab.setDataGravacao(LocalDate.parse(dataGravacao.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 					cnab.setFundo((FundoDto)cbFundo.getSelectedItem());

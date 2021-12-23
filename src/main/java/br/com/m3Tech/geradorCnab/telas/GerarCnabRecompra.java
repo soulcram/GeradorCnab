@@ -70,7 +70,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
 import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
 
-public class GerarCnabAquisicao extends JPanel {
+public class GerarCnabRecompra extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -111,7 +111,7 @@ public class GerarCnabAquisicao extends JPanel {
 	private ITipoRecebivelService tipoRecebivelService;
 	private IConfGlobalService confGlobalService;
 
-	public GerarCnabAquisicao() {
+	public GerarCnabRecompra() {
 		try {
 			
 			cnab = new CnabDto();	
@@ -554,7 +554,7 @@ public class GerarCnabAquisicao extends JPanel {
 	}
 	
 	private String getNomeArquivo(Integer seq) {
-		return "CNAB_" + cnab.getLayout().getTamLayout() + "_AQUISICAO_" + LocalDate.now().toString().replaceAll("-", "")+ "_" + seq +".txt";
+		return "CNAB_" + cnab.getLayout().getTamLayout() + "_RECOMPRA_" + LocalDate.now().toString().replaceAll("-", "")+ "_" + seq +".txt";
 	}
 
 
