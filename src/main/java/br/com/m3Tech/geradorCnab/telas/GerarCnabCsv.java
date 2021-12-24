@@ -3,20 +3,25 @@ package br.com.m3Tech.geradorCnab.telas;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
@@ -32,7 +37,6 @@ import br.com.m3Tech.geradorCnab.dto.FundoDto;
 import br.com.m3Tech.geradorCnab.dto.MovimentoDto;
 import br.com.m3Tech.geradorCnab.dto.OriginadorDto;
 import br.com.m3Tech.geradorCnab.dto.SacadoDto;
-import br.com.m3Tech.geradorCnab.dto.TipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.dto.TituloDto;
 import br.com.m3Tech.geradorCnab.enuns.LayoutEnum;
 import br.com.m3Tech.geradorCnab.model.Base;
@@ -56,18 +60,13 @@ import br.com.m3Tech.geradorCnab.service.impl.TipoRecebivelServiceImpl;
 import br.com.m3Tech.geradorCnab.telas.componentes.Botao;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBase;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCedenteDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCoobrigacaoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxFundoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxLayout;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxMovimentoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxOriginadorDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxSacadoDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
 import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
-import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
 
 public class GerarCnabCsv extends JPanel {
 
@@ -78,28 +77,22 @@ public class GerarCnabCsv extends JPanel {
 	private JComboBox<LayoutEnum> cbLayout;
 	private JComboBox<OriginadorDto> cbOriginador;
 	private JComboBox<BancoDto> cbBanco;
-	private JComboBox<String> cbCoobrigacao;
-	private JComboBox<CedenteDto> cbCedente;
-	private JComboBox<SacadoDto> cbSacado;
 	private JComboBox<MovimentoDto> cbMovimento;
-	private JComboBox<TipoRecebivelDto> cbTipoRecebivel;
 	
 	private Text dataGravacao;
-	private Text dataVencimento;
-	private Text seuNumero;
-	private Text numeroDocumento;
-	private Text valorTitulo;
-	private Text valorAquisicao;
-	private Text chaveNfe;
-	private Text termoCessao;
+	private Text nomeArquivo;
 	private Text path;
 	
-	private JTable tabela;
+//	private JTable tabela;
 	
 	private Label erro;
 	
 	private CnabDto cnab;
-	private TituloDto titulo;
+	
+	private File fileCsv;
+	
+	
+//	private TituloDto titulo;
 	
 	private IFundoService fundoService;
 	private IOriginadorService originadorService;
@@ -114,7 +107,7 @@ public class GerarCnabCsv extends JPanel {
 		try {
 			
 			cnab = new CnabDto();	
-			titulo = new TituloDto();
+//			titulo = new TituloDto();
 			
 			fundoService = new FundoServiceImpl();
 			originadorService = new OriginadorServiceImpl();
@@ -146,44 +139,15 @@ public class GerarCnabCsv extends JPanel {
 			this.add(new Label("Banco: ", 470, 100, 100, 20, 14, Color.BLACK));
 			cbBanco = ComboBoxBancoDto.novo(580, 100, 350, 20);
 			
-			this.add(new Label("Coobrigação: ", 10, 150, 100, 20, 14, Color.BLACK));
-			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 150, 350, 20);
-			this.add(new Label("Vencimento: ", 470, 150, 100, 20, 14, Color.BLACK));
-			dataVencimento = new Text(580, 150, 100, 20, true);
-			
-			this.add(new Label("Cedente: ", 10, 180, 100, 20, 14, Color.BLACK));
-			cbCedente = ComboBoxCedenteDto.novo(110, 180, 350, 20);
-			this.add(new Label("Sacado: ", 470, 180, 100, 20, 14, Color.BLACK));
-			cbSacado = ComboBoxSacadoDto.novo(580, 180, 350, 20);
-			
 			this.add(new Label("Movimento: ", 10, 210, 100, 20, 14, Color.BLACK));
 			cbMovimento = ComboBoxMovimentoDto.novo(110, 210, 350, 20);
-			this.add(new Label("Tipo Recebível: ", 470, 210, 100, 20, 14, Color.BLACK));
-			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 210, 350, 20);
+			this.add(new Botao("Baixar Modelo Csv", 580, 210, 150, 20, getActionBaixarModeloCsv()));
 			
-			this.add(new Label("Seu Número: ", 10, 240, 100, 20, 14, Color.BLACK));
-			seuNumero = new Text(110, 240, 300, 20, true);
-			this.add(new Botao("@", 410, 240, 50, 20, getActionGerarSeuNumero()));
-			this.add(new Label("Número Doc.: ", 470, 240, 100, 20, 14, Color.BLACK));
-			numeroDocumento = new Text(580, 240, 150, 20, true);
-			this.add(new Botao("@", 730, 240, 50, 20, getActionGerarNumeroDocumento()));
+			this.add(new Label("Arquivo: ", 10, 250, 100, 20, 14, Color.BLACK));
+			nomeArquivo = new Text(120, 250, 450, 20, false);
+			this.add(new Botao("Carregar arquivo", 580, 250, 150, 20, getActionCarregarArquivoCsv()));
 			
-			this.add(new Label("Valor Título: ", 10, 270, 100, 20, 14, Color.BLACK));
-			valorTitulo = new Text(110, 270, 150, 20, true);
-			this.add(new Label("Valor Aquisição: ", 470, 270, 100, 20, 14, Color.BLACK));
-			valorAquisicao = new Text(580, 270, 150, 20, true);
-			
-			this.add(new Label("Chave Nfe: ", 10, 300, 100, 20, 14, Color.BLACK));
-			chaveNfe = new Text(110, 300, 300, 20, true);
-			this.add(new Botao("@", 410, 300, 50, 20, getActionGerarChaveNfe()));
-			this.add(new Label("Termo Cessão: ", 470, 300, 100, 20, 14, Color.BLACK));
-			termoCessao = new Text(580, 300, 150, 20, true);
-			this.add(new Botao("@", 730, 300, 50, 20, getActionGerarTermoCessao()));
-			
-			this.add(new Botao("Adicionar Título", 400, 350, 150, 20, getActionAdicionarTitulo()));
-		
-			
-			iniciarTabela();
+
 			
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
 			path = new Text(130, 650, 500, 20, true);
@@ -196,8 +160,6 @@ public class GerarCnabCsv extends JPanel {
 			preencherComboFundos();
 			preencherComboBanco();
 			preencherComboMovimento();
-			preencherComboTipoRecebivel();
-			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			
@@ -208,18 +170,8 @@ public class GerarCnabCsv extends JPanel {
 			this.add(cbLayout);
 			this.add(cbOriginador);
 			this.add(cbBanco);
-			this.add(cbCoobrigacao);
-			this.add(dataVencimento);
-			this.add(cbCedente);
-			this.add(cbSacado);
 			this.add(cbMovimento);
-			this.add(cbTipoRecebivel);
-			this.add(seuNumero);
-			this.add(numeroDocumento);
-			this.add(valorTitulo);
-			this.add(valorAquisicao);
-			this.add(chaveNfe);
-			this.add(termoCessao);
+			this.add(nomeArquivo);
 			this.add(path);
 			this.repaint();
 		
@@ -231,54 +183,6 @@ public class GerarCnabCsv extends JPanel {
 		
 		
 	}
-	
-	@SuppressWarnings("serial")
-	private void iniciarTabela() {
-
-		try {
-			
-			DefaultTableModel modelo = new DefaultTableModel(
-					new Object[][] {},
-					new String[] {"Seu Numero","Valor Título","Cedente","Sacado"}
-					);
-			
-			tabela = new JTable(modelo){
-			    @Override
-			    public boolean isCellEditable(int row, int column) {
-			        return false;
-			    }
-			};
-
-
-			tabela.addMouseListener(getActionEditarRow());
-			
-			tabela.setVisible(true);
-			tabela.repaint();
-			
-			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 390, 920, 240);
-			
-			this.add(scroll);
-
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-
-	}
-	
-	private MouseListener getActionEditarRow() {
-		// TODO Auto-generated method stub
-		return new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-				if (e.getClickCount() > 1) {
-					
-				}
-			}
-		};
-	}
 
 	private ActionListener getActionCbBase() {
 		return new ActionListener() {
@@ -289,7 +193,7 @@ public class GerarCnabCsv extends JPanel {
 					preencherComboFundos();
 					preencherComboBanco();
 					preencherComboMovimento();
-					preencherComboTipoRecebivel();
+//					preencherComboTipoRecebivel();
 				} catch (Exception e1) {
 					erro.setText(e1.getMessage());
 				}
@@ -322,7 +226,7 @@ public class GerarCnabCsv extends JPanel {
 					StreamFactory factory = StreamFactory.newInstance();
 			        
 					factory.loadResource("beanio.xml");
-			        
+								        
 			        File pathArquivo = new File(path.getText());
 			        
 			        if(!pathArquivo.exists()) {
@@ -330,6 +234,13 @@ public class GerarCnabCsv extends JPanel {
 			        }
 			        
 			        File arquivoFinal = new File(pathArquivo, getNomeArquivo(cnab.getNumSeqArquivo()));
+			        			        
+			        carregarTitulosApartirDoCSv();
+
+			        if(cnab.getTitulos().isEmpty()) {
+			        	JOptionPane.showMessageDialog(null, "Nenhum titulo encontrado no csv.");
+			        	return;
+			        }
 			        
 			        BeanWriter out = factory.createWriter(cnab.getLayout().getNmLayout(),arquivoFinal );        
 			                
@@ -347,7 +258,6 @@ public class GerarCnabCsv extends JPanel {
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
-			        ((DefaultTableModel)tabela.getModel()).setNumRows(0);
 			        cnab = new CnabDto();
 			       
 					
@@ -358,46 +268,113 @@ public class GerarCnabCsv extends JPanel {
 				
 				
 			}
+
+		};
+	}
+
+	private void carregarTitulosApartirDoCSv() {
+
+		try {
+			Path p = Paths.get(fileCsv.toURI());
+			List<String> readAllLines = Files.readAllLines(p, StandardCharsets.UTF_8);
+			readAllLines.remove(0); // removendo o header
+			
+			for (String linha : readAllLines) {
+
+				String[] colunas = linha.split(";");
+				
+				CedenteDto cedente = new CedenteDto(null, 
+						colunas[0], //nomeCedente
+						colunas[1]  //docCedente
+								);
+				
+				SacadoDto sacado = new SacadoDto(null, 
+						colunas[2], //nomeSacado
+						colunas[3], //docSacado
+						colunas[4], //endereçoSacado
+						colunas[5] //cepSacado
+						);
+
+				TituloDto titulo = new TituloDto(cedente, 
+						sacado, 
+						cnab.getBanco().getCodigoBanco(), 
+						LocalDate.parse(colunas[6], DateTimeFormatter.ofPattern("dd/MM/yyyy")), //dataVencimento
+						null, 
+						((MovimentoDto)cbMovimento.getSelectedItem()), 
+						colunas[7], //SeuNumero 
+						colunas[8], //coobrigacao, 
+						colunas[9], //nossoNumero, 
+						colunas[10], //numeroDocumento, 
+						colunas[11], //especie, 
+						colunas[12], //termoCessao, 
+						colunas[13], //chaveNfe, 
+						null, //valorPago, 
+						new BigDecimal(colunas[14].replaceAll(",", ".")), //valorTitulo, 
+						new BigDecimal(colunas[15].replaceAll(",", ".")), //valorAquisicao, 
+						null);
+
+				cnab.getTitulos().add(titulo.getCopy());
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private ActionListener getActionCarregarArquivoCsv() {
+		return new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV files (*csv)", "csv");
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				fileChooser.setFileFilter(filter);
+				int ret = fileChooser.showOpenDialog(GerarCnabCsv.this);
+				if (ret == JFileChooser.APPROVE_OPTION) {
+					fileCsv = fileChooser.getSelectedFile();
+					nomeArquivo.setText(fileCsv.getName());
+				}
+
+			}
 		};
 	}
 	
-
-	private ActionListener getActionAdicionarTitulo() {
+	private ActionListener getActionBaixarModeloCsv() {
 		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				titulo.setCedente((CedenteDto)cbCedente.getSelectedItem());
-				titulo.setChaveNfe(chaveNfe.getText());
-				titulo.setCoobrigacao("Com coobrigação".equals(cbCoobrigacao.getSelectedItem()) ? "01" : "02");
-				titulo.setDataVencimento(LocalDate.parse(dataVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-				titulo.setEspecie(((TipoRecebivelDto)cbTipoRecebivel.getSelectedItem()).getCdEspecie());
-				titulo.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
-				titulo.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
-				titulo.setNumeroDocumento(numeroDocumento.getText());
-				titulo.setSacado((SacadoDto)cbSacado.getSelectedItem());
-				titulo.setSeuNumero(seuNumero.getText());
-				titulo.setTermoCessao(termoCessao.getText());
-				titulo.setValorAquisicao(new BigDecimal(valorAquisicao.getText().replaceAll(",", ".")));
-				titulo.setValorTitulo(new BigDecimal(valorTitulo.getText().replaceAll(",", ".")));
-				
-				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-				
-//				"Seu Numero","Valor Título","Cedente","Sacado"
-				
-				modelo.addRow(new Object[] {
-						
-						titulo.getSeuNumero(),
-						titulo.getValorTitulo(),
-						titulo.getCedente().getNomeCedente(),
-						titulo.getSacado().getNomeSacado()
-						
-				});
-				
-				cnab.getTitulos().add(titulo.getCopy());
-				
-				titulo = new TituloDto();
-				
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					URL resource = getClass().getClassLoader().getResource("template.csv");
+					
+					File caminho = new File(path.getText());
+					
+					if(!caminho.exists()) {
+						caminho.mkdirs();
+					}
+					
+					Path p = Paths.get(resource.toURI());
+					List<String> readAllLines = Files.readAllLines(p, StandardCharsets.UTF_8);
+					
+					File modelo = new File(caminho , "template.csv");
+										
+					BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(modelo.getPath()), StandardCharsets.UTF_8));
+					
+					for(String s : readAllLines) {
+						bw.write(s + "\r\n");
+					}
+					
+					bw.close();
+
+					JOptionPane.showMessageDialog(null, "O arquivo foi salvo em: " + caminho.getPath());
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		};
 	}
@@ -413,8 +390,6 @@ public class GerarCnabCsv extends JPanel {
 						dataGravacao.setText(((FundoDto)cbFundo.getSelectedItem()).getDataFundo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 					
 						preencherComboOriginador();
-						preencherComboCedente();
-						preencherComboSacado();
 						
 					} catch (Exception e1) {
 						erro.setText(e1.getMessage());
@@ -423,48 +398,6 @@ public class GerarCnabCsv extends JPanel {
 			}
 		};
 	}
-	
-	private ActionListener getActionGerarSeuNumero() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				seuNumero.setText(ValorAleatorioUtil.getValor(25));
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarNumeroDocumento() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				numeroDocumento.setText(ValorAleatorioUtil.getValor(10));
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarChaveNfe() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				chaveNfe.setText("31190600006388319890559240000000311006164587");
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarTermoCessao() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				termoCessao.setText(ValorAleatorioUtil.getValor(10));
-			}
-		};
-	}
-	
-	
 	
 	private void preencherComboFundos() throws Exception {
 		List<FundoDto> fundos = fundoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
@@ -476,8 +409,6 @@ public class GerarCnabCsv extends JPanel {
 			
 			dataGravacao.setText(((FundoDto)cbFundo.getSelectedItem()).getDataFundo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 			preencherComboOriginador();
-			preencherComboCedente();
-			preencherComboSacado();
 		}
 	}
 	
@@ -498,38 +429,6 @@ public class GerarCnabCsv extends JPanel {
 		if(movimentos != null && !movimentos.isEmpty()) {
 			for(MovimentoDto movimento : movimentos) {
 				cbMovimento.addItem(movimento);
-			}
-			
-		}
-	}
-	
-	private void preencherComboTipoRecebivel() throws Exception {
-		List<TipoRecebivelDto> listaTipoRecebivel = tipoRecebivelService.findAllTipoRecebivel(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbTipoRecebivel.removeAllItems();
-		if(listaTipoRecebivel != null && !listaTipoRecebivel.isEmpty()) {
-			for(TipoRecebivelDto tipoRecebivel : listaTipoRecebivel) {
-				cbTipoRecebivel.addItem(tipoRecebivel);
-			}
-			
-		}
-	}
-	
-	private void preencherComboCedente() throws Exception {
-		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbCedente.removeAllItems();
-		if(cedentes != null && !cedentes.isEmpty()) {
-			for(CedenteDto cedente : cedentes) {
-				cbCedente.addItem(cedente);
-			}
-			
-		}
-	}
-	private void preencherComboSacado() throws Exception {
-		List<SacadoDto> sacados = sacadoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbSacado.removeAllItems();
-		if(sacados != null && !sacados.isEmpty()) {
-			for(SacadoDto sacado : sacados) {
-				cbSacado.addItem(sacado);
 			}
 			
 		}

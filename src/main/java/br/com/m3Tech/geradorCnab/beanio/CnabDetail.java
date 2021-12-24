@@ -72,7 +72,7 @@ public class CnabDetail {
 		
 	}
 	
-public CnabDetail(String[] colunas,Integer numSeq) {
+	public CnabDetail(String[] colunas,Integer numSeq) {
 		
 		this.coobrigacao = colunas[14];
 		this.seuNumero = colunas[2];
