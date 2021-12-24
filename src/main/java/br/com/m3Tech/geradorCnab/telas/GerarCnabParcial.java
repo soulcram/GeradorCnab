@@ -229,7 +229,7 @@ public class GerarCnabParcial extends JPanel {
 			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo(
 					Conexao.getConnection((Base) cbBase.getSelectedItem()),
 					((FundoDto) cbFundo.getSelectedItem()).getIdFundo(),
-					((LayoutEnum) cbLayout.getSelectedItem()).getCdLayout());
+					false);
 
 			if (titulosEmEstoque != null && !titulosEmEstoque.isEmpty()) {
 				for (TituloDto dto : titulosEmEstoque) {

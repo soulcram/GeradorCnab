@@ -420,7 +420,7 @@ private static final long serialVersionUID = 1L;
 			}
 		} catch (Exception e) {
 			erro.setText(e.getMessage());
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -434,7 +434,7 @@ private static final long serialVersionUID = 1L;
 			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo(
 					Conexao.getConnection((Base) cbBase.getSelectedItem()),
 					((FundoDto) cbFundo.getSelectedItem()).getIdFundo(),
-					((LayoutEnum) cbLayout.getSelectedItem()).getCdLayout());
+					false);
 
 			if (titulosEmEstoque != null && !titulosEmEstoque.isEmpty()) {
 				for (TituloDto dto : titulosEmEstoque) {
@@ -444,7 +444,7 @@ private static final long serialVersionUID = 1L;
 			}
 		} catch (Exception e) {
 			erro.setText(e.getMessage());
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	
@@ -720,7 +720,7 @@ private static final long serialVersionUID = 1L;
 	}
 	
 	private void preencherComboMovimentoRecompraBaixa() throws Exception {
-		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosRecompraBaixa(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
+		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosRecompraParcial(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
 		cbMovimentoBaixaRecompra.removeAllItems();
 		if(movimentos != null && !movimentos.isEmpty()) {
 			for(MovimentoDto movimento : movimentos) {

@@ -15,6 +15,7 @@ public class FundoDto {
 	private String nomeFundo;
 	private Integer layoutAquisicao;
 	private LocalDate dataFundo;
+	
 	@Override
 	public String toString() {
 		return idFundo + " - " + nomeFundo;

@@ -15,6 +15,11 @@ public interface IMovimentoService {
 	
 	public List<MovimentoDto> findAllMovimentosAquisicao(Connection con, Integer cdLayout);
 	public List<MovimentoDto> findAllMovimentosBaixa(Connection con, Integer cdLayout);
+	public List<MovimentoDto> findAllMovimentosRecompraAquisicao(Connection con, Integer cdLayout);
+	public List<MovimentoDto> findAllMovimentosRecompraBaixa(Connection con, Integer cdLayout);
+	public List<MovimentoDto> findAllMovimentosRecompraParcial(Connection con, Integer cdLayout);
+	public List<MovimentoDto> findAllMovimentosParcial(Connection con, Integer cdLayout);
+	public List<MovimentoDto> findAllMovimentosProrrogacao(Connection con, Integer cdLayout);
 	
 	public List<TituloEmEstoqueDto> findAllTitulosEmEstoque(Connection con, Integer idFundo);
 
@@ -25,12 +30,10 @@ public interface IMovimentoService {
 	public Boolean isRecompra(Connection con, Integer idMovimento);
 	public Boolean isProrrogacao(Connection con, Integer idMovimento);
 
-	public List<TituloDto> findAllTituloEmEstoqueByFundo(Connection con, Integer idFundo, Integer cdLayout);
+	public List<TituloDto> findAllTituloEmEstoqueByFundo(Connection con, Integer idFundo, boolean isProrrogacao);
 
-	public List<MovimentoDto> findAllMovimentosParcial(Connection con, Integer cdLayout);
+	
 
-	List<MovimentoDto> findAllMovimentosRecompraAquisicao(Connection con, Integer cdLayout);
 
-	List<MovimentoDto> findAllMovimentosRecompraBaixa(Connection con, Integer cdLayout);
 
 }

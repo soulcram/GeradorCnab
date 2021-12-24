@@ -7,9 +7,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -27,110 +27,83 @@ import br.com.m3Tech.geradorCnab.beanio.CnabHeader;
 import br.com.m3Tech.geradorCnab.beanio.CnabTrailler;
 import br.com.m3Tech.geradorCnab.dao.Conexao;
 import br.com.m3Tech.geradorCnab.dto.BancoDto;
-import br.com.m3Tech.geradorCnab.dto.CedenteDto;
 import br.com.m3Tech.geradorCnab.dto.CnabDto;
 import br.com.m3Tech.geradorCnab.dto.FundoDto;
 import br.com.m3Tech.geradorCnab.dto.MovimentoDto;
 import br.com.m3Tech.geradorCnab.dto.OriginadorDto;
-import br.com.m3Tech.geradorCnab.dto.SacadoDto;
-import br.com.m3Tech.geradorCnab.dto.TipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.dto.TituloDto;
 import br.com.m3Tech.geradorCnab.enuns.LayoutEnum;
 import br.com.m3Tech.geradorCnab.model.Base;
 import br.com.m3Tech.geradorCnab.model.ConfGlobal;
 import br.com.m3Tech.geradorCnab.service.IBancoService;
-import br.com.m3Tech.geradorCnab.service.ICedenteService;
 import br.com.m3Tech.geradorCnab.service.IConfGlobalService;
 import br.com.m3Tech.geradorCnab.service.IFundoService;
 import br.com.m3Tech.geradorCnab.service.IMovimentoService;
 import br.com.m3Tech.geradorCnab.service.IOriginadorService;
-import br.com.m3Tech.geradorCnab.service.ISacadoService;
-import br.com.m3Tech.geradorCnab.service.ITipoRecebivelService;
 import br.com.m3Tech.geradorCnab.service.impl.BancoServiceImpl;
-import br.com.m3Tech.geradorCnab.service.impl.CedenteServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.ConfGlobalServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.FundoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.MovimentoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.OriginadorServiceImpl;
-import br.com.m3Tech.geradorCnab.service.impl.SacadoServiceImpl;
-import br.com.m3Tech.geradorCnab.service.impl.TipoRecebivelServiceImpl;
 import br.com.m3Tech.geradorCnab.telas.componentes.Botao;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBase;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCedenteDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCoobrigacaoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxFundoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxLayout;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxMovimentoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxOriginadorDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxSacadoDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
 import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
-import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
 
 public class GerarCnabProrrogacao extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 	
 	private JComboBox<Base> cbBase;
 	private JComboBox<FundoDto> cbFundo;
 	private JComboBox<LayoutEnum> cbLayout;
 	private JComboBox<OriginadorDto> cbOriginador;
 	private JComboBox<BancoDto> cbBanco;
-	private JComboBox<String> cbCoobrigacao;
-	private JComboBox<CedenteDto> cbCedente;
-	private JComboBox<SacadoDto> cbSacado;
 	private JComboBox<MovimentoDto> cbMovimento;
-	private JComboBox<TipoRecebivelDto> cbTipoRecebivel;
 	
 	private Text dataGravacao;
-	private Text dataVencimento;
-	private Text seuNumero;
-	private Text numeroDocumento;
-	private Text valorTitulo;
-	private Text valorAquisicao;
-	private Text chaveNfe;
-	private Text termoCessao;
 	private Text path;
+	private Text seuNumero;
+	private Text vencimentoOriginal;
+	private Text novoVencimento;
 	
-	private JTable tabela;
+	private JTable tabelaTitulosEmEstoque;
+	private JTable tabelaTituloParaBaixar;
 	
 	private Label erro;
 	
 	private CnabDto cnab;
 	private TituloDto titulo;
+	private List<TituloDto> titulosEmEstoque;
 	
 	private IFundoService fundoService;
 	private IOriginadorService originadorService;
 	private IBancoService bancoService;
-	private ICedenteService cedenteService;
-	private ISacadoService sacadoService;
 	private IMovimentoService movimentoService;
-	private ITipoRecebivelService tipoRecebivelService;
 	private IConfGlobalService confGlobalService;
 
 	public GerarCnabProrrogacao() {
 		try {
 			
 			cnab = new CnabDto();	
-			titulo = new TituloDto();
 			
 			fundoService = new FundoServiceImpl();
 			originadorService = new OriginadorServiceImpl();
 			bancoService = new BancoServiceImpl();
-			cedenteService = new CedenteServiceImpl();
-			sacadoService = new SacadoServiceImpl();
 			movimentoService = new MovimentoServiceImpl();
-			tipoRecebivelService = new TipoRecebivelServiceImpl();
 			confGlobalService = new ConfGlobalServiceImpl();
 			
 			this.setBounds(1, 1, 1000, 690);
 			this.setLayout(null);
 			this.setBackground(Color.WHITE);
 		
-			this.add(new Label("Gerar Cnab Aquisição", 10, 10, 500, 20, 14, Color.BLUE));
+			this.add(new Label("Gerar Cnab Prorrogação", 10, 10, 500, 20, 14, Color.BLUE));
 		
 			this.add(new Label("Selecionar Base", 10, 40, 100, 20, 14, Color.BLACK));
 			cbBase = ComboBoxBase.novo(110, 40, 350, 20, getActionCbBase());
@@ -146,45 +119,18 @@ public class GerarCnabProrrogacao extends JPanel {
 			cbOriginador = ComboBoxOriginadorDto.novo(110, 100, 350, 20);
 			this.add(new Label("Banco: ", 470, 100, 100, 20, 14, Color.BLACK));
 			cbBanco = ComboBoxBancoDto.novo(580, 100, 350, 20);
+
+			this.add(new Label("Movimento: ", 10, 130, 100, 20, 14, Color.BLACK));
+			cbMovimento = ComboBoxMovimentoDto.novo(110, 130, 350, 20);
 			
-			this.add(new Label("Coobrigação: ", 10, 150, 100, 20, 14, Color.BLACK));
-			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 150, 350, 20);
-			this.add(new Label("Vencimento: ", 470, 150, 100, 20, 14, Color.BLACK));
-			dataVencimento = new Text(580, 150, 100, 20, true);
-			
-			this.add(new Label("Cedente: ", 10, 180, 100, 20, 14, Color.BLACK));
-			cbCedente = ComboBoxCedenteDto.novo(110, 180, 350, 20);
-			this.add(new Label("Sacado: ", 470, 180, 100, 20, 14, Color.BLACK));
-			cbSacado = ComboBoxSacadoDto.novo(580, 180, 350, 20);
-			
-			this.add(new Label("Movimento: ", 10, 210, 100, 20, 14, Color.BLACK));
-			cbMovimento = ComboBoxMovimentoDto.novo(110, 210, 350, 20);
-			this.add(new Label("Tipo Recebível: ", 470, 210, 100, 20, 14, Color.BLACK));
-			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 210, 350, 20);
-			
-			this.add(new Label("Seu Número: ", 10, 240, 100, 20, 14, Color.BLACK));
-			seuNumero = new Text(110, 240, 300, 20, true);
-			this.add(new Botao("@", 410, 240, 50, 20, getActionGerarSeuNumero()));
-			this.add(new Label("Número Doc.: ", 470, 240, 100, 20, 14, Color.BLACK));
-			numeroDocumento = new Text(580, 240, 150, 20, true);
-			this.add(new Botao("@", 730, 240, 50, 20, getActionGerarNumeroDocumento()));
-			
-			this.add(new Label("Valor Título: ", 10, 270, 100, 20, 14, Color.BLACK));
-			valorTitulo = new Text(110, 270, 150, 20, true);
-			this.add(new Label("Valor Aquisição: ", 470, 270, 100, 20, 14, Color.BLACK));
-			valorAquisicao = new Text(580, 270, 150, 20, true);
-			
-			this.add(new Label("Chave Nfe: ", 10, 300, 100, 20, 14, Color.BLACK));
-			chaveNfe = new Text(110, 300, 300, 20, true);
-			this.add(new Botao("@", 410, 300, 50, 20, getActionGerarChaveNfe()));
-			this.add(new Label("Termo Cessão: ", 470, 300, 100, 20, 14, Color.BLACK));
-			termoCessao = new Text(580, 300, 150, 20, true);
-			this.add(new Botao("@", 730, 300, 50, 20, getActionGerarTermoCessao()));
-			
-			this.add(new Botao("Adicionar Título", 400, 350, 150, 20, getActionAdicionarTitulo()));
-		
-			
-			iniciarTabela();
+			this.add(new Label("Nova Data Vencimento", 10, 350, 200, 20, 14, Color.BLUE));
+			this.add(new Label("Seu Número: ", 150, 350, 100, 20, 14, Color.BLACK));
+			seuNumero = new Text(250, 350, 170, 20, false);
+			this.add(new Label("Vencimento Original: ", 440, 350, 200, 20, 14, Color.BLACK));
+			vencimentoOriginal = new Text(580, 350, 100, 20, false);
+			this.add(new Label("Novo Vencimento: ", 440, 380, 200, 20, 14, Color.BLACK));
+			novoVencimento = new Text(580, 380, 100, 20, true);
+			this.add(new Botao("Add Título", 700, 380, 100, 20, getActionAdicionarTituloProrrogacao()));
 			
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
 			path = new Text(130, 650, 500, 20, true);
@@ -197,11 +143,12 @@ public class GerarCnabProrrogacao extends JPanel {
 			preencherComboFundos();
 			preencherComboBanco();
 			preencherComboMovimento();
-			preencherComboTipoRecebivel();
-			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			
+			
+			iniciarTabelaTitulosEmEstoque();
+			iniciarTabelaTitulosParaBaixar();
 			
 			this.add(cbBase);
 			this.add(cbFundo);
@@ -209,18 +156,10 @@ public class GerarCnabProrrogacao extends JPanel {
 			this.add(cbLayout);
 			this.add(cbOriginador);
 			this.add(cbBanco);
-			this.add(cbCoobrigacao);
-			this.add(dataVencimento);
-			this.add(cbCedente);
-			this.add(cbSacado);
 			this.add(cbMovimento);
-			this.add(cbTipoRecebivel);
 			this.add(seuNumero);
-			this.add(numeroDocumento);
-			this.add(valorTitulo);
-			this.add(valorAquisicao);
-			this.add(chaveNfe);
-			this.add(termoCessao);
+			this.add(vencimentoOriginal);
+			this.add(novoVencimento);
 			this.add(path);
 			this.repaint();
 		
@@ -234,7 +173,7 @@ public class GerarCnabProrrogacao extends JPanel {
 	}
 	
 	@SuppressWarnings("serial")
-	private void iniciarTabela() {
+	private void iniciarTabelaTitulosEmEstoque() {
 
 		try {
 			
@@ -243,7 +182,92 @@ public class GerarCnabProrrogacao extends JPanel {
 					new String[] {"Seu Numero","Valor Título","Cedente","Sacado"}
 					);
 			
-			tabela = new JTable(modelo){
+			tabelaTitulosEmEstoque = new JTable(modelo){
+			    @Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false;
+			    }
+			};
+			
+			preencherTabelaTitulosEmEstoque();
+
+			tabelaTitulosEmEstoque.addMouseListener(getActionAdicionarTitulo());
+			tabelaTitulosEmEstoque.setName("Títulos disponivel para prorrogação");
+			tabelaTitulosEmEstoque.setVisible(true);
+			tabelaTitulosEmEstoque.repaint();
+			
+			this.add(new Label("Títulos disponivel para prorrogação", 10, 160, 250, 20, 14, Color.BLUE));
+			
+			JScrollPane scroll = new JScrollPane(tabelaTitulosEmEstoque);
+			scroll.setBounds(10, 180, 920, 150);
+			scroll.setName("Títulos disponivel para prorrogação");
+			this.add(scroll);
+
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void preencherTabelaTitulosEmEstoque() {
+
+		try {
+
+			DefaultTableModel modelo = (DefaultTableModel) tabelaTitulosEmEstoque.getModel();
+			modelo.setNumRows(0);
+
+			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo(
+					Conexao.getConnection((Base) cbBase.getSelectedItem()),
+					((FundoDto) cbFundo.getSelectedItem()).getIdFundo(),
+					true);
+
+			if (titulosEmEstoque != null && !titulosEmEstoque.isEmpty()) {
+				for (TituloDto dto : titulosEmEstoque) {
+					modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+							dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+				}
+			}else {
+				JOptionPane.showMessageDialog(null, "Nenhum titulo em estoque que permita prorrogação");
+			}
+		} catch (Exception e) {
+			erro.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	private void preencherTabelaTitulosParaBaixar() {
+
+		try {
+
+			DefaultTableModel modelo = (DefaultTableModel) tabelaTituloParaBaixar.getModel();
+			modelo.setNumRows(0);
+
+			List<TituloDto> titulos = cnab.getTitulos();
+
+			if (titulos != null && !titulos.isEmpty()) {
+				for (TituloDto dto : titulos) {
+					modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+							dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+				}
+			}
+		} catch (Exception e) {
+			erro.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	@SuppressWarnings("serial")
+	private void iniciarTabelaTitulosParaBaixar() {
+
+		try {
+			
+			DefaultTableModel modelo = new DefaultTableModel(
+					new Object[][] {},
+					new String[] {"Seu Numero","Valor Título","Cedente","Sacado"}
+					);
+			
+			tabelaTituloParaBaixar = new JTable(modelo){
 			    @Override
 			    public boolean isCellEditable(int row, int column) {
 			        return false;
@@ -251,13 +275,16 @@ public class GerarCnabProrrogacao extends JPanel {
 			};
 
 
-			tabela.addMouseListener(getActionEditarRow());
+			tabelaTituloParaBaixar.addMouseListener(getActionAdicionarTitulo());
+			tabelaTituloParaBaixar.setName("Títulos que serão prorrogados");
+			tabelaTituloParaBaixar.setVisible(true);
+			tabelaTituloParaBaixar.repaint();
 			
-			tabela.setVisible(true);
-			tabela.repaint();
+			this.add(new Label("Títulos que serão prorrogados", 10, 410, 310, 20, 14, Color.BLUE));
 			
-			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 390, 920, 240);
+			JScrollPane scroll = new JScrollPane(tabelaTituloParaBaixar);
+			scroll.setBounds(10, 430, 920, 180);
+			scroll.setName("Títulos que serão prorrogados");
 			
 			this.add(scroll);
 
@@ -268,17 +295,124 @@ public class GerarCnabProrrogacao extends JPanel {
 
 	}
 	
-	private MouseListener getActionEditarRow() {
-		// TODO Auto-generated method stub
+	private MouseListener getActionAdicionarTitulo() {
+		
 		return new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 
 				if (e.getClickCount() > 1) {
+					String seuNumeroSelecionado = tabelaTitulosEmEstoque.getValueAt(tabelaTitulosEmEstoque.getSelectedRow(), 0).toString();
 					
+					
+					
+					for(TituloDto dto : titulosEmEstoque) {
+						
+						if(seuNumeroSelecionado.equals(dto.getSeuNumero())) {
+							titulo = dto;
+							
+							titulo.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
+							titulo.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
+							
+							seuNumero.setText(titulo.getSeuNumero());
+							vencimentoOriginal.setText(titulo.getDataVencimento().format( DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+							break;
+						}
+					}
+					
+
 				}
 			}
 		};
+	}
+	
+	private ActionListener getActionAdicionarTituloProrrogacao() {
+		return new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				if(!validarDataVencimento()) {
+					return;
+				}
+				
+				LocalDate novaDataVencimento = LocalDate.parse(novoVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+				
+				if(titulo != null) {
+					titulosEmEstoque.remove(titulo);
+					
+					DefaultTableModel modelo = (DefaultTableModel) tabelaTitulosEmEstoque.getModel();
+					modelo.setNumRows(0);
+
+					for (TituloDto dto : titulosEmEstoque) {
+						modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+									dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+					}
+					
+				}
+				
+				TituloDto copy = titulo.getCopy();
+				
+				copy.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
+				copy.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
+				copy.setDataVencimento(novaDataVencimento);
+				
+				cnab.getTitulos().add(copy);
+
+				titulo = new TituloDto();
+				preencherTabelaTitulosParaBaixar();
+				novoVencimento.setText("");
+				vencimentoOriginal.setText("");
+				seuNumero.setText("");
+				
+			}
+
+
+		};
+	}
+	
+	private boolean validarDataVencimento() {
+		if(StringUtils.EmptyOrNull(novoVencimento.getText())) {
+			JOptionPane.showMessageDialog(null, "Vencimento é obrigatorio.","Erro", 0);
+			return false;
+		}
+		
+		try {
+			LocalDate novaDataVencimento = LocalDate.parse(novoVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		}catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Data Vencimento com formato inesperado. Use o formato dd/MM/yyyy ","Erro", 0);
+			return false;
+		}
+		
+		
+		Integer diasMaxProrrogacao = null;
+		
+		try {
+			diasMaxProrrogacao = fundoService.findDiasMaxProrrogacao(Conexao.getConnection((Base)cbBase.getSelectedItem()),((FundoDto)cbFundo.getSelectedItem()).getIdFundo());
+		}catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro ao consultar dias máximos para prorrogação, Prorrogação não permitida para o fundo","Erro", 0);
+			return false;
+		}
+		
+		if(diasMaxProrrogacao != null) {
+			
+			long dias = ChronoUnit.DAYS.between(titulo.getDataVencimento(), LocalDate.parse(novoVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+			
+			if(dias < 1) {
+				JOptionPane.showMessageDialog(null, "Dava inválida, A nova data de vencimento deve ser maior que a data de Vencimento Original","Erro", 0);
+				return false;
+			}
+			
+			if(dias > diasMaxProrrogacao) {
+				JOptionPane.showMessageDialog(null, "Dava inválida, Fundo permite apenas " + diasMaxProrrogacao + " de prorrogação","Erro", 0);
+				return false;
+			}
+			
+		}else {
+			JOptionPane.showMessageDialog(null, "Erro ao consultar dias máximos para prorrogação, Prorrogação não permitida para o fundo","Erro", 0);
+			return false;
+		}		
+		
+		return true;
 	}
 
 	private ActionListener getActionCbBase() {
@@ -290,7 +424,6 @@ public class GerarCnabProrrogacao extends JPanel {
 					preencherComboFundos();
 					preencherComboBanco();
 					preencherComboMovimento();
-					preencherComboTipoRecebivel();
 				} catch (Exception e1) {
 					erro.setText(e1.getMessage());
 				}
@@ -343,6 +476,7 @@ public class GerarCnabProrrogacao extends JPanel {
 			        out.write(new CnabHeader(cnab));
 			        int qtdeTitulos = 2;
 			        for(TituloDto dto : cnab.getTitulos()) {
+			        	dto.setDataLiquidacao(null);
 			        	out.write(new CnabDetail(dto, qtdeTitulos++));
 			        }
 			        out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));
@@ -354,7 +488,7 @@ public class GerarCnabProrrogacao extends JPanel {
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
-			        ((DefaultTableModel)tabela.getModel()).setNumRows(0);
+			        ((DefaultTableModel)tabelaTituloParaBaixar.getModel()).setNumRows(0);
 			        cnab = new CnabDto();
 			       
 					
@@ -363,47 +497,6 @@ public class GerarCnabProrrogacao extends JPanel {
 					repaint();
 				}
 				
-				
-			}
-		};
-	}
-	
-
-	private ActionListener getActionAdicionarTitulo() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				titulo.setCedente((CedenteDto)cbCedente.getSelectedItem());
-				titulo.setChaveNfe(chaveNfe.getText());
-				titulo.setCoobrigacao("Com coobrigação".equals(cbCoobrigacao.getSelectedItem()) ? "01" : "02");
-				titulo.setDataVencimento(LocalDate.parse(dataVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-				titulo.setEspecie(((TipoRecebivelDto)cbTipoRecebivel.getSelectedItem()).getCdEspecie());
-				titulo.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
-				titulo.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
-				titulo.setNumeroDocumento(numeroDocumento.getText());
-				titulo.setSacado((SacadoDto)cbSacado.getSelectedItem());
-				titulo.setSeuNumero(seuNumero.getText());
-				titulo.setTermoCessao(termoCessao.getText());
-				titulo.setValorAquisicao(new BigDecimal(valorAquisicao.getText().replaceAll(",", ".")));
-				titulo.setValorTitulo(new BigDecimal(valorTitulo.getText().replaceAll(",", ".")));
-				
-				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
-				
-//				"Seu Numero","Valor Título","Cedente","Sacado"
-				
-				modelo.addRow(new Object[] {
-						
-						titulo.getSeuNumero(),
-						titulo.getValorTitulo(),
-						titulo.getCedente().getNomeCedente(),
-						titulo.getSacado().getNomeSacado()
-						
-				});
-				
-				cnab.getTitulos().add(titulo.getCopy());
-				
-				titulo = new TituloDto();
 				
 			}
 		};
@@ -419,9 +512,8 @@ public class GerarCnabProrrogacao extends JPanel {
 					
 						dataGravacao.setText(((FundoDto)cbFundo.getSelectedItem()).getDataFundo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 					
+						preencherTabelaTitulosEmEstoque();
 						preencherComboOriginador();
-						preencherComboCedente();
-						preencherComboSacado();
 						
 					} catch (Exception e1) {
 						erro.setText(e1.getMessage());
@@ -431,60 +523,28 @@ public class GerarCnabProrrogacao extends JPanel {
 		};
 	}
 	
-	private ActionListener getActionGerarSeuNumero() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				seuNumero.setText(ValorAleatorioUtil.getValor(25));
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarNumeroDocumento() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				numeroDocumento.setText(ValorAleatorioUtil.getValor(10));
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarChaveNfe() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				chaveNfe.setText("31190600006388319890559240000000311006164587");
-			}
-		};
-	}
-	
-	private ActionListener getActionGerarTermoCessao() {
-		return new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				termoCessao.setText(ValorAleatorioUtil.getValor(10));
-			}
-		};
-	}
-	
-	
-	
 	private void preencherComboFundos() throws Exception {
-		List<FundoDto> fundos = fundoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
+		List<FundoDto> fundos = fundoService.findAllProrrogacao(Conexao.getConnection((Base)cbBase.getSelectedItem()));
 		cbFundo.removeAllItems();
+		if(fundos == null || fundos.isEmpty()) {
+			
+			
+			cbOriginador.removeAllItems();
+			((DefaultTableModel) tabelaTitulosEmEstoque.getModel()).setNumRows(0);
+			JOptionPane.showMessageDialog(null, "Nenhum fundo encontrado que permita prorrogação");
+			return;
+		}
+		
+		
 		if(fundos != null && !fundos.isEmpty()) {
 			for(FundoDto fundo : fundos) {
 				cbFundo.addItem(fundo);
 			}
 			
 			dataGravacao.setText(((FundoDto)cbFundo.getSelectedItem()).getDataFundo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+			
+			preencherTabelaTitulosEmEstoque();
 			preencherComboOriginador();
-			preencherComboCedente();
-			preencherComboSacado();
 		}
 	}
 	
@@ -500,7 +560,7 @@ public class GerarCnabProrrogacao extends JPanel {
 	}
 	
 	private void preencherComboMovimento() throws Exception {
-		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosAquisicao(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
+		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosProrrogacao(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
 		cbMovimento.removeAllItems();
 		if(movimentos != null && !movimentos.isEmpty()) {
 			for(MovimentoDto movimento : movimentos) {
@@ -509,39 +569,7 @@ public class GerarCnabProrrogacao extends JPanel {
 			
 		}
 	}
-	
-	private void preencherComboTipoRecebivel() throws Exception {
-		List<TipoRecebivelDto> listaTipoRecebivel = tipoRecebivelService.findAllTipoRecebivel(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbTipoRecebivel.removeAllItems();
-		if(listaTipoRecebivel != null && !listaTipoRecebivel.isEmpty()) {
-			for(TipoRecebivelDto tipoRecebivel : listaTipoRecebivel) {
-				cbTipoRecebivel.addItem(tipoRecebivel);
-			}
-			
-		}
-	}
-	
-	private void preencherComboCedente() throws Exception {
-		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbCedente.removeAllItems();
-		if(cedentes != null && !cedentes.isEmpty()) {
-			for(CedenteDto cedente : cedentes) {
-				cbCedente.addItem(cedente);
-			}
-			
-		}
-	}
-	private void preencherComboSacado() throws Exception {
-		List<SacadoDto> sacados = sacadoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
-		cbSacado.removeAllItems();
-		if(sacados != null && !sacados.isEmpty()) {
-			for(SacadoDto sacado : sacados) {
-				cbSacado.addItem(sacado);
-			}
-			
-		}
-	}
-	
+
 	private void preencherComboBanco() throws Exception {
 		List<BancoDto> bancos = bancoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
 		cbBanco.removeAllItems();

@@ -13,4 +13,8 @@ public interface IFundoService {
 	
 	public FundoDto findOneById(Connection con, Integer id);
 
+	public List<FundoDto> findAllProrrogacao(Connection con);
+
+	public Integer findDiasMaxProrrogacao(Connection con, Integer idFundo);
+
 }

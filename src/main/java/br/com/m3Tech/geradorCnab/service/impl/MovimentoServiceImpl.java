@@ -167,6 +167,43 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 		
 		return retorno;
 	}
+	
+	@Override
+	public List<MovimentoDto> findAllMovimentosProrrogacao(Connection con, Integer cdLayout) {
+		
+		List<MovimentoDto> retorno = new ArrayList<MovimentoDto>();
+		
+		String query = "SELECT ID_LAYOUT_MOVIMENTO, CD_OCORRENCIA, NM_TIPO_MOVIMENTO , TM.CD_TIPO_MOVIMENTACAO\r\n" + 
+				"FROM TB_LAYOUT_MOVIMENTO LM \r\n" + 
+				"INNER JOIN TB_TIPO_MOVIMENTO TM ON TM.ID_TIPO_MOVIMENTO = LM.ID_TIPO_MOVIMENTO \r\n" + 
+				"INNER JOIN TB_TIPO_MOVIMENTACAO TMM ON TMM.CD_TIPO_MOVIMENTACAO = tm.CD_TIPO_MOVIMENTACAO \r\n" + 
+				"WHERE LM.CD_LAYOUT = ?\r\n" + 
+				"AND TMM.IC_ALTERACAO_VENCIMENTO = 1 \r\n";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(query);
+			
+			ps.setInt(1, cdLayout);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			while(rs.next()) {
+				MovimentoDto movimento = new MovimentoDto(rs.getInt("ID_LAYOUT_MOVIMENTO"), 
+											  			  rs.getString("CD_OCORRENCIA"),
+											  			  rs.getString("NM_TIPO_MOVIMENTO"));
+				
+				retorno.add(movimento);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return retorno;
+	}
 
 	public List<MovimentoDto> findAllMovimentosRecompraAquisicao(Connection con, Integer cdLayout) {
 		
@@ -216,6 +253,44 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 				"WHERE LM.CD_LAYOUT = ?\r\n" + 
 				"AND TMM.IC_RECOMPRA = 1\r\n" +
 				"AND TMM.IC_BAIXAR_ATIVO = 1";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(query);
+			
+			ps.setInt(1, cdLayout);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			while(rs.next()) {
+				MovimentoDto movimento = new MovimentoDto(rs.getInt("ID_LAYOUT_MOVIMENTO"), 
+											  			  rs.getString("CD_OCORRENCIA"),
+											  			  rs.getString("NM_TIPO_MOVIMENTO"));
+				
+				retorno.add(movimento);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return retorno;
+	}
+	
+	
+	public List<MovimentoDto> findAllMovimentosRecompraParcial(Connection con, Integer cdLayout) {
+		
+		List<MovimentoDto> retorno = new ArrayList<MovimentoDto>();
+		
+		String query = "SELECT ID_LAYOUT_MOVIMENTO, CD_OCORRENCIA, NM_TIPO_MOVIMENTO\r\n" + 
+				"FROM TB_LAYOUT_MOVIMENTO LM\r\n" + 
+				"INNER JOIN TB_TIPO_MOVIMENTO TM ON TM.ID_TIPO_MOVIMENTO = LM.ID_TIPO_MOVIMENTO\r\n" + 
+				"INNER JOIN TB_TIPO_MOVIMENTACAO TMM ON TMM.CD_TIPO_MOVIMENTACAO = tm.CD_TIPO_MOVIMENTACAO\r\n" + 
+				"WHERE LM.CD_LAYOUT = ?\r\n" + 
+				"AND TMM.IC_RECOMPRA = 1\r\n" +
+				"AND TMM.TMM.IC_GERA_HIST_RECEBIVEL = 1";
 		
 		try {
 			PreparedStatement ps = con.prepareStatement(query);
@@ -337,40 +412,67 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 		
 		return false;
 	}
-
-	public List<TituloDto> findAllTituloEmEstoqueByFundo(Connection con, Integer idFundo, Integer cdLayout) {
+	
+	public List<TituloDto> findAllTituloEmEstoqueByFundo(Connection con, Integer idFundo, boolean isProrrogacao) {
 		
 		
 		try {
 			
-			String query = "SELECT DISTINCT TOP 30 R.DS_SEU_NUMERO, R.IC_COOBRIGACAO " +
-//					",R.DS_NOSSO_NUMERO " +
-					",R.DS_NU_DOCUMENTO, CONVERT(INT,ID_TIPO_ESPECIE) AS ID_TIPO_ESPECIE, STG.TERMO_CESSAO, STG.CHAVE_NFE, \r\n" + 
-					"R.VL_AQUISICAO,(E.VL_NOMINAL - COALESCE(HR.VL_ABATIMENTO,0) -COALESCE(HR.VL_AMORTIZACAO,0) ) AS VL_NOMINAL ,FC.ID_CEDENTE,FC.NM_CEDENTE,FC.NU_CPF_CNPJ AS DOC_CEDENTE, FS.ID_SACADO, FS.NM_SACADO, FS.NU_CPF_CNPJ AS DOC_SACADO, FS.DS_LOGRADOURO,FS.NU_CEP \r\n" + 
-					",B.NU_BANCO, R.DT_VENCIMENTO \r\n" + 
-					"FROM TB_ESTOQUE E \r\n" + 
-					"INNER JOIN TB_RECEBIVEL R ON R.ID_RECEBIVEL = E.ID_RECEBIVEL \r\n" + 
-					"LEFT JOIN TB_HISTORICO_RECEBIVEL HR ON HR.ID_RECEBIVEL = R.ID_RECEBIVEL\r\n" + 
-					"INNER JOIN TB_FUNDO F ON F.ID_FUNDO = R.ID_FUNDO \r\n" + 
-					"INNER JOIN TB_FUNDO_CEDENTE FC ON FC.ID_CEDENTE = R.ID_CEDENTE \r\n" + 
-					"INNER JOIN TB_FUNDO_SACADO FS ON FS.ID_SACADO = R.ID_SACADO \r\n" + 
-					"INNER JOIN TB_BANCO B ON B.ID_BANCO = R.ID_BANCO \r\n" + 
-					"INNER JOIN TB_STG_REMESSA STG ON STG.ID_ARQUIVO = R.ID_ARQUIVO AND STG.NU_SEQ_REGISTRO = R.NU_SEQ_REGISTRO \r\n" + 
-					"INNER JOIN TB_LAYOUT_RECEBIVEL LR ON LR.ID_TIPO_RECEBIVEL = R.ID_TIPO_RECEBIVEL  \r\n" + 
-					"WHERE E.ID_FUNDO = ?\r\n" + 
-					"AND E.DT = DBO.FC_TRAZDIAUTIL(DATEADD(DD, - 1, F.DT_FUNDO), 'A') \r\n" + 
-					"AND LR.CD_LAYOUT = ?";
+			String query = "DECLARE @IDFUNDO INT = 1\r\n" + 
+					"\r\n" + 
+					"Select TOP 30 x.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
+					"from (\r\n" + 
+					"	SELECT DISTINCT R.ID_RECEBIVEL,\r\n" + 
+					"	R.DS_SEU_NUMERO, \r\n" + 
+					"	R.IC_COOBRIGACAO,\r\n" + 
+					"	R.DS_NU_DOCUMENTO, \r\n" + 
+					"	STG.TERMO_CESSAO, \r\n" + 
+					"	STG.CHAVE_NFE, \r\n" + 
+					"	R.VL_AQUISICAO,\r\n" + 
+					"	(E.VL_NOMINAL - COALESCE(HR.VL_ABATIMENTO,0) -COALESCE(HR.VL_AMORTIZACAO,0) ) AS VL_NOMINAL ,\r\n" + 
+					"	FC.ID_CEDENTE,FC.NM_CEDENTE,FC.NU_CPF_CNPJ AS DOC_CEDENTE, \r\n" + 
+					"	FS.ID_SACADO, FS.NM_SACADO, FS.NU_CPF_CNPJ AS DOC_SACADO, FS.DS_LOGRADOURO,FS.NU_CEP ,\r\n" + 
+					"	B.NU_BANCO, \r\n" + 
+					"	R.DT_VENCIMENTO \r\n" + 
+					"	FROM TB_ESTOQUE E \r\n" + 
+					"	INNER JOIN TB_RECEBIVEL R ON R.ID_RECEBIVEL = E.ID_RECEBIVEL \r\n" + 
+					"	LEFT JOIN TB_HISTORICO_RECEBIVEL HR ON HR.ID_RECEBIVEL = R.ID_RECEBIVEL\r\n" + 
+					"	INNER JOIN TB_FUNDO F ON F.ID_FUNDO = R.ID_FUNDO \r\n" + 
+					"	INNER JOIN TB_FUNDO_CEDENTE FC ON FC.ID_CEDENTE = R.ID_CEDENTE \r\n" + 
+					"	INNER JOIN TB_FUNDO_SACADO FS ON FS.ID_SACADO = R.ID_SACADO \r\n" + 
+					"	INNER JOIN TB_BANCO B ON B.ID_BANCO = R.ID_BANCO \r\n" + 
+					"	INNER JOIN TB_STG_REMESSA STG ON STG.ID_ARQUIVO = R.ID_ARQUIVO AND STG.NU_SEQ_REGISTRO = R.NU_SEQ_REGISTRO  \r\n" + 
+					"	WHERE E.ID_FUNDO = @IDFUNDO\r\n" + 
+					"	AND E.DT = DBO.FC_TRAZDIAUTIL(DATEADD(DD, - 1, F.DT_FUNDO), 'A') \r\n" + 
+					") as X\r\n" + 
+					"INNER JOIN TB_RECEBIVEL REC ON REC.DS_SEU_NUMERO = X.DS_SEU_NUMERO\r\n" + 
+					"INNER JOIN VW_ARQUIVO_IMPORTADO_DETAIL D ON D.ID_ARQUIVO = REC.ID_ARQUIVO AND D.NU_SEQ_REGISTRO = REC.NU_SEQ_REGISTRO\r\n"; 
+					
+			if(isProrrogacao) {
+
+					
+		   query += "INNER JOIN TB_FUNDO F ON F.ID_FUNDO = @IDFUNDO\r\n" + 
+					"AND X.DT_VENCIMENTO BETWEEN F.DT_MIN_VENCIMENTO_ORIGINAL AND F.DT_MAX_VENCIMENTO_ORIGINAL\r\n" + 
+					"AND F.PZ_MAX_ALTERACAO_DT_VCTO > (\r\n" + 
+					"									SELECT COUNT(*) FROM TB_MOVIMENTO M\r\n" + 
+					"									INNER JOIN TB_TIPO_MOVIMENTO TM ON M.ID_TIPO_MOVIMENTO = TM.ID_TIPO_MOVIMENTO\r\n" + 
+					"									INNER JOIN TB_TIPO_MOVIMENTACAO TMM ON TMM.CD_TIPO_MOVIMENTACAO = TM.CD_TIPO_MOVIMENTACAO\r\n" + 
+					"									WHERE M.ID_RECEBIVEL = X.ID_RECEBIVEL\r\n" + 
+					"									AND IC_ALTERACAO_VENCIMENTO = 1 \r\n" + 
+					"							     )\r\n" + 
+					"" ;
+			}
 			
 			PreparedStatement ps = con.prepareStatement(query);
-			
-			ps.setInt(1, idFundo);
-			ps.setInt(2, cdLayout);
-			
 			ps.execute();
 			
 			ResultSet rs = ps.getResultSet();
 			
 			List<TituloDto> retorno = new ArrayList<TituloDto>();
+			
+			if(rs == null) {
+				return retorno;
+			}
 			
 			while(rs.next()) {
 				
@@ -392,7 +494,6 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 				titulo.setChaveNfe(rs.getString("CHAVE_NFE"));
 				titulo.setCoobrigacao(rs.getBoolean("IC_COOBRIGACAO") ? "01" : "02");
 				titulo.setEspecie(rs.getString("ID_TIPO_ESPECIE"));
-//				titulo.setNossoNumero(rs.getString("DS_NOSSO_NUMERO"));
 				titulo.setNumBanco(rs.getString("NU_BANCO"));
 				titulo.setNumeroDocumento(rs.getString("DS_NU_DOCUMENTO"));
 				titulo.setSeuNumero(rs.getString("DS_SEU_NUMERO"));
@@ -410,7 +511,6 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			return retorno;
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
