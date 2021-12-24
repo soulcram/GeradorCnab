@@ -42,7 +42,7 @@ public class CadastrarBase extends JPanel {
 		this.add(new Label("Cadastrar Base", 10, 10, 500, 20, 14, Color.BLACK));
 		
 		this.add(new Label("Url", 10, 50, 100, 20, 14, Color.BLACK));
-		this.add(new Label("Usuário", 410, 50, 100, 20, 14, Color.BLACK));
+		this.add(new Label("Usuario", 410, 50, 100, 20, 14, Color.BLACK));
 		this.add(new Label("Senha", 610, 50, 100, 20, 14, Color.BLACK));
 		
 		url = new Text(10, 80, 390, 20,true);

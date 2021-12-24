@@ -82,7 +82,8 @@ public class GerarCnabRecompra extends JPanel {
 	private JComboBox<String> cbCoobrigacao;
 	private JComboBox<CedenteDto> cbCedente;
 	private JComboBox<SacadoDto> cbSacado;
-	private JComboBox<MovimentoDto> cbMovimento;
+	private JComboBox<MovimentoDto> cbMovimentoBaixaRecompra;
+	private JComboBox<MovimentoDto> cbMovimentoAquisicaoRecompra;
 	private JComboBox<TipoRecebivelDto> cbTipoRecebivel;
 	
 	private Text dataGravacao;
@@ -95,12 +96,14 @@ public class GerarCnabRecompra extends JPanel {
 	private Text termoCessao;
 	private Text path;
 	
-	private JTable tabela;
+	private JTable tabelaTituloParaBaixar;
+	private JTable tabelaTitulosEmEstoque;
 	
 	private Label erro;
 	
 	private CnabDto cnab;
 	private TituloDto titulo;
+	private List<TituloDto> titulosEmEstoque;
 	
 	private IFundoService fundoService;
 	private IOriginadorService originadorService;
@@ -130,7 +133,7 @@ public class GerarCnabRecompra extends JPanel {
 			this.setLayout(null);
 			this.setBackground(Color.WHITE);
 		
-			this.add(new Label("Gerar Cnab Aquisição", 10, 10, 500, 20, 14, Color.BLUE));
+			this.add(new Label("Gerar Cnab Recompra", 10, 10, 500, 20, 14, Color.BLUE));
 		
 			this.add(new Label("Selecionar Base", 10, 40, 100, 20, 14, Color.BLACK));
 			cbBase = ComboBoxBase.novo(110, 40, 350, 20, getActionCbBase());
@@ -147,44 +150,45 @@ public class GerarCnabRecompra extends JPanel {
 			this.add(new Label("Banco: ", 470, 100, 100, 20, 14, Color.BLACK));
 			cbBanco = ComboBoxBancoDto.novo(580, 100, 350, 20);
 			
-			this.add(new Label("Coobrigação: ", 10, 150, 100, 20, 14, Color.BLACK));
-			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 150, 350, 20);
-			this.add(new Label("Vencimento: ", 470, 150, 100, 20, 14, Color.BLACK));
-			dataVencimento = new Text(580, 150, 100, 20, true);
+			this.add(new Label("Movimento: ", 10, 130, 100, 20, 14, Color.BLACK));
+			cbMovimentoBaixaRecompra = ComboBoxMovimentoDto.novo(110, 130, 350, 20);
 			
-			this.add(new Label("Cedente: ", 10, 180, 100, 20, 14, Color.BLACK));
-			cbCedente = ComboBoxCedenteDto.novo(110, 180, 350, 20);
-			this.add(new Label("Sacado: ", 470, 180, 100, 20, 14, Color.BLACK));
-			cbSacado = ComboBoxSacadoDto.novo(580, 180, 350, 20);
+			this.add(new Label("Coobrigação: ", 10, 320, 100, 20, 14, Color.BLACK));
+			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 320, 350, 20);
+			this.add(new Label("Vencimento: ", 470, 320, 100, 20, 14, Color.BLACK));
+			dataVencimento = new Text(580, 320, 100, 20, true);
 			
-			this.add(new Label("Movimento: ", 10, 210, 100, 20, 14, Color.BLACK));
-			cbMovimento = ComboBoxMovimentoDto.novo(110, 210, 350, 20);
-			this.add(new Label("Tipo Recebível: ", 470, 210, 100, 20, 14, Color.BLACK));
-			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 210, 350, 20);
+			this.add(new Label("Cedente: ", 10, 350, 100, 20, 14, Color.BLACK));
+			cbCedente = ComboBoxCedenteDto.novo(110, 350, 350, 20);
+			this.add(new Label("Sacado: ", 470, 350, 100, 20, 14, Color.BLACK));
+			cbSacado = ComboBoxSacadoDto.novo(580, 350, 350, 20);
 			
-			this.add(new Label("Seu Número: ", 10, 240, 100, 20, 14, Color.BLACK));
-			seuNumero = new Text(110, 240, 300, 20, true);
-			this.add(new Botao("@", 410, 240, 50, 20, getActionGerarSeuNumero()));
-			this.add(new Label("Número Doc.: ", 470, 240, 100, 20, 14, Color.BLACK));
-			numeroDocumento = new Text(580, 240, 150, 20, true);
-			this.add(new Botao("@", 730, 240, 50, 20, getActionGerarNumeroDocumento()));
+			this.add(new Label("Movimento: ", 10, 380, 100, 20, 14, Color.BLACK));
+			cbMovimentoAquisicaoRecompra = ComboBoxMovimentoDto.novo(110, 380, 350, 20);
+			this.add(new Label("Tipo Recebível: ", 470, 380, 100, 20, 14, Color.BLACK));
+			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 380, 350, 20);
 			
-			this.add(new Label("Valor Título: ", 10, 270, 100, 20, 14, Color.BLACK));
-			valorTitulo = new Text(110, 270, 150, 20, true);
-			this.add(new Label("Valor Aquisição: ", 470, 270, 100, 20, 14, Color.BLACK));
-			valorAquisicao = new Text(580, 270, 150, 20, true);
+			this.add(new Label("Seu Número: ", 10, 410, 100, 20, 14, Color.BLACK));
+			seuNumero = new Text(110, 410, 300, 20, true);
+			this.add(new Botao("@", 410, 410, 50, 20, getActionGerarSeuNumero()));
+			this.add(new Label("Número Doc.: ", 470, 410, 100, 20, 14, Color.BLACK));
+			numeroDocumento = new Text(580, 410, 150, 20, true);
+			this.add(new Botao("@", 730, 410, 50, 20, getActionGerarNumeroDocumento()));
 			
-			this.add(new Label("Chave Nfe: ", 10, 300, 100, 20, 14, Color.BLACK));
-			chaveNfe = new Text(110, 300, 300, 20, true);
-			this.add(new Botao("@", 410, 300, 50, 20, getActionGerarChaveNfe()));
-			this.add(new Label("Termo Cessão: ", 470, 300, 100, 20, 14, Color.BLACK));
-			termoCessao = new Text(580, 300, 150, 20, true);
-			this.add(new Botao("@", 730, 300, 50, 20, getActionGerarTermoCessao()));
+			this.add(new Label("Valor Título: ", 10, 435, 100, 20, 14, Color.BLACK));
+			valorTitulo = new Text(110, 435, 150, 20, false);
+			this.add(new Label("Valor Aquisição: ", 470, 435, 100, 20, 14, Color.BLACK));
+			valorAquisicao = new Text(580, 435, 150, 20, false);
 			
-			this.add(new Botao("Adicionar Título", 400, 350, 150, 20, getActionAdicionarTitulo()));
+			this.add(new Label("Chave Nfe: ", 10, 460, 100, 20, 14, Color.BLACK));
+			chaveNfe = new Text(110, 460, 300, 20, true);
+			this.add(new Botao("@", 410, 460, 50, 20, getActionGerarChaveNfe()));
+			this.add(new Label("Termo Cessão: ", 470, 460, 100, 20, 14, Color.BLACK));
+			termoCessao = new Text(580, 460, 150, 20, true);
+			this.add(new Botao("@", 730, 460, 50, 20, getActionGerarTermoCessao()));
+			
+			this.add(new Botao("Adicionar Título", 400, 490, 150, 20, getActionAdicionarTituloAquisicao()));
 		
-			
-			iniciarTabela();
 			
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
 			path = new Text(130, 650, 500, 20, true);
@@ -196,12 +200,15 @@ public class GerarCnabRecompra extends JPanel {
 			
 			preencherComboFundos();
 			preencherComboBanco();
-			preencherComboMovimento();
+			preencherComboMovimentoRecompraBaixa();
+			preencherComboMovimentoRecompraAquisicao();
 			preencherComboTipoRecebivel();
 			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			
+			iniciarTabelaTitulosEmEstoque();
+			iniciarTabela();
 			
 			this.add(cbBase);
 			this.add(cbFundo);
@@ -213,7 +220,8 @@ public class GerarCnabRecompra extends JPanel {
 			this.add(dataVencimento);
 			this.add(cbCedente);
 			this.add(cbSacado);
-			this.add(cbMovimento);
+			this.add(cbMovimentoBaixaRecompra);
+			this.add(cbMovimentoAquisicaoRecompra);
 			this.add(cbTipoRecebivel);
 			this.add(seuNumero);
 			this.add(numeroDocumento);
@@ -225,12 +233,146 @@ public class GerarCnabRecompra extends JPanel {
 			this.repaint();
 		
 		} catch (Exception e) {
-			erro.setText(e.getMessage());
+			e.printStackTrace();
 			this.repaint();
 		};
 		
 		
 		
+	}
+	
+	@SuppressWarnings("serial")
+	private void iniciarTabelaTitulosEmEstoque() {
+
+		try {
+			
+			DefaultTableModel modelo = new DefaultTableModel(
+					new Object[][] {},
+					new String[] {"Seu Numero","Valor Título","Cedente","Sacado"}
+					);
+			
+			tabelaTitulosEmEstoque = new JTable(modelo){
+			    @Override
+			    public boolean isCellEditable(int row, int column) {
+			        return false;
+			    }
+			};
+			
+			preencherTabelaTitulosEmEstoque();
+
+			tabelaTitulosEmEstoque.addMouseListener(getActionAdicionarTitulo());
+			tabelaTitulosEmEstoque.setName("Títulos em Estoque");
+			tabelaTitulosEmEstoque.setVisible(true);
+			tabelaTitulosEmEstoque.repaint();
+			
+			this.add(new Label("Títulos em Estoque", 10, 160, 110, 20, 14, Color.BLUE));
+			
+			JScrollPane scroll = new JScrollPane(tabelaTitulosEmEstoque);
+			scroll.setBounds(10, 180, 920, 100);
+			scroll.setName("Títulos em Estoque");
+			this.add(scroll);
+
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+	}
+	
+	private MouseListener getActionAdicionarTitulo() {
+		
+		return new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				if (e.getClickCount() > 1) {
+					String seuNumeroSelecionado = tabelaTitulosEmEstoque.getValueAt(tabelaTitulosEmEstoque.getSelectedRow(), 0).toString();
+					
+					TituloDto tituloEncontrado = null;
+					
+					for(TituloDto dto : titulosEmEstoque) {
+						
+						if(seuNumeroSelecionado.equals(dto.getSeuNumero())) {
+							tituloEncontrado = dto;
+							dto.setMovimento((MovimentoDto)cbMovimentoBaixaRecompra.getSelectedItem());
+							dto.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
+							cnab.getTitulos().add(dto.getCopy());
+							preencherTabelaTitulosParaBaixar();
+							break;
+						}
+					}
+					
+					if(tituloEncontrado != null) {
+						titulosEmEstoque.remove(tituloEncontrado);
+						
+						DefaultTableModel modelo = (DefaultTableModel) tabelaTitulosEmEstoque.getModel();
+						modelo.setNumRows(0);
+
+						for (TituloDto dto : titulosEmEstoque) {
+							modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+										dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+						}
+						
+					}
+					
+					BigDecimal valorAq = BigDecimal.ZERO;
+					BigDecimal valorTit = BigDecimal.ZERO;
+					
+					for (TituloDto dto : cnab.getTitulos()) {
+						valorAq = valorAq.add(dto.getValorAquisicao());
+						valorTit = valorTit.add(dto.getValorTitulo());
+					}
+					
+					valorAquisicao.setText(valorAq.toString());
+					valorTitulo.setText(valorTit.toString());
+				}
+			}
+		};
+	}
+
+	private void preencherTabelaTitulosParaBaixar() {
+	
+		try {
+	
+			DefaultTableModel modelo = (DefaultTableModel) tabelaTituloParaBaixar.getModel();
+			modelo.setNumRows(0);
+	
+			List<TituloDto> titulos = cnab.getTitulos();
+	
+			if (titulos != null && !titulos.isEmpty()) {
+				for (TituloDto dto : titulos) {
+					modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+							dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+				}
+			}
+		} catch (Exception e) {
+			erro.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	private void preencherTabelaTitulosEmEstoque() {
+
+		try {
+
+			DefaultTableModel modelo = (DefaultTableModel) tabelaTitulosEmEstoque.getModel();
+			modelo.setNumRows(0);
+
+			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo(
+					Conexao.getConnection((Base) cbBase.getSelectedItem()),
+					((FundoDto) cbFundo.getSelectedItem()).getIdFundo(),
+					((LayoutEnum) cbLayout.getSelectedItem()).getCdLayout());
+
+			if (titulosEmEstoque != null && !titulosEmEstoque.isEmpty()) {
+				for (TituloDto dto : titulosEmEstoque) {
+					modelo.addRow(new Object[] { dto.getSeuNumero(), dto.getValorTitulo(),
+							dto.getCedente().getNomeCedente(), dto.getSacado().getNomeSacado() });
+				}
+			}
+		} catch (Exception e) {
+			erro.setText(e.getMessage());
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -243,7 +385,7 @@ public class GerarCnabRecompra extends JPanel {
 					new String[] {"Seu Numero","Valor Título","Cedente","Sacado"}
 					);
 			
-			tabela = new JTable(modelo){
+			tabelaTituloParaBaixar = new JTable(modelo){
 			    @Override
 			    public boolean isCellEditable(int row, int column) {
 			        return false;
@@ -251,13 +393,15 @@ public class GerarCnabRecompra extends JPanel {
 			};
 
 
-			tabela.addMouseListener(getActionEditarRow());
+//			tabelaTituloParaBaixar.addMouseListener(getActionEditarRow());
 			
-			tabela.setVisible(true);
-			tabela.repaint();
+			tabelaTituloParaBaixar.setVisible(true);
+			tabelaTituloParaBaixar.repaint();
 			
-			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 390, 920, 240);
+			this.add(new Label("Títulos adicionados", 10, 500, 310, 20, 14, Color.BLUE));
+			
+			JScrollPane scroll = new JScrollPane(tabelaTituloParaBaixar);
+			scroll.setBounds(10, 520, 920, 130);
 			
 			this.add(scroll);
 
@@ -289,7 +433,8 @@ public class GerarCnabRecompra extends JPanel {
 				try {
 					preencherComboFundos();
 					preencherComboBanco();
-					preencherComboMovimento();
+					preencherComboMovimentoRecompraBaixa();
+					preencherComboMovimentoRecompraAquisicao();
 					preencherComboTipoRecebivel();
 				} catch (Exception e1) {
 					erro.setText(e1.getMessage());
@@ -354,7 +499,7 @@ public class GerarCnabRecompra extends JPanel {
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
-			        ((DefaultTableModel)tabela.getModel()).setNumRows(0);
+			        ((DefaultTableModel)tabelaTituloParaBaixar.getModel()).setNumRows(0);
 			        cnab = new CnabDto();
 			       
 					
@@ -369,7 +514,7 @@ public class GerarCnabRecompra extends JPanel {
 	}
 	
 
-	private ActionListener getActionAdicionarTitulo() {
+	private ActionListener getActionAdicionarTituloAquisicao() {
 		return new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
@@ -379,7 +524,7 @@ public class GerarCnabRecompra extends JPanel {
 				titulo.setCoobrigacao("Com coobrigação".equals(cbCoobrigacao.getSelectedItem()) ? "01" : "02");
 				titulo.setDataVencimento(LocalDate.parse(dataVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 				titulo.setEspecie(((TipoRecebivelDto)cbTipoRecebivel.getSelectedItem()).getCdEspecie());
-				titulo.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
+				titulo.setMovimento((MovimentoDto)cbMovimentoAquisicaoRecompra.getSelectedItem());
 				titulo.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
 				titulo.setNumeroDocumento(numeroDocumento.getText());
 				titulo.setSacado((SacadoDto)cbSacado.getSelectedItem());
@@ -388,7 +533,7 @@ public class GerarCnabRecompra extends JPanel {
 				titulo.setValorAquisicao(new BigDecimal(valorAquisicao.getText().replaceAll(",", ".")));
 				titulo.setValorTitulo(new BigDecimal(valorTitulo.getText().replaceAll(",", ".")));
 				
-				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+				DefaultTableModel modelo = (DefaultTableModel) tabelaTituloParaBaixar.getModel();
 				
 //				"Seu Numero","Valor Título","Cedente","Sacado"
 				
@@ -422,6 +567,7 @@ public class GerarCnabRecompra extends JPanel {
 						preencherComboOriginador();
 						preencherComboCedente();
 						preencherComboSacado();
+						preencherTabelaTitulosEmEstoque();
 						
 					} catch (Exception e1) {
 						erro.setText(e1.getMessage());
@@ -485,6 +631,7 @@ public class GerarCnabRecompra extends JPanel {
 			preencherComboOriginador();
 			preencherComboCedente();
 			preencherComboSacado();
+			preencherTabelaTitulosEmEstoque();
 		}
 	}
 	
@@ -499,12 +646,23 @@ public class GerarCnabRecompra extends JPanel {
 		}
 	}
 	
-	private void preencherComboMovimento() throws Exception {
-		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosAquisicao(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
-		cbMovimento.removeAllItems();
+	private void preencherComboMovimentoRecompraBaixa() throws Exception {
+		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosRecompraBaixa(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
+		cbMovimentoBaixaRecompra.removeAllItems();
 		if(movimentos != null && !movimentos.isEmpty()) {
 			for(MovimentoDto movimento : movimentos) {
-				cbMovimento.addItem(movimento);
+				cbMovimentoBaixaRecompra.addItem(movimento);
+			}
+			
+		}
+	}
+	
+	private void preencherComboMovimentoRecompraAquisicao() throws Exception {
+		List<MovimentoDto> movimentos = movimentoService.findAllMovimentosRecompraAquisicao(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((LayoutEnum)cbLayout.getSelectedItem()).getCdLayout());
+		cbMovimentoAquisicaoRecompra.removeAllItems();
+		if(movimentos != null && !movimentos.isEmpty()) {
+			for(MovimentoDto movimento : movimentos) {
+				cbMovimentoAquisicaoRecompra.addItem(movimento);
 			}
 			
 		}
