@@ -63,6 +63,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.NumericUtils;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
 import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
+import br.com.m3Tech.utils.LocalDateUtils;
 
 public class GerarCnabAquisicaoDinamico extends JPanel {
 
@@ -78,6 +79,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 	private JComboBox<String> cbSacado;
 	
 	private Text dataGravacao;
+	private Text dataVencimento;
 	private Text quantTitulo;
 	private Text path;
 	
@@ -135,6 +137,8 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			
 			this.add(new Label("Coobrigação: ", 10, 150, 100, 20, 14, Color.BLACK));
 			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 150, 350, 20);
+			this.add(new Label("Vencimento: ", 470, 150, 100, 20, 14, Color.BLACK));
+			dataVencimento = new Text(580, 150, 100, 20, true);
 			
 			this.add(new Label("Cedente: ", 10, 180, 100, 20, 14, Color.BLACK));
 			cbCedente = ComboBoxTipoCedente.novo(110, 180, 350, 20);
@@ -154,6 +158,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			
 			preencherComboFundos();
 			preencherComboBanco();
+			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			
 			
@@ -164,6 +169,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			this.add(cbOriginador);
 			this.add(cbBanco);
 			this.add(cbCoobrigacao);
+			this.add(dataVencimento);
 			this.add(quantTitulo);
 			this.add(cbCedente);
 			this.add(cbSacado);
@@ -205,6 +211,11 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 					
 					if(StringUtils.EmptyOrNull(quantTitulo.getText())) {
 						JOptionPane.showMessageDialog(null, "Quantidade de Títulos é obrigatório","Erro", 0);
+						return;
+					}
+					
+					if(Integer.parseInt(quantTitulo.getText()) > 999997) {
+						JOptionPane.showMessageDialog(null, "Quantidade de Títulos máxima é 999.997","Erro", 0);
 						return;
 					}
 					
@@ -293,6 +304,8 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			titulo.setMovimento(movimentoDto);
 			titulo.setCedente(getCedenteSelecionado());
 			titulo.setSacado(getSacadoSelecionado());
+			titulo.setDataVencimento(LocalDateUtils.parseDate(dataVencimento.getText()));
+			titulo.setCoobrigacao("Com coobrigação".equals(cbCoobrigacao.getSelectedItem()) ? "01" : "02");
 	
 			titulo.setNumBanco(cnab.getBanco().getCodigoBanco());
 			cnab.getTitulos().add(titulo.getCopy());

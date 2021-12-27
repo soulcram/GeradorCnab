@@ -243,6 +243,11 @@ public class GerarCnabCsv extends JPanel {
 			        	return;
 			        }
 			        
+			        if(cnab.getTitulos().size() > 999997) {
+						JOptionPane.showMessageDialog(null, "Quantidade de Títulos máxima é 999.997","Erro", 0);
+						return;
+					}
+			        
 			        BeanWriter out = factory.createWriter(cnab.getLayout().getNmLayout(),arquivoFinal );        
 			                
 			        out.write(new CnabHeader(cnab));

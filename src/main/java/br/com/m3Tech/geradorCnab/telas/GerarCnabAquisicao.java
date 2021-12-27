@@ -69,6 +69,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.Label;
 import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
 import br.com.m3Tech.geradorCnab.util.ValorAleatorioUtil;
+import br.com.m3Tech.utils.LocalDateUtils;
 
 public class GerarCnabAquisicao extends JPanel {
 
@@ -374,10 +375,38 @@ public class GerarCnabAquisicao extends JPanel {
 			
 			public void actionPerformed(ActionEvent e) {
 				
+				BigDecimal vlAquisicao = new BigDecimal(valorAquisicao.getText().replaceAll(",", "."));
+				BigDecimal vlTitulo = new BigDecimal(valorTitulo.getText().replaceAll(",", "."));
+				
+				if(vlAquisicao.compareTo(vlTitulo) > 0) {
+					JOptionPane.showMessageDialog(null, "Valor de aquisição não pode ser maior que o valor do título","Erro", 0);
+					return;
+				}
+				
+				if(cnab.getTitulos().size() > 999997) {
+					JOptionPane.showMessageDialog(null, "Quantidade de Títulos máxima é 999.997","Erro", 0);
+					return;
+				}
+				
+				if(StringUtils.EmptyOrNull(seuNumero.getText())) {
+					JOptionPane.showMessageDialog(null, "Seu Numero é obrigatório","Erro", 0);
+					return;
+				}
+				
+				if(StringUtils.EmptyOrNull(numeroDocumento.getText())) {
+					JOptionPane.showMessageDialog(null, "Numero Documento é obrigatório","Erro", 0);
+					return;
+				}
+				
+				if(StringUtils.EmptyOrNull(termoCessao.getText())) {
+					JOptionPane.showMessageDialog(null, "Termo Cessão é obrigatório","Erro", 0);
+					return;
+				}
+				
 				titulo.setCedente((CedenteDto)cbCedente.getSelectedItem());
 				titulo.setChaveNfe(chaveNfe.getText());
 				titulo.setCoobrigacao("Com coobrigação".equals(cbCoobrigacao.getSelectedItem()) ? "01" : "02");
-				titulo.setDataVencimento(LocalDate.parse(dataVencimento.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+				titulo.setDataVencimento(LocalDateUtils.parseDate(dataVencimento.getText()));
 				titulo.setEspecie(((TipoRecebivelDto)cbTipoRecebivel.getSelectedItem()).getCdEspecie());
 				titulo.setMovimento((MovimentoDto)cbMovimento.getSelectedItem());
 				titulo.setNumBanco(((BancoDto)cbBanco.getSelectedItem()).getCodigoBanco());
@@ -385,8 +414,8 @@ public class GerarCnabAquisicao extends JPanel {
 				titulo.setSacado((SacadoDto)cbSacado.getSelectedItem());
 				titulo.setSeuNumero(seuNumero.getText());
 				titulo.setTermoCessao(termoCessao.getText());
-				titulo.setValorAquisicao(new BigDecimal(valorAquisicao.getText().replaceAll(",", ".")));
-				titulo.setValorTitulo(new BigDecimal(valorTitulo.getText().replaceAll(",", ".")));
+				titulo.setValorAquisicao(vlAquisicao);
+				titulo.setValorTitulo(vlTitulo);
 				
 				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 				

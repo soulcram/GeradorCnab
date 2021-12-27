@@ -6,17 +6,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import br.com.m3Tech.geradorCnab.dao.Conexao;
 import br.com.m3Tech.geradorCnab.model.Base;
 import br.com.m3Tech.geradorCnab.telas.componentes.Botao;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
 import br.com.m3Tech.geradorCnab.telas.componentes.Text;
+import br.com.m3Tech.geradorCnab.util.StringUtils;
 
 public class CadastrarBase extends JPanel {
 
@@ -25,6 +29,8 @@ public class CadastrarBase extends JPanel {
 	private Text url;
 	private Text usuario;
 	private Text senha;
+	
+	private Botao bTestarConexao;
 	private Botao bCadastrar;
 	private Botao bAtualizar;
 	private Botao bExcluir;
@@ -53,6 +59,9 @@ public class CadastrarBase extends JPanel {
 		this.add(usuario);
 		this.add(senha);
 		
+		bTestarConexao = new Botao("Testar Conexão", 410, 110, 150, 20, getActionTestarConexao());
+		bTestarConexao.setVisible(true);
+		
 		bCadastrar = new Botao("Cadastrar", 810, 80, 100, 20, getActionCadastrar());
 		bCadastrar.setVisible(true);
 		
@@ -65,6 +74,7 @@ public class CadastrarBase extends JPanel {
 		this.add(bAtualizar);
 		this.add(bCadastrar);
 		this.add(bExcluir);
+		this.add(bTestarConexao);
 		
 		iniciarTabela();
 		
@@ -204,16 +214,20 @@ public class CadastrarBase extends JPanel {
 				
 				try {
 					
-				Base base = new Base(url.getText(), usuario.getText(), senha.getText());
-				base.setId(idAtual);
-				
-				
-				base.save();
-				
-				idAtual = null;
-				url.setText("");
-				usuario.setText("");
-				senha.setText("");
+					if(!validarBase()) {
+						return;
+					}
+					
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+					base.setId(idAtual);
+					
+					
+					base.save();
+					
+					idAtual = null;
+					url.setText("");
+					usuario.setText("");
+					senha.setText("");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -235,8 +249,11 @@ public class CadastrarBase extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
+					if(!validarBase()) {
+						return;
+					}
 					
-				Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
 				
 				
 					base.save();
@@ -257,5 +274,61 @@ public class CadastrarBase extends JPanel {
 			}
 		};
 	}
+	
+	private ActionListener getActionTestarConexao() {
+		
+		return new ActionListener() {
+			
 
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					if(!validarBase()) {
+						return;
+					}
+						
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+				
+					Connection con = Conexao.getConnection(base);
+				
+					if(con == null) {
+						JOptionPane.showMessageDialog(null, "Erro ao conectar com a base informada","Erro", 0);
+					}else {
+						JOptionPane.showMessageDialog(null, "Conexão com a base de dados bem sucedida.","Sucesso", 1);
+					}
+
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Erro ao conectar com a base informada: " + e1.getMessage(),"Erro", 0);
+					e1.printStackTrace();
+				}
+				
+			}
+
+		};
+	}
+	
+
+	private boolean validarBase() {
+		
+		if(StringUtils.EmptyOrNull(url.getText())) {
+			JOptionPane.showMessageDialog(null, "Url é obrigatório","Erro", 0);
+			return false;
+		}
+		
+		if(StringUtils.EmptyOrNull(usuario.getText())) {
+			JOptionPane.showMessageDialog(null, "Usuário é obrigatório","Erro", 0);
+			return false;
+		}
+		
+		if(StringUtils.EmptyOrNull(senha.getText())) {
+			JOptionPane.showMessageDialog(null, "Senha é obrigatório","Erro", 0);
+			return false;
+		}
+
+		return true;
+		
+	}
+	
+	
 }
