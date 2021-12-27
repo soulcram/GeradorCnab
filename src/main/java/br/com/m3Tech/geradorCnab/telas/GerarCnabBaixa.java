@@ -48,7 +48,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.Botao;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBase;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxFundoDto;
-import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxLayout;
+import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxLayoutRemessa;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxMovimentoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxOriginadorDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
@@ -108,7 +108,7 @@ public class GerarCnabBaixa extends JPanel {
 			this.add(new Label("Data Gravação: ", 470, 70, 100, 20, 14, Color.BLACK));
 			dataGravacao= new Text(580, 70, 100, 20, true);
 			this.add(new Label("Layout: ", 690, 70, 50, 20, 14, Color.BLACK));
-			cbLayout = ComboBoxLayout.novo(750, 70, 200, 20);
+			cbLayout = ComboBoxLayoutRemessa.novo(750, 70, 200, 20);
 			
 			this.add(new Label("Originador: ", 10, 100, 100, 20, 14, Color.BLACK));
 			cbOriginador = ComboBoxOriginadorDto.novo(110, 100, 350, 20);

@@ -4,7 +4,7 @@ import javax.swing.JComboBox;
 
 import br.com.m3Tech.geradorCnab.enuns.LayoutEnum;
 
-public class ComboBoxLayout{
+public class ComboBoxLayoutRemessa{
 	
 	public static JComboBox<LayoutEnum> novo(int posX,int posY, int tamHor, int tamVer) {
 		
@@ -13,7 +13,7 @@ public class ComboBoxLayout{
 		JComboBox<LayoutEnum> cb = new JComboBox<LayoutEnum>();
 		cb.setBounds(posX, posY, tamHor, tamVer);
 		
-		for(LayoutEnum layout : LayoutEnum.values()) {
+		for(LayoutEnum layout : LayoutEnum.findAllRemessa()) {
 			cb.addItem(layout);
 		}
 		
