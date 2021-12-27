@@ -1,3 +1,0 @@
-Linha de comando para gerar versão
-
-mvn compile assembly:single
