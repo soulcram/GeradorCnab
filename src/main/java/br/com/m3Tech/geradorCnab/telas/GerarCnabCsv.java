@@ -67,6 +67,7 @@ import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxOriginadorDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
 import br.com.m3Tech.geradorCnab.telas.componentes.Text;
 import br.com.m3Tech.geradorCnab.util.StringUtils;
+import br.com.m3Tech.utils.LocalDateUtils;
 
 public class GerarCnabCsv extends JPanel {
 
@@ -285,12 +286,12 @@ public class GerarCnabCsv extends JPanel {
 				
 				CedenteDto cedente = new CedenteDto(null, 
 						colunas[0], //nomeCedente
-						colunas[1]  //docCedente
+						colunas[1].replaceAll("[^0-9xX]", "")  //docCedente
 								);
 				
 				SacadoDto sacado = new SacadoDto(null, 
 						colunas[2], //nomeSacado
-						colunas[3], //docSacado
+						colunas[3].replaceAll("[^0-9xX]", ""), //docSacado
 						colunas[4], //endereçoSacado
 						colunas[5] //cepSacado
 						);
@@ -298,7 +299,7 @@ public class GerarCnabCsv extends JPanel {
 				TituloDto titulo = new TituloDto(cedente, 
 						sacado, 
 						cnab.getBanco().getCodigoBanco(), 
-						LocalDate.parse(colunas[6], DateTimeFormatter.ofPattern("dd/MM/yyyy")), //dataVencimento
+						LocalDateUtils.parseDate(colunas[6]), //dataVencimento
 						null, 
 						((MovimentoDto)cbMovimento.getSelectedItem()), 
 						colunas[7], //SeuNumero 
