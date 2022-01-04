@@ -51,6 +51,10 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			e.printStackTrace();
 		}
 		
+		if(retorno.isEmpty()) {
+			retorno.add(new MovimentoDto(null, "01", "AQUISICAO"));
+		}
+		
 		return retorno;
 	}
 

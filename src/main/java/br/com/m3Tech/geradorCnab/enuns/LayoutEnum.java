@@ -9,6 +9,9 @@ import lombok.Getter;
 public enum LayoutEnum {
 	
 	CNAB_REMESSA_444(16,"Remessa_444","R",444),
+//	CNAB_500_REMESSA_FIDD(41,"cnab500RemessaFidd","R",500),
+	
+	CNAB_600_PLANNER_REM03(43,"cnab600RemessaPlanner03","R",600),
 	CNAB_400_COBRANCA_BRADESCO(5,"cobrancaBradesco_400","C",400),
 	CNAB_400_COBRANCA_BANCO_BRASIL(4,"cobrancaBancoBrasil_400","C",400),
 	CNAB_400_COBRANCA_HSBC(6,"cobrancaHsbc_400","C",400),

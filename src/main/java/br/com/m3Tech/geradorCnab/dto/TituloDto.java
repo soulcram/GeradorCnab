@@ -17,7 +17,10 @@ public class TituloDto {
 	private String numBanco;
 	private LocalDate dataVencimento;
 	private LocalDate dataLiquidacao;
+	private LocalDate dataCarencia;
 	private MovimentoDto movimento;
+	private IndexadorDto indexador;
+	private RiscoDto risco;
 	private String seuNumero;
 	private String coobrigacao;
 	private String nossoNumero;
@@ -25,10 +28,12 @@ public class TituloDto {
 	private String especie;
 	private String termoCessao;
 	private String chaveNfe;
+	private String variacaoCambial;
 	private BigDecimal valorPago;
 	private BigDecimal valorTitulo;
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
+	private BigDecimal taxaJurosIndexador;
 
 	public TituloDto getCopy() {
 		return new TituloDto(cedente, 
@@ -36,7 +41,10 @@ public class TituloDto {
 							 numBanco, 
 							 dataVencimento, 
 							 dataLiquidacao, 
+							 dataCarencia,
 							 movimento, 
+							 indexador,
+							 risco,
 							 seuNumero, 
 							 coobrigacao, 
 							 nossoNumero, 
@@ -44,10 +52,12 @@ public class TituloDto {
 							 especie, 
 							 termoCessao, 
 							 chaveNfe, 
+							 variacaoCambial,
 							 valorPago, 
 							 valorTitulo, 
 							 valorAquisicao, 
-							 valorAbatimento);
+							 valorAbatimento,
+							 taxaJurosIndexador);
 	}
 
 }

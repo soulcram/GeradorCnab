@@ -10,20 +10,20 @@ import org.beanio.types.TypeHandler;
 
 import br.com.m3Tech.geradorCnab.util.StringUtils;
 
-public class BigDecimalConvertTypeHandler implements ConfigurableTypeHandler{
+public class BigDecimalConvertTaxaTypeHandler implements ConfigurableTypeHandler{
 	
 	private final BigDecimalTypeHandler handler;
 	private boolean removeCaracteresEspecial = true;
 	
-	public BigDecimalConvertTypeHandler(){
+	public BigDecimalConvertTaxaTypeHandler(){
 		this.handler = new BigDecimalTypeHandler();
 	}
 
-	public BigDecimalConvertTypeHandler(final BigDecimalTypeHandler handler) {
+	public BigDecimalConvertTaxaTypeHandler(final BigDecimalTypeHandler handler) {
 		this.handler = handler;
 	}
 	
-	public BigDecimalConvertTypeHandler(final boolean removeCaracteresEspecial){
+	public BigDecimalConvertTaxaTypeHandler(final boolean removeCaracteresEspecial){
 		this.handler = new BigDecimalTypeHandler();
 		this.removeCaracteresEspecial = removeCaracteresEspecial;
 	}
@@ -46,9 +46,18 @@ public class BigDecimalConvertTypeHandler implements ConfigurableTypeHandler{
 	@Override
 	public String format(Object value) {
 		if(value != null) {
+			
+			int scale = 8;
+			
+			String[] split = value.toString().split(".");
+			
+			if(split.length > 1) {
+				scale = split[1].length();
+			}
+			
 			BigDecimal newvalue = new BigDecimal(value.toString());
 		
-			newvalue = newvalue.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+			newvalue = newvalue.setScale(scale, BigDecimal.ROUND_UNNECESSARY);
 		
 			return removeCaracteresEspecial ? StringUtils.removerPontoEVirgula(newvalue.toString()) : handler.format(value);
 		}
@@ -64,7 +73,7 @@ public class BigDecimalConvertTypeHandler implements ConfigurableTypeHandler{
 	@Override
 	public TypeHandler newInstance(Properties properties)
 			throws IllegalArgumentException {
-		return new BigDecimalConvertTypeHandler((BigDecimalTypeHandler) handler.newInstance(properties));
+		return new BigDecimalConvertTaxaTypeHandler((BigDecimalTypeHandler) handler.newInstance(properties));
 	}
 
 }

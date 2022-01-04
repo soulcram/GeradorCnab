@@ -27,12 +27,14 @@ public class CnabDetail {
 	private BigDecimal valorTitulo;
 	private String especieTitulo;
 	private LocalDate dataEmissao;
+	private LocalDate dataCarencia;
 	private String tipoPessoaCedente;
 	private String docCedente;
 	private String nomeCedente;
 	private String termoCessao;
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
+	private BigDecimal taxaJurosIndexador;
 	private String tipoPessoaSacado;
 	private String docSacado;
 	private String nomeSacado;
@@ -40,9 +42,17 @@ public class CnabDetail {
 	private String cepSacado;
 	private String chaveNfe;
 	private String numSeqRegistro;
+	private String tipoJuros;
+	private String variacaoCambial;
+	private String risco;
 	
 	public CnabDetail(TituloDto dto,Integer numSeq) {
 		
+		this.dataCarencia = dto.getDataCarencia();
+		this.risco = dto.getRisco() != null ? dto.getRisco().getCodRisco() : null;
+		this.taxaJurosIndexador = dto.getTaxaJurosIndexador();
+		this.tipoJuros = dto.getIndexador() != null ? dto.getIndexador().getCodIndexador().toString() : null;
+		this.variacaoCambial = dto.getVariacaoCambial();
 		this.coobrigacao = dto.getCoobrigacao();
 		this.seuNumero = dto.getSeuNumero();
 		this.numeroBanco = dto.getNumBanco();

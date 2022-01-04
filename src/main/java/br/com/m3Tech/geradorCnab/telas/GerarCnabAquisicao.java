@@ -30,8 +30,10 @@ import br.com.m3Tech.geradorCnab.dto.BancoDto;
 import br.com.m3Tech.geradorCnab.dto.CedenteDto;
 import br.com.m3Tech.geradorCnab.dto.CnabDto;
 import br.com.m3Tech.geradorCnab.dto.FundoDto;
+import br.com.m3Tech.geradorCnab.dto.IndexadorDto;
 import br.com.m3Tech.geradorCnab.dto.MovimentoDto;
 import br.com.m3Tech.geradorCnab.dto.OriginadorDto;
+import br.com.m3Tech.geradorCnab.dto.RiscoDto;
 import br.com.m3Tech.geradorCnab.dto.SacadoDto;
 import br.com.m3Tech.geradorCnab.dto.TipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.dto.TituloDto;
@@ -42,16 +44,20 @@ import br.com.m3Tech.geradorCnab.service.IBancoService;
 import br.com.m3Tech.geradorCnab.service.ICedenteService;
 import br.com.m3Tech.geradorCnab.service.IConfGlobalService;
 import br.com.m3Tech.geradorCnab.service.IFundoService;
+import br.com.m3Tech.geradorCnab.service.IIndexadorService;
 import br.com.m3Tech.geradorCnab.service.IMovimentoService;
 import br.com.m3Tech.geradorCnab.service.IOriginadorService;
+import br.com.m3Tech.geradorCnab.service.IRiscoService;
 import br.com.m3Tech.geradorCnab.service.ISacadoService;
 import br.com.m3Tech.geradorCnab.service.ITipoRecebivelService;
 import br.com.m3Tech.geradorCnab.service.impl.BancoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.CedenteServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.ConfGlobalServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.FundoServiceImpl;
+import br.com.m3Tech.geradorCnab.service.impl.IndexadorServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.MovimentoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.OriginadorServiceImpl;
+import br.com.m3Tech.geradorCnab.service.impl.RiscoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.SacadoServiceImpl;
 import br.com.m3Tech.geradorCnab.service.impl.TipoRecebivelServiceImpl;
 import br.com.m3Tech.geradorCnab.telas.componentes.Botao;
@@ -60,9 +66,11 @@ import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxBase;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCedenteDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxCoobrigacaoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxFundoDto;
+import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxIndexadorDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxLayoutRemessa;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxMovimentoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxOriginadorDto;
+import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxRiscoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxSacadoDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.geradorCnab.telas.componentes.Label;
@@ -85,16 +93,21 @@ public class GerarCnabAquisicao extends JPanel {
 	private JComboBox<SacadoDto> cbSacado;
 	private JComboBox<MovimentoDto> cbMovimento;
 	private JComboBox<TipoRecebivelDto> cbTipoRecebivel;
+	private JComboBox<IndexadorDto> cbIndexador;
+	private JComboBox<RiscoDto> cbRisco;
 	
 	private Text dataGravacao;
 	private Text dataVencimento;
+	private Text dataCarencia;
 	private Text seuNumero;
 	private Text numeroDocumento;
 	private Text valorTitulo;
 	private Text valorAquisicao;
+	private Text taxaJurosIndexador;
 	private Text chaveNfe;
 	private Text termoCessao;
 	private Text path;
+	private Text variacaoCambial;
 	
 	private JTable tabela;
 	
@@ -111,6 +124,8 @@ public class GerarCnabAquisicao extends JPanel {
 	private IMovimentoService movimentoService;
 	private ITipoRecebivelService tipoRecebivelService;
 	private IConfGlobalService confGlobalService;
+	private IIndexadorService indexadorService;
+	private IRiscoService riscoService;
 
 	public GerarCnabAquisicao() {
 		try {
@@ -126,6 +141,8 @@ public class GerarCnabAquisicao extends JPanel {
 			movimentoService = new MovimentoServiceImpl();
 			tipoRecebivelService = new TipoRecebivelServiceImpl();
 			confGlobalService = new ConfGlobalServiceImpl();
+			indexadorService = new IndexadorServiceImpl();
+			riscoService = new RiscoServiceImpl();
 			
 			this.setBounds(1, 1, 1000, 690);
 			this.setLayout(null);
@@ -162,7 +179,7 @@ public class GerarCnabAquisicao extends JPanel {
 			cbMovimento = ComboBoxMovimentoDto.novo(110, 210, 350, 20);
 			this.add(new Label("Tipo Recebível: ", 470, 210, 100, 20, 14, Color.BLACK));
 			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 210, 350, 20);
-			
+
 			this.add(new Label("Seu Número: ", 10, 240, 100, 20, 14, Color.BLACK));
 			seuNumero = new Text(110, 240, 300, 20, true);
 			this.add(new Botao("@", 410, 240, 50, 20, getActionGerarSeuNumero()));
@@ -182,7 +199,18 @@ public class GerarCnabAquisicao extends JPanel {
 			termoCessao = new Text(580, 300, 150, 20, true);
 			this.add(new Botao("@", 730, 300, 50, 20, getActionGerarTermoCessao()));
 			
-			this.add(new Botao("Adicionar Título", 400, 350, 150, 20, getActionAdicionarTitulo()));
+			this.add(new Label("Indexador: ", 10, 330, 100, 20, 14, Color.BLACK));
+			cbIndexador = ComboBoxIndexadorDto.novo(110, 330, 100, 20);
+			this.add(new Label("Data Carencia: ", 220, 330, 100, 20, 14, Color.BLACK));
+			dataCarencia = new Text(330, 330, 100, 20, true);
+			this.add(new Label("TaxaJurosIndexador: ", 440, 330, 100, 20, 14, Color.BLACK));
+			taxaJurosIndexador = new Text(550, 330, 100, 20, true);
+			this.add(new Label("VariacaoCambial: ", 660, 330, 100, 20, 14, Color.BLACK));
+			variacaoCambial = new Text(770, 330, 100, 20, true);
+			this.add(new Label("Risco: ", 10, 360, 100, 20, 14, Color.BLACK));
+			cbRisco = ComboBoxRiscoDto.novo(110, 360, 200, 20);
+			
+			this.add(new Botao("Adicionar Título", 400, 400, 150, 20, getActionAdicionarTitulo()));
 		
 			
 			iniciarTabela();
@@ -198,6 +226,8 @@ public class GerarCnabAquisicao extends JPanel {
 			preencherComboFundos();
 			preencherComboBanco();
 			preencherComboMovimento();
+			preencherComboIndexador();
+			preencherComboRisco();
 			preencherComboTipoRecebivel();
 			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 		
@@ -216,6 +246,11 @@ public class GerarCnabAquisicao extends JPanel {
 			this.add(cbSacado);
 			this.add(cbMovimento);
 			this.add(cbTipoRecebivel);
+			this.add(cbIndexador);
+			this.add(dataCarencia);
+			this.add(taxaJurosIndexador);
+			this.add(variacaoCambial);
+			this.add(cbRisco);
 			this.add(seuNumero);
 			this.add(numeroDocumento);
 			this.add(valorTitulo);
@@ -258,7 +293,7 @@ public class GerarCnabAquisicao extends JPanel {
 			tabela.repaint();
 			
 			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 390, 920, 240);
+			scroll.setBounds(10, 430, 920, 200);
 			
 			this.add(scroll);
 
@@ -291,6 +326,8 @@ public class GerarCnabAquisicao extends JPanel {
 					preencherComboFundos();
 					preencherComboBanco();
 					preencherComboMovimento();
+					preencherComboIndexador();
+					preencherComboRisco();
 					preencherComboTipoRecebivel();
 				} catch (Exception e1) {
 					erro.setText(e1.getMessage());
@@ -377,6 +414,7 @@ public class GerarCnabAquisicao extends JPanel {
 				
 				BigDecimal vlAquisicao = new BigDecimal(valorAquisicao.getText().replaceAll(",", "."));
 				BigDecimal vlTitulo = new BigDecimal(valorTitulo.getText().replaceAll(",", "."));
+				BigDecimal vlTaxaJurosIndexador = new BigDecimal(taxaJurosIndexador.getText().replaceAll(",", "."));
 				
 				if(vlAquisicao.compareTo(vlTitulo) > 0) {
 					JOptionPane.showMessageDialog(null, "Valor de aquisição não pode ser maior que o valor do título","Erro", 0);
@@ -416,6 +454,11 @@ public class GerarCnabAquisicao extends JPanel {
 				titulo.setTermoCessao(termoCessao.getText());
 				titulo.setValorAquisicao(vlAquisicao);
 				titulo.setValorTitulo(vlTitulo);
+				titulo.setIndexador((IndexadorDto)cbIndexador.getSelectedItem());
+				titulo.setRisco((RiscoDto)cbRisco.getSelectedItem());
+				titulo.setVariacaoCambial(variacaoCambial.getText());
+				titulo.setTaxaJurosIndexador(vlTaxaJurosIndexador);
+				titulo.setDataCarencia(LocalDateUtils.parseDate(dataCarencia.getText()));
 				
 				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 				
@@ -534,6 +577,28 @@ public class GerarCnabAquisicao extends JPanel {
 		if(movimentos != null && !movimentos.isEmpty()) {
 			for(MovimentoDto movimento : movimentos) {
 				cbMovimento.addItem(movimento);
+			}
+			
+		}
+	}
+	
+	private void preencherComboIndexador() throws Exception {
+		List<IndexadorDto> indexadores = indexadorService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
+		cbIndexador.removeAllItems();
+		if(indexadores != null && !indexadores.isEmpty()) {
+			for(IndexadorDto indexador : indexadores) {
+				cbIndexador.addItem(indexador);
+			}
+			
+		}
+	}
+	
+	private void preencherComboRisco() throws Exception {
+		List<RiscoDto> riscos = riscoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
+		cbRisco.removeAllItems();
+		if(riscos != null && !riscos.isEmpty()) {
+			for(RiscoDto risco : riscos) {
+				cbRisco.addItem(risco);
 			}
 			
 		}

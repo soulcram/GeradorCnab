@@ -306,7 +306,10 @@ public class GerarCnabCsv extends JPanel {
 						cnab.getBanco().getCodigoBanco(), 
 						LocalDateUtils.parseDate(colunas[6]), //dataVencimento
 						null, 
+						null,
 						((MovimentoDto)cbMovimento.getSelectedItem()), 
+						null,
+						null,
 						colunas[7], //SeuNumero 
 						colunas[8], //coobrigacao, 
 						colunas[9], //nossoNumero, 
@@ -314,9 +317,11 @@ public class GerarCnabCsv extends JPanel {
 						colunas[11], //especie, 
 						colunas[12], //termoCessao, 
 						colunas[13], //chaveNfe, 
+						null,
 						null, //valorPago, 
 						new BigDecimal(colunas[14].replaceAll(",", ".")), //valorTitulo, 
 						new BigDecimal(colunas[15].replaceAll(",", ".")), //valorAquisicao, 
+						null,
 						null);
 
 				cnab.getTitulos().add(titulo.getCopy());

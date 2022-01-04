@@ -49,6 +49,10 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 			e.printStackTrace();
 		}
 		
+		if(retorno.isEmpty()) {
+			retorno.add(new TipoRecebivelDto(null, "01", "Duplicata"));
+		}
+		
 		return retorno;
 	}
 
