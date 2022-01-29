@@ -1,6 +1,7 @@
 package br.com.m3Tech.solucoesFromtis.service;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
@@ -31,6 +32,8 @@ public interface IMovimentoService {
 	public Boolean isProrrogacao(Connection con, Integer idMovimento);
 
 	public List<TituloDto> findAllTituloEmEstoqueByFundo(Connection con, Integer idFundo, boolean isProrrogacao);
+
+	public MovimentoDto getPrimeiroMovimentoAquisicao(Connection con, Integer cdLayout) throws SQLException;
 
 	
 

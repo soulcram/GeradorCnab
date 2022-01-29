@@ -79,7 +79,27 @@ public class SacadoServiceImpl implements ISacadoService, Serializable{
 		
 		return sacado;
 	}
-	
+
+	@Override
+	public SacadoDto getPrimeiroSacado(Connection con, Integer idFundo) throws SQLException {
+		SacadoDto sacado = null;
+
+		String sqlQuery = "select TOP 1 ID_SACADO, NM_SACADO, NU_CPF_CNPJ,DS_LOGRADOURO,NU_CEP from TB_FUNDO_SACADO where ID_FUNDO = " + idFundo;
+
+		PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+		ps.execute();
+
+		ResultSet rs = ps.getResultSet();
+
+		if (rs.next()) {
+			sacado = new SacadoDto(rs.getInt("ID_SACADO"), rs.getString("NM_SACADO"), rs.getString("NU_CPF_CNPJ"),
+					rs.getString("DS_LOGRADOURO"), rs.getString("NU_CEP"));
+
+		}
+
+		return sacado;
+	}
 	
 
 

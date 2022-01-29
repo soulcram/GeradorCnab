@@ -37,7 +37,8 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			while(rs.next()) {
 				CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 											  rs.getString("NM_CEDENTE"), 
-											  rs.getString("NU_CPF_CNPJ"));
+											  rs.getString("NU_CPF_CNPJ"),
+											  rs.getString("TP_COOBRIGACAO"));
 				
 				cedentes.add(cedente);
 			}
@@ -65,7 +66,8 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			while(rs.next()) {
 				cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 											  rs.getString("NM_CEDENTE"), 
-											  rs.getString("NU_CPF_CNPJ"));
+											  rs.getString("NU_CPF_CNPJ"),
+											  rs.getString("TP_COOBRIGACAO"));
 				
 			}
 			
@@ -74,6 +76,30 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			e.printStackTrace();
 		}
 		
+		return cedente;
+	}
+
+	@Override
+	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo) throws SQLException {
+
+		CedenteDto cedente = null;
+
+		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, TP_COOBRIGACAO FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
+
+		PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+		ps.execute();
+
+		ResultSet rs = ps.getResultSet();
+
+		if(rs.next()) {
+			cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+					rs.getString("NM_CEDENTE"), 
+					rs.getString("NU_CPF_CNPJ"), 
+					rs.getString("TP_COOBRIGACAO"));
+
+		}
+
 		return cedente;
 	}
 	

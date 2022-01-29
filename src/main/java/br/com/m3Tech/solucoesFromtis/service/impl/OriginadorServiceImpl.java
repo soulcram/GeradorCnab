@@ -75,6 +75,29 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 		
 		return originador;
 	}
+
+	@Override
+	public OriginadorDto getPrimeiroOriginador(Connection con, Integer idFundo) throws SQLException {
+		OriginadorDto originador = null;
+
+		String sqlQuery = "SELECT TOP 1 ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA\r\n"
+				+ "FROM TB_FUNDO_ORIGINADOR FO \r\n" + "INNER JOIN TB_PESSOA P ON P.ID_PESSOA = FO.ID_ORIGINADOR  \r\n"
+				+ "WHERE ID_FUNDO = " + idFundo;
+		
+		PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+		ps.execute();
+
+		ResultSet rs = ps.getResultSet();
+
+		while (rs.next()) {
+			originador = new OriginadorDto(rs.getInt("ID_FUNDO_ORIGINADOR"), rs.getString("DS_CODIGO_CEDENTE"),
+					rs.getString("NM_PESSOA"));
+
+		}
+
+		return originador;
+	}
 	
 	
 

@@ -7,16 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CedenteDto {
+public class ResultadoTesteDto {
 	
-	private Integer idCedente;
-	private String nomeCedente;
-	private String docCedente;
-	private String coobrigacao;
+	private String processo;
+	private String info;
+	private String resultado;
 	
 	@Override
 	public String toString() {
-		return nomeCedente;
+		return processo;
 	}
+	
+	
 
 }

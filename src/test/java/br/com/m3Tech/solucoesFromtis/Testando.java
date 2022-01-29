@@ -1,4 +1,4 @@
-package br.com.m3Tech.geradorCnab;
+package br.com.m3Tech.solucoesFromtis;
 
 import java.io.IOException;
 

@@ -23,6 +23,7 @@ public class ComboBoxTela{
 		cb.addItem("Gerar Cnab de um Arquivo Csv");
 		cb.addItem("Comparar Versões");
 		cb.addItem("Cadastrar Base");
+		cb.addItem("Testes diversos");
 		
 		
 		cb.addActionListener(acao);

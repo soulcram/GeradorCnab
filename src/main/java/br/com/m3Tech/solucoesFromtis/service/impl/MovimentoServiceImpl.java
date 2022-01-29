@@ -482,7 +482,8 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 				
 				CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 													rs.getString("NM_CEDENTE"), 
-													rs.getString("DOC_CEDENTE"));
+													rs.getString("DOC_CEDENTE"),
+													null);
 				
 				SacadoDto sacado = new SacadoDto(rs.getInt("ID_SACADO"), 
 												 rs.getString("NM_SACADO"), 
@@ -609,6 +610,32 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 		}
 		
 		return false;
+	}
+
+	@Override
+	public MovimentoDto getPrimeiroMovimentoAquisicao(Connection con, Integer cdLayout) throws SQLException {
+		MovimentoDto retorno = null;
+
+		String sqlQuery = " SELECT TOP 1 ID_LAYOUT_MOVIMENTO, CD_OCORRENCIA, NM_TIPO_MOVIMENTO\r\n" + 
+				" FROM TB_LAYOUT_MOVIMENTO LM\r\n" + 
+				" INNER JOIN TB_TIPO_MOVIMENTO TM ON TM.ID_TIPO_MOVIMENTO = LM.ID_TIPO_MOVIMENTO\r\n" + 
+				" INNER JOIN TB_TIPO_MOVIMENTACAO TMM On TMM.CD_TIPO_MOVIMENTACAO = TM.CD_TIPO_MOVIMENTACAO\r\n" + 
+				" WHERE CD_LAYOUT = " +cdLayout+ " \r\n" + 
+				" AND TMM.IC_AQUISICAO = 1";
+		
+		PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+		ps.execute();
+
+		ResultSet rs = ps.getResultSet();
+
+		if (rs.next()) {
+			retorno = new MovimentoDto(rs.getInt("ID_LAYOUT_MOVIMENTO"), rs.getString("CD_OCORRENCIA"),
+					rs.getString("NM_TIPO_MOVIMENTO"));
+
+		}
+
+		return retorno;
 	}
 	
 	

@@ -89,4 +89,28 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 		return retorno;
 	}
 
+	@Override
+	public TipoRecebivelDto getPrimeiroTipoRecebivelAquisicao(Connection con, Integer cdLayout) throws SQLException {
+		TipoRecebivelDto retorno = null;
+
+		String sqlQuery = "SELECT DISTINCT TOP 1 TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n"
+				+ "FROM TB_LAYOUT_RECEBIVEL LR\r\n"
+				+ "INNER JOIN TB_TIPO_RECEBIVEL TR ON LR.ID_TIPO_RECEBIVEL = TR.ID_TIPO_RECEBIVEL\r\n"
+				+ "WHERE LR.CD_LAYOUT = " + cdLayout;
+
+		PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+		ps.execute();
+
+		ResultSet rs = ps.getResultSet();
+
+		if (rs.next()) {
+			retorno = new TipoRecebivelDto(rs.getInt("ID_TIPO_RECEBIVEL"), rs.getString("ID_TIPO_ESPECIE"),
+					rs.getString("NM_TIPO_RECEBIVEL"));
+
+		}
+
+		return retorno;
+	}
+
 }

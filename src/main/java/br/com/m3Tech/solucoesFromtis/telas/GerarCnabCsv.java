@@ -280,7 +280,8 @@ public class GerarCnabCsv extends JPanel {
 				
 				CedenteDto cedente = new CedenteDto(null, 
 						colunas[0], //nomeCedente
-						colunas[1].replaceAll("[^0-9xX]", "")  //docCedente
+						colunas[1].replaceAll("[^0-9xX]", ""),  //docCedente
+						null
 								);
 				
 				SacadoDto sacado = new SacadoDto(null, 

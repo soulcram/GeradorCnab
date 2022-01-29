@@ -3,7 +3,7 @@ package br.com.m3Tech.solucoesFromtis.querys;
 public class Querys {
 	
 	private static final String FUNDO = "ID_FUNDO, NM_FUNDO, DT_FUNDO, LAYOUT_AQUISICAO";
-	private static final String CEDENTE = "ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ";
+	private static final String CEDENTE = "ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, TP_COOBRIGACAO";
 	private static final String SACADO = "ID_SACADO, NM_SACADO, NU_CPF_CNPJ,DS_LOGRADOURO,NU_CEP";
 	private static final String ORIGINADOR = "ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA";
 	private static final String BANCO = "ID_BANCO, NM_BANCO, NU_BANCO";

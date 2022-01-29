@@ -21,6 +21,18 @@ public class FileUtil {
 		return retorno;
 	}
 	
+	public static void limparDiretorio(String caminho) {
+
+		File diretorio = new File(caminho);
+		
+		if(diretorio.isDirectory()) {
+		
+			for (File f : diretorio.listFiles()) {
+				f.delete();
+			}
+		}
+	}
+	
 	public static List<File> getDiferencaNoSource(List<File> destino, List<File> source) {
 
 		retorno = Lists.newArrayList();
