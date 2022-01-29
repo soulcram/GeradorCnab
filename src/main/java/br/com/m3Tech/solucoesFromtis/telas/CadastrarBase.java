@@ -15,6 +15,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.stereotype.Controller;
+
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
@@ -22,6 +24,7 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 
+@Controller
 public class CadastrarBase extends JPanel {
 
 	private static final long serialVersionUID = 1L;

@@ -14,6 +14,8 @@ public class ComboBoxBase{
 		JComboBox<Base> cb = new JComboBox<Base>();
 		cb.setBounds(posX, posY, tamHor, tamVer);
 		
+		cb.addItem(new Base("Selecione", "", ""));
+		
 		for(Base b : new Base().findAll()) {
 			cb.addItem(b);
 		}

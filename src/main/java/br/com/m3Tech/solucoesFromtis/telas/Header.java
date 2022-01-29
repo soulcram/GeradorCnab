@@ -5,23 +5,58 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTela;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 
+@Component
 public class Header extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private Conteudo conteudo;
+	
+	private final Conteudo conteudo;
+	private final GerarCnabAquisicao gerarCnabAquisicao;
+	private final GerarCnabAquisicaoDinamico gerarCnabAquisicaoDinamico;
+	private final GerarCnabBaixa gerarCnabBaixa;
+	private final GerarCnabParcial gerarCnabParcial;
+	private final GerarCnabRecompra gerarCnabRecompra;
+	private final GerarCnabRecompraParcial gerarCnabRecompraParcial;
+	private final GerarCnabProrrogacao gerarCnabProrrogacao;
+	private final GerarCnabCsv gerarCnabCsv;
+	private final CompararVersoes compararVersoes;
+	private final CadastrarBase cadastrarBase;
 
 	private JComboBox<String> cbTelas;
-
-	public Header(Conteudo conteudo) {
-
-		this.conteudo = conteudo;
+	
+	@Autowired
+	public Header(final Conteudo conteudo,
+				  final GerarCnabAquisicao gerarCnabAquisicao,
+				  final GerarCnabAquisicaoDinamico gerarCnabAquisicaoDinamico,
+				  final GerarCnabBaixa gerarCnabBaixa,
+				  final GerarCnabParcial gerarCnabParcial,
+				  final GerarCnabRecompra gerarCnabRecompra,
+				  final GerarCnabRecompraParcial gerarCnabRecompraParcial,
+				  final GerarCnabProrrogacao gerarCnabProrrogacao,
+				  final GerarCnabCsv gerarCnabCsv,
+				  final CompararVersoes compararVersoes,
+				  final CadastrarBase cadastrarBase) {
+		
+		this.conteudo= conteudo;
+		this.gerarCnabAquisicao = gerarCnabAquisicao;
+		this.gerarCnabAquisicaoDinamico = gerarCnabAquisicaoDinamico;
+		this.gerarCnabBaixa = gerarCnabBaixa;
+		this.gerarCnabParcial = gerarCnabParcial;
+		this.gerarCnabRecompra = gerarCnabRecompra;
+		this.gerarCnabRecompraParcial = gerarCnabRecompraParcial;
+		this.gerarCnabProrrogacao = gerarCnabProrrogacao;
+		this.gerarCnabCsv = gerarCnabCsv;
+		this.compararVersoes = compararVersoes;
+		this.cadastrarBase = cadastrarBase;
 
 		this.setBounds(10, 10, ConfigTela.largura, 80);
 		this.setLayout(null);
@@ -49,58 +84,58 @@ public class Header extends JPanel {
 
 					case "Gerar Cnab Aquisição":
 
-						conteudo.atualizarConteudo(new GerarCnabAquisicao());
+						conteudo.atualizarConteudo(gerarCnabAquisicao);
 
 						break;
 
 					case "Gerar Cnab Aquisição Dinâmico":
 
-						conteudo.atualizarConteudo(new GerarCnabAquisicaoDinamico());
+						conteudo.atualizarConteudo(gerarCnabAquisicaoDinamico);
 
 						break;
 
 					case "Gerar Cnab Baixa":
 
-						conteudo.atualizarConteudo(new GerarCnabBaixa());
+						conteudo.atualizarConteudo(gerarCnabBaixa);
 
 						break;
 
 					case "Gerar Cnab Liquidação Parcial":
 
-						conteudo.atualizarConteudo(new GerarCnabParcial());
+						conteudo.atualizarConteudo(gerarCnabParcial);
 
 						break;
 
 					case "Gerar Cnab Recompra":
 
-						conteudo.atualizarConteudo(new GerarCnabRecompra());
+						conteudo.atualizarConteudo(gerarCnabRecompra);
 
 						break;
 
 					case "Gerar Cnab Recompra Parcial":
 
-						conteudo.atualizarConteudo(new GerarCnabRecompraParcial());
+						conteudo.atualizarConteudo(gerarCnabRecompraParcial);
 
 						break;
 					case "Gerar Cnab Prorrogação":
 
-						conteudo.atualizarConteudo(new GerarCnabProrrogacao());
+						conteudo.atualizarConteudo(gerarCnabProrrogacao);
 
 						break;
 					case "Gerar Cnab de um Arquivo Csv":
 
-						conteudo.atualizarConteudo(new GerarCnabCsv());
+						conteudo.atualizarConteudo(gerarCnabCsv);
 
 						break;
 
 					case "Comparar Versões":
 
-						conteudo.atualizarConteudo(new CompararVersoes());
+						conteudo.atualizarConteudo(compararVersoes);
 
 						break;
 					case "Cadastrar Base":
 
-						conteudo.atualizarConteudo(new CadastrarBase());
+						conteudo.atualizarConteudo(cadastrarBase);
 
 						break;
 
@@ -110,7 +145,7 @@ public class Header extends JPanel {
 
 					}
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", 0);
+					e1.printStackTrace();
 				}
 
 			}

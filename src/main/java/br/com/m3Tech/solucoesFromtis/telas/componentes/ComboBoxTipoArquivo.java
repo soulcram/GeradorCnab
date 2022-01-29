@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 
-public class ComboBoxTela{
+public class ComboBoxTipoArquivo{
 	
 	public static JComboBox<String> novo(int posX,int posY, int tamHor, int tamVer, ActionListener acao) {
 		
@@ -12,17 +12,13 @@ public class ComboBoxTela{
 		JComboBox<String> cb = new JComboBox<String>();
 		cb.setBounds(posX, posY, tamHor, tamVer);
 		
-		cb.addItem("Selecione...");
-		cb.addItem("Gerar Cnab Aquisição");
-		cb.addItem("Gerar Cnab Aquisição Dinâmico");
-		cb.addItem("Gerar Cnab Baixa");
-		cb.addItem("Gerar Cnab Liquidação Parcial");
-		cb.addItem("Gerar Cnab Recompra");
-		cb.addItem("Gerar Cnab Recompra Parcial");
-		cb.addItem("Gerar Cnab Prorrogação");
-		cb.addItem("Gerar Cnab de um Arquivo Csv");
-		cb.addItem("Comparar Versões");
-		cb.addItem("Cadastrar Base");
+		cb.addItem("Todos");
+		cb.addItem(".java");
+		cb.addItem(".sql");
+		cb.addItem(".xhtml");
+		cb.addItem(".html");
+		cb.addItem(".xml");
+		cb.addItem(".jrxml");
 		
 		
 		cb.addActionListener(acao);

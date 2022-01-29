@@ -8,13 +8,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
 import br.com.m3Tech.solucoesFromtis.querys.Querys;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 
 	private static final long serialVersionUID = 1L;

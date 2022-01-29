@@ -3,10 +3,13 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 
+@Service
 public class ConfGlobalServiceImpl implements IConfGlobalService{
 
 	@Override

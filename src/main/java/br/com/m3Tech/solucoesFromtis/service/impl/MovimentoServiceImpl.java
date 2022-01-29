@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
@@ -16,10 +18,9 @@ import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloEmEstoqueDto;
 import br.com.m3Tech.solucoesFromtis.querys.Querys;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 
 	private static final long serialVersionUID = 1L;

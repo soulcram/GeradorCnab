@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,16 +18,22 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
+import org.springframework.stereotype.Controller;
+
 import com.google.common.collect.Lists;
 
 import br.com.m3Tech.solucoesFromtis.model.Classe;
 import br.com.m3Tech.solucoesFromtis.model.ClasseAnalisada;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
+import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTipoArquivo;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
 import br.com.m3Tech.solucoesFromtis.util.FileUtil;
 
+@Controller
 public class CompararVersoes extends JPanel {
+
+	private static final long serialVersionUID = 1L;
 	
 	private Text nomeDiretorioMercado;
 	private Text nomeDiretorioLegado;
@@ -34,6 +41,8 @@ public class CompararVersoes extends JPanel {
 	Label quantidade;
 	
 	private JTable tabela;
+	
+	private JComboBox<String> cbTipoArquivo;
 	
 	private JTextArea conteudoMercado;
 	private JTextArea conteudoLegado;
@@ -61,12 +70,15 @@ public class CompararVersoes extends JPanel {
 		nomeDiretorioLegado = new Text(650, 30, 450, 20, true);
 		this.add(new Botao("Diretório Legado", 1120, 30, 150, 20, getActionCarregarDiretorioLegado()));
 		
-		this.add(new Botao("Carregar Arquivos", 10, 80, 150, 20, getActionCarregarArquivos()));
+		this.add(new Label("Filtrar por tipo arquivo: ", 10, 65, 150, 20, 14, Color.BLACK));
+		cbTipoArquivo = ComboBoxTipoArquivo.novo(170, 65, 290, 20, getActionCbTipoArquivo());
 		
-		quantidade = new Label("Quantidade de arquivo com diferenças: ", 200, 80, 600, 20, 14, Color.BLACK);
+		this.add(new Botao("Carregar Arquivos", 480, 280, 150, 20, getActionCarregarArquivos()));
 		
-		this.add(new Label("Conteudo Versão Mercado: ", 10, 370, 200, 20, 14, Color.BLACK));
-		this.add(new Label("Conteudo Versão Legado: ", 630, 370, 200, 20, 14, Color.BLACK));
+		quantidade = new Label("Quantidade de arquivo com diferenças: ", 650, 280, 600, 20, 14, Color.BLACK);
+		
+		this.add(new Label("Conteudo Versão Mercado: ", 10, 320, 200, 20, 14, Color.BLACK));
+		this.add(new Label("Conteudo Versão Legado: ", 670, 320, 200, 20, 14, Color.BLACK));
 		
 		iniciarTabela();
 		iniciarConteudoMercado();
@@ -75,9 +87,21 @@ public class CompararVersoes extends JPanel {
 		this.add(nomeDiretorioMercado);
 		this.add(nomeDiretorioLegado);
 		this.add(quantidade);
+		this.add(cbTipoArquivo);
 		
 		this.repaint();
 
+	}
+	
+	private ActionListener getActionCbTipoArquivo() {
+		return new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+
+				getActionCarregarArquivos();
+
+			}
+		};
 	}
 
 	private void iniciarConteudoMercado() {
@@ -85,7 +109,7 @@ public class CompararVersoes extends JPanel {
 		conteudoMercado = new JTextArea();
 
 		JScrollPane scroll = new JScrollPane(conteudoMercado);
-		scroll.setBounds(10, 390, 600, 350);
+		scroll.setBounds(10, 350, 670, 350);
 		
 		this.add(scroll);
 		
@@ -96,7 +120,7 @@ public class CompararVersoes extends JPanel {
 		conteudoLegado = new JTextArea();
 
 		JScrollPane scroll = new JScrollPane(conteudoLegado);
-		scroll.setBounds(630, 390, 600, 350);
+		scroll.setBounds(700, 350, 670, 350);
 		
 		this.add(scroll);
 		
@@ -125,8 +149,8 @@ public class CompararVersoes extends JPanel {
 					diretorioLegado = new File(nomeDiretorioLegado.getText());
 				}
 				
-				filesMercado = FileUtil.getFiles(nomeDiretorioMercado.getText());
-				filesLegado = FileUtil.getFiles(nomeDiretorioLegado.getText());
+				filesMercado = FileUtil.getFiles(nomeDiretorioMercado.getText(), cbTipoArquivo.getSelectedItem().toString());
+				filesLegado = FileUtil.getFiles(nomeDiretorioLegado.getText(),cbTipoArquivo.getSelectedItem().toString());
 				
 				List<Classe> listaClasseMercado = getListaClasse(filesMercado);
 				
@@ -215,6 +239,7 @@ public class CompararVersoes extends JPanel {
 		return classeAnalisada;
 	}
 
+	@SuppressWarnings("serial")
 	private void iniciarTabela() {
 try {
 			
@@ -237,7 +262,7 @@ try {
 			tabela.repaint();
 			
 			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 100, 250, 200);
+			scroll.setBounds(10, 100, 450, 200);
 			
 			this.add(scroll);
 

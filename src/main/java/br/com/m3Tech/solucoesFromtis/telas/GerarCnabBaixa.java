@@ -20,6 +20,8 @@ import javax.swing.table.DefaultTableModel;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
 import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
@@ -39,11 +41,6 @@ import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
-import br.com.m3Tech.solucoesFromtis.service.impl.BancoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.ConfGlobalServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.FundoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.MovimentoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.OriginadorServiceImpl;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBase;
@@ -56,6 +53,7 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.utils.LocalDateUtils;
 
+@Controller
 public class GerarCnabBaixa extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -78,22 +76,27 @@ public class GerarCnabBaixa extends JPanel {
 	private CnabDto cnab;
 	private List<TituloDto> titulosEmEstoque;
 	
-	private IFundoService fundoService;
-	private IOriginadorService originadorService;
-	private IBancoService bancoService;
-	private IMovimentoService movimentoService;
-	private IConfGlobalService confGlobalService;
+	private final IFundoService fundoService;
+	private final IOriginadorService originadorService;
+	private final IBancoService bancoService;
+	private final IMovimentoService movimentoService;
+	private final IConfGlobalService confGlobalService;
 
-	public GerarCnabBaixa() {
+	@Autowired
+	public GerarCnabBaixa(final IFundoService fundoService,
+			final IOriginadorService originadorService,
+			final IBancoService bancoService,
+			final IMovimentoService movimentoService,
+			final IConfGlobalService confGlobalService) {
+
+		this.fundoService = fundoService;
+		this.originadorService = originadorService;
+		this.bancoService = bancoService;
+		this.movimentoService = movimentoService;
+		this.confGlobalService = confGlobalService;
 		try {
 			
 			cnab = new CnabDto();	
-			
-			fundoService = new FundoServiceImpl();
-			originadorService = new OriginadorServiceImpl();
-			bancoService = new BancoServiceImpl();
-			movimentoService = new MovimentoServiceImpl();
-			confGlobalService = new ConfGlobalServiceImpl();
 			
 			this.setBounds(1, 1, ConfigTela.largura, ConfigTela.altura);
 			this.setLayout(null);
@@ -126,10 +129,11 @@ public class GerarCnabBaixa extends JPanel {
 			erro = new Label("", 10, 670, 1000, 20, 14, Color.RED);
 			this.add(erro);
 
-			
-			preencherComboFundos();
-			preencherComboBanco();
-			preencherComboMovimento();
+			if(!"Selecione".equals(((Base)cbBase.getSelectedItem()).getUrl())) {
+				preencherComboFundos();
+				preencherComboBanco();
+				preencherComboMovimento();
+			}
 		
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			
@@ -195,6 +199,10 @@ public class GerarCnabBaixa extends JPanel {
 	}
 	
 	private void preencherTabelaTitulosEmEstoque() {
+		
+		if("Selecione".equals(((Base) cbBase.getSelectedItem()).getUrl())) {
+			return;
+		}
 
 		try {
 

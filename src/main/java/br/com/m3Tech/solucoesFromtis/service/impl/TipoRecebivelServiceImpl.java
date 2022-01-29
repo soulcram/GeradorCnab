@@ -8,12 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializable{
 
 	private static final long serialVersionUID = 1L;

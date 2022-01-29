@@ -40,16 +40,18 @@ public class Classe {
 	
     private String getConteudo(File file) throws IOException {
     	String retorno = "";
-    	List<String> readAllLines = Files.readAllLines(Paths.get(file.toURI()), Charsets.UTF_8);
     	
-    	for(String s : readAllLines) {
-    		
-//    		if(s.contains(" class ") ) {
-//        		this.nomeClasse = getNomeClasse(s);
-//        	}
-    		
-    		retorno += s + "\n";
-    		
+    	try {
+	    	List<String> readAllLines = Files.readAllLines(Paths.get(file.toURI()), Charsets.ISO_8859_1);
+	    	
+	    	for(String s : readAllLines) {
+	    		
+	    		retorno += s + "\n";
+	    		
+	    	}
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		System.out.println("Erro ao carregar arquivo: " + file.getName());
     	}
 	return retorno;
 }
@@ -154,17 +156,17 @@ public class Classe {
 //    	
 //    }
 
-	private String getNomeClasse(String s) {
-		String[] split = s.split(" ");
-		
-		int index = 0;
-		
-		for(int i = 0; i < split.length; i++) {
-			if("class".equalsIgnoreCase(split[i])) {
-				index = i;
-			}
-		}
-		return split[index + 1].replaceAll("\\{", "");
-	}
+//	private String getNomeClasse(String s) {
+//		String[] split = s.split(" ");
+//		
+//		int index = 0;
+//		
+//		for(int i = 0; i < split.length; i++) {
+//			if("class".equalsIgnoreCase(split[i])) {
+//				index = i;
+//			}
+//		}
+//		return split[index + 1].replaceAll("\\{", "");
+//	}
 
 }

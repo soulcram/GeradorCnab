@@ -9,13 +9,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.querys.Querys;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class FundoServiceImpl implements IFundoService, Serializable{
 
 	private static final long serialVersionUID = 1L;

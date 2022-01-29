@@ -8,12 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.RiscoDto;
 import br.com.m3Tech.solucoesFromtis.service.IRiscoService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class RiscoServiceImpl implements IRiscoService, Serializable{
 
 	private static final long serialVersionUID = 1L;

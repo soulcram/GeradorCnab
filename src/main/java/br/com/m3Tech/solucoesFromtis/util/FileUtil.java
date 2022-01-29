@@ -12,11 +12,11 @@ public class FileUtil {
 	
 	static List<File> retorno = Lists.newArrayList();
 
-	public static List<File> getFiles(String caminho) {
+	public static List<File> getFiles(String caminho, String filtro) {
 
 		retorno = Lists.newArrayList();
 
-		addFiles(caminho);
+		addFiles(caminho, filtro);
 		
 		return retorno;
 	}
@@ -46,7 +46,7 @@ public class FileUtil {
 	}
 	
 	
-	private static void addFiles(String caminho) {
+	private static void addFiles(String caminho, String filtro) {
 		
 		File diretorio = new File(caminho);
 			
@@ -56,13 +56,13 @@ public class FileUtil {
 
 			if (f.isFile()) {
 				
-				if (aceitarFile(f.getName())) {
+				if (aceitarFile(f.getName(), filtro)) {
 					retorno.add(f);
 				}
 				
 			} else if (f.isDirectory()) {
 				if (!ignorarDiretorio(f.getName())) {
-					addFiles(f.getPath());
+					addFiles(f.getPath(), filtro);
 				}
 
 			}
@@ -71,8 +71,22 @@ public class FileUtil {
 		
 	}
 
-	private static boolean aceitarFile(String name) {
-		return name.contains(".java") ;
+	private static boolean aceitarFile(String name, String filtro) {
+		
+		List<String> arquivosParaIgnorar = Lists.newArrayList("project", "classpath", "xlsx", "svn","cmd");
+		try {
+			if(arquivosParaIgnorar.contains(name.split("\\.")[1])) {
+				return false;
+			}
+		}catch(Exception e) {
+			return false;
+		}
+		
+		if("Todos".equalsIgnoreCase(filtro)) {
+			return true;
+		}
+		
+		return name.contains(filtro) ;
 	}
 
 	private static boolean ignorarDiretorio(String name) {

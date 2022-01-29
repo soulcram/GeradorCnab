@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
 import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
@@ -41,14 +43,6 @@ import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
 import br.com.m3Tech.solucoesFromtis.service.ISacadoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
-import br.com.m3Tech.solucoesFromtis.service.impl.BancoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.CedenteServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.ConfGlobalServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.FundoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.MovimentoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.OriginadorServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.SacadoServiceImpl;
-import br.com.m3Tech.solucoesFromtis.service.impl.TipoRecebivelServiceImpl;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBase;
@@ -65,6 +59,7 @@ import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.LocalDateUtils;
 
+@Controller
 public class GerarCnabAquisicaoDinamico extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -90,29 +85,38 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 	private List<CedenteDto> cedentes;
 	private List<SacadoDto> sacados;
 	
-	private IFundoService fundoService;
-	private IOriginadorService originadorService;
-	private IBancoService bancoService;
-	private ICedenteService cedenteService;
-	private ISacadoService sacadoService;
-	private IMovimentoService movimentoService;
-	private ITipoRecebivelService tipoRecebivelService;
-	private IConfGlobalService confGlobalService;
+	private final IFundoService fundoService;
+	private final IOriginadorService originadorService;
+	private final IBancoService bancoService;
+	private final ICedenteService cedenteService;
+	private final ISacadoService sacadoService;
+	private final IMovimentoService movimentoService;
+	private final ITipoRecebivelService tipoRecebivelService;
+	private final IConfGlobalService confGlobalService;
 
-	public GerarCnabAquisicaoDinamico() {
+	@Autowired
+	public GerarCnabAquisicaoDinamico(final IFundoService fundoService,
+									  final IOriginadorService originadorService,
+									  final IBancoService bancoService,
+									  final ICedenteService cedenteService,
+									  final ISacadoService sacadoService,
+									  final IMovimentoService movimentoService,
+									  final ITipoRecebivelService tipoRecebivelService,
+									  final IConfGlobalService confGlobalService) {
+		
+		this.fundoService = fundoService;
+		this.originadorService = originadorService;
+		this.bancoService = bancoService;
+		this.cedenteService = cedenteService;
+		this.sacadoService = sacadoService;
+		this.movimentoService = movimentoService;
+		this.tipoRecebivelService = tipoRecebivelService;
+		this.confGlobalService = confGlobalService;
+		
 		try {
 
 			cnab = new CnabDto();	
 			titulo = new TituloDto();
-			
-			fundoService = new FundoServiceImpl();
-			originadorService = new OriginadorServiceImpl();
-			bancoService = new BancoServiceImpl();
-			cedenteService = new CedenteServiceImpl();
-			sacadoService = new SacadoServiceImpl();
-			movimentoService = new MovimentoServiceImpl();
-			tipoRecebivelService = new TipoRecebivelServiceImpl();
-			confGlobalService = new ConfGlobalServiceImpl();
 			
 			this.setBounds(1, 1, ConfigTela.largura, ConfigTela.altura);
 			this.setLayout(null);
@@ -155,9 +159,11 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			erro = new Label("", 10, 670, 1000, 20, 14, Color.RED);
 			this.add(erro);
 
+			if(!"Selecione".equals(((Base)cbBase.getSelectedItem()).getUrl())) {
+				preencherComboFundos();
+				preencherComboBanco();
+			}
 			
-			preencherComboFundos();
-			preencherComboBanco();
 			dataVencimento.setText(LocalDate.now().plusDays(30).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 			path.setText(confGlobalService.getConfGlobal().getPath());
 			

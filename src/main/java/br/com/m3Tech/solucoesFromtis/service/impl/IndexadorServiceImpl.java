@@ -8,12 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import br.com.m3Tech.solucoesFromtis.dto.IndexadorDto;
 import br.com.m3Tech.solucoesFromtis.service.IIndexadorService;
-import lombok.NoArgsConstructor;
 
 
-@NoArgsConstructor
+@Service
 public class IndexadorServiceImpl implements IIndexadorService, Serializable{
 
 	private static final long serialVersionUID = 1L;
