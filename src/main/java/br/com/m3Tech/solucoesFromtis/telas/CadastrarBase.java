@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
+import br.com.m3Tech.solucoesFromtis.telas.componentes.CheckBox;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
@@ -37,6 +38,9 @@ public class CadastrarBase extends JPanel {
 	private Botao bCadastrar;
 	private Botao bAtualizar;
 	private Botao bExcluir;
+	
+	private CheckBox versaoMercado;
+	
 	private JTable tabela;
 	
 	private Integer idAtual;
@@ -44,7 +48,7 @@ public class CadastrarBase extends JPanel {
 	public CadastrarBase() {
 		
 		
-		this.setBounds(1, 1, 1000, 690);
+		this.setBounds(1, 1, ConfigTela.largura, 690);
 		this.setLayout(null);
 		this.setBackground(Color.WHITE);
 		
@@ -54,30 +58,33 @@ public class CadastrarBase extends JPanel {
 		this.add(new Label("Usuario", 410, 50, 100, 20, 14, Color.BLACK));
 		this.add(new Label("Senha", 610, 50, 100, 20, 14, Color.BLACK));
 		
-		url = new Text(10, 80, 390, 20,true);
-		usuario = new Text(410, 80, 190, 20,true);
-		senha = new Text(610, 80, 190, 20,true);
+		url = new Text(10, 80, 350, 20,true);
+		usuario = new Text(370, 80, 190, 20,true);
+		senha = new Text(570, 80, 190, 20,true);
+		versaoMercado = new CheckBox("Versão Mercado", 770, 80, 130, 20, 14);
 		
 		this.add(url);
 		this.add(usuario);
 		this.add(senha);
+		this.add(versaoMercado);
 		
 		bTestarConexao = new Botao("Testar Conexão", 410, 110, 150, 20, getActionTestarConexao());
 		bTestarConexao.setVisible(true);
 		
-		bCadastrar = new Botao("Cadastrar", 810, 80, 100, 20, getActionCadastrar());
+		bCadastrar = new Botao("Cadastrar", 910, 80, 100, 20, getActionCadastrar());
 		bCadastrar.setVisible(true);
 		
-		bAtualizar = new Botao("Atualizar", 810, 80, 100, 20, getActionAtualizar());
+		bAtualizar = new Botao("Atualizar", 910, 80, 100, 20, getActionAtualizar());
 		bAtualizar.setVisible(false);
 		
-		bExcluir = new Botao("Excluir", 810, 110, 100, 20, getActionExcluir());
+		bExcluir = new Botao("Excluir", 910, 110, 100, 20, getActionExcluir());
 		bExcluir.setVisible(false);
 		
 		this.add(bAtualizar);
 		this.add(bCadastrar);
 		this.add(bExcluir);
 		this.add(bTestarConexao);
+		
 		
 		iniciarTabela();
 		
@@ -93,7 +100,7 @@ public class CadastrarBase extends JPanel {
 			
 			DefaultTableModel modelo = new DefaultTableModel(
 					new Object[][] {},
-					new String[] {"ID","Url","Usuário","Senha"}
+					new String[] {"ID","Url","Usuário","Senha", "Versão Mercado"}
 					);
 			
 			tabela = new JTable(modelo){
@@ -112,7 +119,7 @@ public class CadastrarBase extends JPanel {
 			tabela.repaint();
 			
 			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 150, 900, 500);
+			scroll.setBounds(10, 150, 1000, 500);
 			
 			this.add(scroll);
 			this.repaint();
@@ -145,7 +152,8 @@ public class CadastrarBase extends JPanel {
 					b.getId(),
 					b.getUrl(),
 					b.getUsuario(),
-					b.getSenha()
+					b.getSenha(),
+					b.getVersaoMercado() == null || ! b.getVersaoMercado() ? "Não" : "Sim"
 					
 			});
 		}
@@ -166,6 +174,7 @@ public class CadastrarBase extends JPanel {
 					url.setText(tabela.getValueAt(tabela.getSelectedRow(), 1).toString());
 					usuario.setText(tabela.getValueAt(tabela.getSelectedRow(), 2).toString());
 					senha.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
+					versaoMercado.setSelected("Sim".equals(tabela.getValueAt(tabela.getSelectedRow(), 4).toString()));
 					
 					bCadastrar.setVisible(false);
 					bAtualizar.setVisible(true);
@@ -184,7 +193,7 @@ public class CadastrarBase extends JPanel {
 				
 				try {
 					
-				Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+				Base base = new Base(url.getText(), usuario.getText(), senha.getText(), versaoMercado.isSelected());
 				base.setId(idAtual);
 				
 				
@@ -194,8 +203,9 @@ public class CadastrarBase extends JPanel {
 				url.setText("");
 				usuario.setText("");
 				senha.setText("");
+				versaoMercado.setSelected(false);
+				
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -221,7 +231,7 @@ public class CadastrarBase extends JPanel {
 						return;
 					}
 					
-					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText(), versaoMercado.isSelected());
 					base.setId(idAtual);
 					
 					
@@ -231,8 +241,9 @@ public class CadastrarBase extends JPanel {
 					url.setText("");
 					usuario.setText("");
 					senha.setText("");
+					versaoMercado.setSelected(false);
+					
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -256,7 +267,7 @@ public class CadastrarBase extends JPanel {
 						return;
 					}
 					
-					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText(), versaoMercado.isSelected());
 				
 				
 					base.save();
@@ -264,8 +275,9 @@ public class CadastrarBase extends JPanel {
 					url.setText("");
 					usuario.setText("");
 					senha.setText("");
+					versaoMercado.setSelected(false);
+					
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -291,7 +303,7 @@ public class CadastrarBase extends JPanel {
 						return;
 					}
 						
-					Base base = new Base(url.getText(), usuario.getText(), senha.getText());
+					Base base = new Base(url.getText(), usuario.getText(), senha.getText(), versaoMercado.isSelected());
 				
 					Connection con = Conexao.getConnection(base);
 				

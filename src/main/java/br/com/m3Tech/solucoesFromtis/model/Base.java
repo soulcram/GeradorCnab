@@ -15,6 +15,7 @@ public class Base extends Crud<Base> {
 	private String url;
 	private String usuario;
 	private String senha;
+	private Boolean versaoMercado;
 
 	@Override
 	public String toString() {

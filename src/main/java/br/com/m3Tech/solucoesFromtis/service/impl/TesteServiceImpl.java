@@ -1,9 +1,7 @@
 package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +18,6 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 
 import br.com.m3Tech.solucoesFromtis.dto.ArquivoDto;
-import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.dto.ResultadoTesteDto;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;

@@ -152,8 +152,8 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 	}
 
 	private String getNomeArquivo(Integer seq) {
-		return "CNAB_TESTE_" + cnab.getLayout().getTamLayout()
-				+ cnab.getTitulos().get(0).getMovimento().getNmMovimento()
+		return "CNAB_TESTE_" + cnab.getLayout().getTamLayout() + "_"
+				+ StringUtils.removerAcentos(cnab.getTitulos().get(0).getMovimento().getNmMovimento())+ "_"
 				+ LocalDate.now().toString().replaceAll("-", "") + "_" + seq + ".txt";
 	}
 

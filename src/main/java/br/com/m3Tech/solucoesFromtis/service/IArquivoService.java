@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import br.com.m3Tech.solucoesFromtis.dto.ArquivoDto;
-import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 
 

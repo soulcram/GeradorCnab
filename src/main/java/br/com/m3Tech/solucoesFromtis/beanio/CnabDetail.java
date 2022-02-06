@@ -51,7 +51,7 @@ public class CnabDetail {
 		this.dataCarencia = dto.getDataCarencia();
 		this.risco = dto.getRisco() != null ? dto.getRisco().getCodRisco() : null;
 		this.taxaJurosIndexador = dto.getTaxaJurosIndexador();
-		this.tipoJuros = dto.getIndexador() != null ? dto.getIndexador().getCodIndexador().toString() : null;
+		this.tipoJuros = dto.getIndexador() != null && dto.getIndexador().getCodIndexador() != null ? dto.getIndexador().getCodIndexador().toString() : null;
 		this.variacaoCambial = dto.getVariacaoCambial();
 		this.coobrigacao = dto.getCoobrigacao();
 		this.seuNumero = dto.getSeuNumero();

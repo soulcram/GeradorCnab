@@ -156,52 +156,52 @@ public class GerarCnabAquisicao extends JPanel {
 		
 			this.add(new Label("Selecionar Base", 10, 40, 100, 20, 14, Color.BLACK));
 			cbBase = ComboBoxBase.novo(110, 40, 350, 20, getActionCbBase());
+			this.add(new Label("Fundo: ", 470, 40, 100, 20, 14, Color.BLACK));
+			cbFundo = ComboBoxFundoDto.novo(580, 40, 350, 20, getActionCbFundoDto());
+			this.add(new Label("Data Gravação: ", 940, 40, 100, 20, 14, Color.BLACK));
+			dataGravacao= new Text(1050, 40, 100, 20, true);
+			this.add(new Label("Layout: ", 1160, 40, 50, 20, 14, Color.BLACK));
+			cbLayout = ComboBoxLayoutRemessa.novo(1220, 40, 200, 20);
 			
-			this.add(new Label("Fundo: ", 10, 70, 100, 20, 14, Color.BLACK));
-			cbFundo = ComboBoxFundoDto.novo(110, 70, 350, 20, getActionCbFundoDto());
-			this.add(new Label("Data Gravação: ", 470, 70, 100, 20, 14, Color.BLACK));
-			dataGravacao= new Text(580, 70, 100, 20, true);
-			this.add(new Label("Layout: ", 690, 70, 50, 20, 14, Color.BLACK));
-			cbLayout = ComboBoxLayoutRemessa.novo(750, 70, 200, 20);
+			this.add(new Label("Originador: ", 10, 70, 100, 20, 14, Color.BLACK));
+			cbOriginador = ComboBoxOriginadorDto.novo(110, 70, 350, 20);
+			this.add(new Label("Banco: ", 470, 70, 100, 20, 14, Color.BLACK));
+			cbBanco = ComboBoxBancoDto.novo(580, 70, 350, 20);
+			this.add(new Label("Vencimento: ", 940, 70, 100, 20, 14, Color.BLACK));
+			dataVencimento = new Text(1050, 70, 100, 20, true);
+			this.add(new Label("Coobrigação: ", 1160, 70, 50, 20, 14, Color.BLACK));
+			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(1220, 70, 200, 20);
 			
-			this.add(new Label("Originador: ", 10, 100, 100, 20, 14, Color.BLACK));
-			cbOriginador = ComboBoxOriginadorDto.novo(110, 100, 350, 20);
-			this.add(new Label("Banco: ", 470, 100, 100, 20, 14, Color.BLACK));
-			cbBanco = ComboBoxBancoDto.novo(580, 100, 350, 20);
 			
-			this.add(new Label("Coobrigação: ", 10, 150, 100, 20, 14, Color.BLACK));
-			cbCoobrigacao = ComboBoxCoobrigacaoDto.novo(110, 150, 350, 20);
-			this.add(new Label("Vencimento: ", 470, 150, 100, 20, 14, Color.BLACK));
-			dataVencimento = new Text(580, 150, 100, 20, true);
+			this.add(new Label("Cedente: ", 10, 100, 100, 20, 14, Color.BLACK));
+			cbCedente = ComboBoxCedenteDto.novo(110, 100, 350, 20);
+			this.add(new Label("Sacado: ", 470, 100, 100, 20, 14, Color.BLACK));
+			cbSacado = ComboBoxSacadoDto.novo(580, 100, 350, 20);
 			
-			this.add(new Label("Cedente: ", 10, 180, 100, 20, 14, Color.BLACK));
-			cbCedente = ComboBoxCedenteDto.novo(110, 180, 350, 20);
-			this.add(new Label("Sacado: ", 470, 180, 100, 20, 14, Color.BLACK));
-			cbSacado = ComboBoxSacadoDto.novo(580, 180, 350, 20);
-			
-			this.add(new Label("Movimento: ", 10, 210, 100, 20, 14, Color.BLACK));
-			cbMovimento = ComboBoxMovimentoDto.novo(110, 210, 350, 20);
-			this.add(new Label("Tipo Recebível: ", 470, 210, 100, 20, 14, Color.BLACK));
-			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 210, 350, 20);
+			this.add(new Label("Movimento: ", 10, 130, 100, 20, 14, Color.BLACK));
+			cbMovimento = ComboBoxMovimentoDto.novo(110, 130, 350, 20);
+			this.add(new Label("Tipo Recebível: ", 470, 130, 100, 20, 14, Color.BLACK));
+			cbTipoRecebivel = ComboBoxTipoRecebivelDto.novo(580, 130, 350, 20);
 
-			this.add(new Label("Seu Número: ", 10, 240, 100, 20, 14, Color.BLACK));
-			seuNumero = new Text(110, 240, 300, 20, true);
-			this.add(new Botao("@", 410, 240, 50, 20, getActionGerarSeuNumero()));
-			this.add(new Label("Número Doc.: ", 470, 240, 100, 20, 14, Color.BLACK));
-			numeroDocumento = new Text(580, 240, 150, 20, true);
-			this.add(new Botao("@", 730, 240, 50, 20, getActionGerarNumeroDocumento()));
+			this.add(new Label("Seu Número: ", 10, 160, 100, 20, 14, Color.BLACK));
+			seuNumero = new Text(110, 160, 250, 20, true);
+			this.add(new Botao("@", 360, 160, 50, 20, getActionGerarSeuNumero()));
+			this.add(new Label("Número Doc.: ", 420, 160, 100, 20, 14, Color.BLACK));
+			numeroDocumento = new Text(510, 160, 150, 20, true);
+			this.add(new Botao("@", 660, 160, 50, 20, getActionGerarNumeroDocumento()));
+			this.add(new Label("Chave Nfe: ", 720, 160, 100, 20, 14, Color.BLACK));
+			chaveNfe = new Text(790, 160, 280, 20, true);
+			this.add(new Botao("@", 1070, 160, 50, 20, getActionGerarChaveNfe()));
+			this.add(new Label("Termo Cessão: ", 1130, 160, 100, 20, 14, Color.BLACK));
+			termoCessao = new Text(1220, 160, 150, 20, true);
+			this.add(new Botao("@", 1370, 160, 50, 20, getActionGerarTermoCessao()));
 			
-			this.add(new Label("Valor Título: ", 10, 270, 100, 20, 14, Color.BLACK));
-			valorTitulo = new Text(110, 270, 150, 20, true);
-			this.add(new Label("Valor Aquisição: ", 470, 270, 100, 20, 14, Color.BLACK));
-			valorAquisicao = new Text(580, 270, 150, 20, true);
+			this.add(new Label("Valor Título: ", 10, 190, 100, 20, 14, Color.BLACK));
+			valorTitulo = new Text(110, 190, 150, 20, true);
+			this.add(new Label("Valor Aquisição: ", 270, 190, 100, 20, 14, Color.BLACK));
+			valorAquisicao = new Text(380, 190, 150, 20, true);
 			
-			this.add(new Label("Chave Nfe: ", 10, 300, 100, 20, 14, Color.BLACK));
-			chaveNfe = new Text(110, 300, 300, 20, true);
-			this.add(new Botao("@", 410, 300, 50, 20, getActionGerarChaveNfe()));
-			this.add(new Label("Termo Cessão: ", 470, 300, 100, 20, 14, Color.BLACK));
-			termoCessao = new Text(580, 300, 150, 20, true);
-			this.add(new Botao("@", 730, 300, 50, 20, getActionGerarTermoCessao()));
+
 			
 			this.add(new Label("Indexador: ", 10, 330, 100, 20, 14, Color.BLACK));
 			cbIndexador = ComboBoxIndexadorDto.novo(110, 330, 100, 20);
@@ -298,7 +298,7 @@ public class GerarCnabAquisicao extends JPanel {
 			tabela.repaint();
 			
 			JScrollPane scroll = new JScrollPane(tabela);
-			scroll.setBounds(10, 430, 920, 200);
+			scroll.setBounds(10, 430, ConfigTela.largura, 200);
 			
 			this.add(scroll);
 
@@ -595,6 +595,7 @@ public class GerarCnabAquisicao extends JPanel {
 	private void preencherComboIndexador() throws Exception {
 		List<IndexadorDto> indexadores = indexadorService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
 		cbIndexador.removeAllItems();
+		cbIndexador.addItem(new IndexadorDto(null, null, "Selecione"));
 		if(indexadores != null && !indexadores.isEmpty()) {
 			for(IndexadorDto indexador : indexadores) {
 				cbIndexador.addItem(indexador);
