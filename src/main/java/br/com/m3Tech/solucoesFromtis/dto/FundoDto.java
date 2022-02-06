@@ -13,6 +13,8 @@ public class FundoDto {
 	
 	private Integer idFundo;
 	private String nomeFundo;
+	private String cnpjFundo;
+	private String codigoIsin;
 	private Integer layoutAquisicao;
 	private LocalDate dataFundo;
 	

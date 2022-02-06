@@ -38,6 +38,8 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				FundoDto fundo = new FundoDto(rs.getInt("ID_FUNDO"), 
 											  rs.getString("NM_FUNDO"), 
+											  rs.getString("NU_CNPJ"),
+											  rs.getString("CODIGO_ISIN"),
 											  rs.getInt("LAYOUT_AQUISICAO"),
 											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
 				
@@ -59,7 +61,7 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 		
 		try {
 			
-			String sqlQuery = "SELECT ID_FUNDO, NM_FUNDO, DT_FUNDO, LAYOUT_AQUISICAO\r\n" + 
+			String sqlQuery = "SELECT ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO\r\n" + 
 					"FROM TB_FUNDO F\r\n" + 
 					"WHERE F.IC_PERMITIR_PRORROGACAO = 1";
 			
@@ -75,6 +77,8 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				FundoDto fundo = new FundoDto(rs.getInt("ID_FUNDO"), 
 											  rs.getString("NM_FUNDO"), 
+											  rs.getString("NU_CNPJ"),
+											  rs.getString("CODIGO_ISIN"),
 											  rs.getInt("LAYOUT_AQUISICAO"),
 											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
 				
@@ -106,6 +110,8 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				fundo = new FundoDto(rs.getInt("ID_FUNDO"), 
 											  rs.getString("NM_FUNDO"), 
+											  rs.getString("NU_CNPJ"),
+											  rs.getString("CODIGO_ISIN"),
 											  rs.getInt("LAYOUT_AQUISICAO"),
 											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
 				

@@ -52,6 +52,7 @@ import br.com.m3Tech.solucoesFromtis.service.IRiscoService;
 import br.com.m3Tech.solucoesFromtis.service.ISacadoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
+import br.com.m3Tech.solucoesFromtis.telas.componentes.CheckBox;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBase;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxCedenteDto;
@@ -66,6 +67,7 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxSacadoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
+import br.com.m3Tech.solucoesFromtis.util.GeradorArquivoCnabUtils;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.LocalDateUtils;
@@ -100,6 +102,8 @@ public class GerarCnabAquisicao extends JPanel {
 	private Text termoCessao;
 	private Text path;
 	private Text variacaoCambial;
+	
+	private CheckBox importacaoAutomatica;
 	
 	private JTable tabela;
 	
@@ -219,6 +223,8 @@ public class GerarCnabAquisicao extends JPanel {
 			
 			iniciarTabela();
 			
+			
+			importacaoAutomatica = new CheckBox("Importação Automática?", 10, 630, 180, 20, 14, getActionImportacaoAutomatica());
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
 			path = new Text(130, 650, 500, 20, true);
 			this.add(new Botao("Gerar Cnab", 650, 650, 100, 20, getActionGerarCnab()));
@@ -262,6 +268,7 @@ public class GerarCnabAquisicao extends JPanel {
 			this.add(valorAquisicao);
 			this.add(chaveNfe);
 			this.add(termoCessao);
+			this.add(importacaoAutomatica);
 			this.add(path);
 			this.repaint();
 		
@@ -334,6 +341,8 @@ public class GerarCnabAquisicao extends JPanel {
 					preencherComboIndexador();
 					preencherComboRisco();
 					preencherComboTipoRecebivel();
+					importacaoAutomatica.setSelected(false);
+					path.setText(confGlobalService.getConfGlobal().getPath());
 				} catch (Exception e1) {
 					erro.setText(e1.getMessage());
 				}
@@ -366,34 +375,13 @@ public class GerarCnabAquisicao extends JPanel {
 					ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 					cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 					confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-					confGlobal.setPath(path.getText());
+					if(!importacaoAutomatica.isSelected()) {
+						confGlobal.setPath(path.getText());
+					}
+					
 					confGlobal.save();
 					
-					StreamFactory factory = StreamFactory.newInstance();
-			        
-					factory.loadResource("beanio.xml");
-			        
-			        File pathArquivo = new File(path.getText());
-			        
-			        if(!pathArquivo.exists()) {
-			        	pathArquivo.mkdirs();
-			        }
-			        
-			        File arquivoFinal = new File(pathArquivo, getNomeArquivo(cnab.getNumSeqArquivo()));
-			        
-			        BeanWriter out = factory.createWriter(cnab.getLayout().getNmLayout(),arquivoFinal );        
-			                
-			        out.write(new CnabHeader(cnab));
-			        int qtdeTitulos = 2;
-			        for(TituloDto dto : cnab.getTitulos()) {
-			        	out.write(new CnabDetail(dto, qtdeTitulos++));
-			        }
-			        out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));
-			        
-			        out.flush();
-			        out.close();
-			        
-			        System.out.println("Fim da Geração");
+					GeradorArquivoCnabUtils.gerar(cnab, "AQUISICAO", importacaoAutomatica.isSelected(), path.getText());
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
@@ -411,6 +399,43 @@ public class GerarCnabAquisicao extends JPanel {
 		};
 	}
 	
+	private ActionListener getActionImportacaoAutomatica() {
+		return new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if(importacaoAutomatica.isSelected()) {
+						
+						String pathRepositorio = confGlobalService.getPathRepositorio(Conexao.getConnection((Base)cbBase.getSelectedItem()));
+						
+						Base baseSelecionada = ((Base)cbBase.getSelectedItem());
+						
+						if(baseSelecionada.getVersaoMercado() != null && baseSelecionada.getVersaoMercado()) {
+								path.setText(pathRepositorio + File.separator + "ENCONTRADOR_ARQUIVO");
+							
+						}else {
+							FundoDto fundoSelecionado = ((FundoDto)cbFundo.getSelectedItem());
+							path.setText(pathRepositorio 
+									+ File.separator 
+									+ fundoSelecionado.getCodigoIsin()
+									+ File.separator
+									+ "REMESSA"
+									+ File.separator
+									+ fundoSelecionado.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"))
+									);
+														
+						}
+						
+					}else {
+						path.setText(confGlobalService.getConfGlobal().getPath());
+					}
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		};
+	}
+			
 
 	private ActionListener getActionAdicionarTitulo() {
 		return new ActionListener() {
@@ -592,15 +617,19 @@ public class GerarCnabAquisicao extends JPanel {
 		}
 	}
 	
-	private void preencherComboIndexador() throws Exception {
-		List<IndexadorDto> indexadores = indexadorService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
-		cbIndexador.removeAllItems();
-		cbIndexador.addItem(new IndexadorDto(null, null, "Selecione"));
-		if(indexadores != null && !indexadores.isEmpty()) {
-			for(IndexadorDto indexador : indexadores) {
-				cbIndexador.addItem(indexador);
+	private void preencherComboIndexador()  {
+		try {
+			List<IndexadorDto> indexadores = indexadorService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()));
+			cbIndexador.removeAllItems();
+			cbIndexador.addItem(new IndexadorDto(null, null, "Selecione"));
+			if(indexadores != null && !indexadores.isEmpty()) {
+				for(IndexadorDto indexador : indexadores) {
+					cbIndexador.addItem(indexador);
+				}
+				
 			}
-			
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -658,9 +687,7 @@ public class GerarCnabAquisicao extends JPanel {
 		}
 	}
 	
-	private String getNomeArquivo(Integer seq) {
-		return "CNAB_" + cnab.getLayout().getTamLayout() + "_AQUISICAO_" + LocalDate.now().toString().replaceAll("-", "")+ "_" + seq +".txt";
-	}
+	
 
 
 }

@@ -61,7 +61,7 @@ public class CadastrarBase extends JPanel {
 		url = new Text(10, 80, 350, 20,true);
 		usuario = new Text(370, 80, 190, 20,true);
 		senha = new Text(570, 80, 190, 20,true);
-		versaoMercado = new CheckBox("Versão Mercado", 770, 80, 130, 20, 14);
+		versaoMercado = new CheckBox("Versão Mercado", 770, 80, 130, 20, 14,null);
 		
 		this.add(url);
 		this.add(usuario);

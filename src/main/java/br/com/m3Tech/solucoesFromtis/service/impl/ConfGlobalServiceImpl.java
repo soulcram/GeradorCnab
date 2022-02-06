@@ -1,5 +1,9 @@
 package br.com.m3Tech.solucoesFromtis.service.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -42,6 +46,32 @@ public class ConfGlobalServiceImpl implements IConfGlobalService{
 		}
 
 		return null;
+	}
+	
+	@Override
+	public String getPathRepositorio(Connection con) {
+		
+		
+		try {
+			
+			String sqlQuery = "SELECT TOP 1 DS_PATH_REPOSITORIO FROM TB_GLOBAL_CONFIG";
+			
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			if(rs.next()) {
+				return rs.getString("DS_PATH_REPOSITORIO");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "";
 	}
 
 

@@ -129,7 +129,7 @@ public class TestesDiversos extends JPanel {
 			this.add(new Label("Selecionar Base", 10, 40, 100, 20, 14, Color.BLACK));
 			cbBase = ComboBoxBase.novo(110, 40, 350, 20, getActionCbBase());
 			
-			testarProcedures = new CheckBox("Testar Procedures", 10, 90, 150, 20, 14);
+			testarProcedures = new CheckBox("Testar Procedures", 10, 90, 150, 20, 14,null);
 			
 			this.add(new Label("Fundo: ", 480, 40, 100, 20, 14, Color.BLACK));
 			cbFundo = ComboBoxFundoDto.novo(600, 40, 350, 20, getActionCbFundoDto());
