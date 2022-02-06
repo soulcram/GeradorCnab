@@ -305,6 +305,7 @@ public class TestesDiversos extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
+					
 					preencherComboFundos();
 //					preencherComboBanco();
 //					preencherComboMovimento();
@@ -501,6 +502,9 @@ public class TestesDiversos extends JPanel {
 				if(cbFundo != null && cbFundo.getItemCount() > 0) {
 					try {
 					
+						DefaultTableModel model = (DefaultTableModel) tabela.getModel();
+						model.setNumRows(0);
+						
 //						dataGravacao.setText(((FundoDto)cbFundo.getSelectedItem()).getDataFundo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 //					
 //						preencherComboOriginador();

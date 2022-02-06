@@ -6,26 +6,52 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.ArquivoDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoService;
+import br.com.m3Tech.solucoesFromtis.service.ITabelaService;
+import br.com.m3Tech.solucoesFromtis.util.LocalDateUtils;
+import br.com.m3Tech.solucoesFromtis.util.MontarQueryUtils;
 
 
 @Service
 public class ArquivoServiceImpl implements IArquivoService, Serializable{
 
 	private static final long serialVersionUID = 1L;
+	
+	private final ITabelaService tabelaService;
+	
+	@Autowired
+	public ArquivoServiceImpl(final ITabelaService tabelaService) {
+		this.tabelaService =  tabelaService;
+	}
 
 	@Override
 	public ArquivoDto inserirTbArquivo(Connection con, FundoDto fundo, String nomeArquivo) throws SQLException {
 		
-		String sqlQuery = "INSERT INTO TB_ARQUIVO(IC_COMPACTADO,DT_ENTRADA,DT_IMPORTACAO, CD_LAYOUT, NM_ARQUIVO, NM_ARQUIVO_ENTRADA,IC_PROC_REMOCAO,IC_STATUS_PROC,IC_TEMPORARIO,ID_FUNDO,ID_USUARIO,TIPO_LAYOUT,IC_ARQUIVO_RETORNO_GERADO)\r\n" + 
-				"values(0,Convert(Date,'" + fundo.getDataFundo().toString() +"'),"
-			  + "Convert(Date,'" + fundo.getDataFundo().toString() +"'), " + fundo.getLayoutAquisicao() +", '" + nomeArquivo +"', '" + nomeArquivo +"',0,'A',0,1,1,'R',0)";
+		Map<String,String> parametros = new HashMap<>();
+		
+		parametros.put("NM_ARQUIVO", "'"+nomeArquivo+"'");
+		parametros.put("DT_ENTRADA", "Convert(Date,'" + fundo.getDataFundo().toString() + "')");
+		parametros.put("DT_IMPORTACAO", "Convert(Date,'" + fundo.getDataFundo().toString() + "')");
+		parametros.put("CD_LAYOUT", fundo.getLayoutAquisicao().toString());
+		parametros.put("NM_ARQUIVO_ENTRADA", "'"+nomeArquivo+"'");
+		parametros.put("IC_STATUS_PROC", "'A'");
+		parametros.put("IC_TEMPORARIO", "0");
+		parametros.put("ID_USUARIO", "1");
+		parametros.put("ID_FUNDO", fundo.getIdFundo().toString());
+		parametros.put("TIPO_LAYOUT", "'R'");
+		parametros.put("IC_ARQUIVO_RETORNO_GERADO", "0");
+		
+		
+		String sqlQuery = MontarQueryUtils.getQueryInsert(parametros, tabelaService.getTabela(con, "TB_ARQUIVO"), "ID_ARQUIVO");
 		
 		PreparedStatement ps = con.prepareStatement(sqlQuery);
 		
@@ -35,17 +61,18 @@ public class ArquivoServiceImpl implements IArquivoService, Serializable{
 	}
 
 	@Override
-	public boolean inserirTbArquivoImportado(Connection con, List<String> cnab, ArquivoDto arquivo) throws SQLException {
-		String sqlQuery = "INSERT INTO TB_ARQUIVO_IMPORTADO(ID_ARQUIVO,TP_REGISTRO,DS_REGISTRO,NU_SEQ_REGISTRO,ID_MOTIVO_REJEICAO,TP_REG_ARQUIVO_IMPORTADO,DS_NOSSO_NUMERO)\r\n" + 
-				"SELECT " +arquivo.getIdArquivo() + ",0,'"+cnab.get(0)+"',1,null,'R',null\r\n" + 
+	public boolean inserirTbArquivoImportado(Connection con, List<String> cnab, ArquivoDto arquivo) throws SQLException {	
+		
+		String sqlQuery = "INSERT INTO TB_ARQUIVO_IMPORTADO(ID_ARQUIVO,TP_REGISTRO,DS_REGISTRO,NU_SEQ_REGISTRO,ID_MOTIVO_REJEICAO,TP_REG_ARQUIVO_IMPORTADO)\r\n" + 
+				"SELECT " +arquivo.getIdArquivo() + ",0,'"+cnab.get(0)+"',1,null,'R'\r\n" + 
 				"\r\n" + 
 				"UNION ALL\r\n" + 
 				"\r\n" + 
-				"SELECT " +arquivo.getIdArquivo() + ",1,'"+cnab.get(1)+"',2,null,'R',null\r\n" + 
+				"SELECT " +arquivo.getIdArquivo() + ",1,'"+cnab.get(1)+"',2,null,'R'\r\n" + 
 				"\r\n" + 
 				"UNION ALL\r\n" + 
 				"\r\n" + 
-				"SELECT " +arquivo.getIdArquivo() + ",9,'"+cnab.get(2)+"',3,null,'R',null\r\n" + 
+				"SELECT " +arquivo.getIdArquivo() + ",9,'"+cnab.get(2)+"',3,null,'R'\r\n" + 
 				"";
 		
 		PreparedStatement ps = con.prepareStatement(sqlQuery);
@@ -97,97 +124,11 @@ public class ArquivoServiceImpl implements IArquivoService, Serializable{
 		if(rs.next()) {
 			retorno = new ArquivoDto(rs.getInt("ID_ARQUIVO"), 
                                      rs.getString("NM_ARQUIVO"), 
-                                     LocalDate.parse(rs.getString("DT_ENTRADA"))
+                                     LocalDateUtils.getLocalDate(rs.getString("DT_ENTRADA"))
                                       );
 		}
 		
 		return retorno;
 	}
-
-
-//	public List<CedenteDto> findAll(Connection con, Integer idFundo) {
-//		
-//		List<CedenteDto> cedentes = new ArrayList<CedenteDto>();
-//		
-//		try {
-//			PreparedStatement ps = con.prepareStatement(Querys.ALL_CEDENTES);
-//			
-//			ps.setInt(1, idFundo);
-//			
-//			ps.execute();
-//			
-//			ResultSet rs = ps.getResultSet();
-//			
-//			while(rs.next()) {
-//				CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
-//											  rs.getString("NM_CEDENTE"), 
-//											  rs.getString("NU_CPF_CNPJ"),
-//											  rs.getString("TP_COOBRIGACAO"));
-//				
-//				cedentes.add(cedente);
-//			}
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return cedentes;
-//	}
-//
-//	public CedenteDto findOneById(Connection con, Integer idCedente) {
-//		CedenteDto cedente = null;
-//		
-//		try {
-//			PreparedStatement ps = con.prepareStatement(Querys.ONE_CEDENTE);
-//			
-//			ps.setInt(1, idCedente);
-//			
-//			ps.execute();
-//			
-//			ResultSet rs = ps.getResultSet();
-//			
-//			while(rs.next()) {
-//				cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
-//											  rs.getString("NM_CEDENTE"), 
-//											  rs.getString("NU_CPF_CNPJ"),
-//											  rs.getString("TP_COOBRIGACAO"));
-//				
-//			}
-//			
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return cedente;
-//	}
-//
-//	@Override
-//	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo) throws SQLException {
-//
-//		CedenteDto cedente = null;
-//
-//		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, TP_COOBRIGACAO FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
-//
-//		PreparedStatement ps = con.prepareStatement(sqlQuery);
-//
-//		ps.execute();
-//
-//		ResultSet rs = ps.getResultSet();
-//
-//		if(rs.next()) {
-//			cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
-//					rs.getString("NM_CEDENTE"), 
-//					rs.getString("NU_CPF_CNPJ"), 
-//					rs.getString("TP_COOBRIGACAO"));
-//
-//		}
-//
-//		return cedente;
-//	}
-	
-	
-
 
 }

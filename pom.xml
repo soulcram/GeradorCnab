@@ -91,33 +91,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>br.com.m3Tech.solucoesFromtis.App</mainClass>
-						</manifest>
-					</archive>
-					<resources>
-						<resource>
-							<directory>src/main/resources</directory>
-						</resource>
-						<resource>
-							<directory>src/main/java</directory>
-							<includes>
-								<include>**/*.xml</include>
-							</includes>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
 		</plugins>
 
 		<finalName>SolucoesFromtis</finalName>
