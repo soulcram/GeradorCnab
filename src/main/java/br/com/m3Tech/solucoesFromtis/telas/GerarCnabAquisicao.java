@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,13 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.beanio.BeanWriter;
-import org.beanio.StreamFactory;
 import org.springframework.stereotype.Controller;
 
-import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler;
+import com.google.common.base.Preconditions;
+
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
@@ -45,6 +41,7 @@ import br.com.m3Tech.solucoesFromtis.service.IBancoService;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
 import br.com.m3Tech.solucoesFromtis.service.IIndexadorService;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
@@ -67,7 +64,6 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxSacadoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
-import br.com.m3Tech.solucoesFromtis.util.GeradorArquivoCnabUtils;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.LocalDateUtils;
@@ -122,6 +118,7 @@ public class GerarCnabAquisicao extends JPanel {
 	private final IConfGlobalService confGlobalService;
 	private final IIndexadorService indexadorService;
 	private final IRiscoService riscoService;
+	private final IGeradorCnab geradorCnab;
 
 	
 	public GerarCnabAquisicao(final IFundoService fundoService,
@@ -133,7 +130,8 @@ public class GerarCnabAquisicao extends JPanel {
 			  final ITipoRecebivelService tipoRecebivelService,
 			  final IConfGlobalService confGlobalService,
 			  final IIndexadorService indexadorService,
-			  final IRiscoService riscoService) {
+			  final IRiscoService riscoService,
+			  final IGeradorCnab geradorCnab) {
 
 		this.fundoService = fundoService;
 		this.originadorService = originadorService;
@@ -145,6 +143,7 @@ public class GerarCnabAquisicao extends JPanel {
 		this.confGlobalService = confGlobalService;
 		this.indexadorService = indexadorService;
 		this.riscoService = riscoService;
+		this.geradorCnab = geradorCnab;
 		
 		try {
 			
@@ -381,7 +380,7 @@ public class GerarCnabAquisicao extends JPanel {
 					
 					confGlobal.save();
 					
-					GeradorArquivoCnabUtils.gerar(cnab, "AQUISICAO", importacaoAutomatica.isSelected(), path.getText());
+					geradorCnab.gerar(cnab, "AQUISICAO", importacaoAutomatica.isSelected(), path.getText());
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
@@ -404,32 +403,18 @@ public class GerarCnabAquisicao extends JPanel {
 			
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(importacaoAutomatica.isSelected()) {
-						
-						String pathRepositorio = confGlobalService.getPathRepositorio(Conexao.getConnection((Base)cbBase.getSelectedItem()));
-						
-						Base baseSelecionada = ((Base)cbBase.getSelectedItem());
-						
-						if(baseSelecionada.getVersaoMercado() != null && baseSelecionada.getVersaoMercado()) {
-								path.setText(pathRepositorio + File.separator + "ENCONTRADOR_ARQUIVO");
-							
-						}else {
-							FundoDto fundoSelecionado = ((FundoDto)cbFundo.getSelectedItem());
-							path.setText(pathRepositorio 
-									+ File.separator 
-									+ fundoSelecionado.getCodigoIsin()
-									+ File.separator
-									+ "REMESSA"
-									+ File.separator
-									+ fundoSelecionado.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"))
-									);
-														
-						}
-						
-					}else {
-						path.setText(confGlobalService.getConfGlobal().getPath());
-					}
+					
+					Base base = ((Base)cbBase.getSelectedItem());
+					FundoDto fundoSelecionado = ((FundoDto)cbFundo.getSelectedItem());
+					
+					Preconditions.checkNotNull(base, "É obrigatório selecionar uma base");
+					Preconditions.checkArgument(!base.getUrl().equals("Selecione"), "É obrigatório selecionar uma base");
+					Preconditions.checkNotNull(fundoSelecionado, "É obrigatório selecionar uma base");
+					
+					path.setText(confGlobalService.getPathSalvarArquivo(Conexao.getConnection(base), importacaoAutomatica.isSelected(), base.getVersaoMercado(), fundoSelecionado));
+
 				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
 					e1.printStackTrace();
 				}
 			}

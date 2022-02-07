@@ -1,22 +1,26 @@
-package br.com.m3Tech.solucoesFromtis.util;
+package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.File;
 import java.time.LocalDate;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
+import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
 import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
 import br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler;
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
+import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 
-public class GeradorArquivoCnabUtils {
-	
-	private GeradorArquivoCnabUtils() {}
-	
-	public static void gerar(CnabDto cnab, String tipo, Boolean importacaoAutomatica, String path) {
+@Service
+public class GeradorCnabImpl implements IGeradorCnab {
+
+
+	@Override
+	public void gerar(CnabDto cnab, String tipo, Boolean importacaoAutomatica, String path) {
 		
 		StreamFactory factory = StreamFactory.newInstance();
         
@@ -59,5 +63,7 @@ public class GeradorArquivoCnabUtils {
 				+ cnab.getNumSeqArquivo() 
 				+ ".txt";
 	}
+
+	
 
 }

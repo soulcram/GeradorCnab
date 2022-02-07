@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -19,14 +18,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.beanio.BeanWriter;
-import org.beanio.StreamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler;
+import com.google.common.base.Preconditions;
+
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
@@ -44,11 +40,13 @@ import br.com.m3Tech.solucoesFromtis.service.IBancoService;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
 import br.com.m3Tech.solucoesFromtis.service.ISacadoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
+import br.com.m3Tech.solucoesFromtis.telas.componentes.CheckBox;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBancoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxBase;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxCedenteDto;
@@ -61,7 +59,6 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxSacadoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
-import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.LocalDateUtils;
 
@@ -97,6 +94,8 @@ public class GerarCnabRecompra extends JPanel {
 	
 	private Label erro;
 	
+	private CheckBox importacaoAutomatica;
+	
 	private CnabDto cnab;
 	private TituloDto titulo;
 	private List<TituloDto> titulosEmEstoque;
@@ -109,6 +108,7 @@ public class GerarCnabRecompra extends JPanel {
 	private final IMovimentoService movimentoService;
 	private final ITipoRecebivelService tipoRecebivelService;
 	private final IConfGlobalService confGlobalService;
+	private final IGeradorCnab geradorCnab;
 
 	@Autowired
 	public GerarCnabRecompra(final IFundoService fundoService,
@@ -118,7 +118,8 @@ public class GerarCnabRecompra extends JPanel {
 			final ISacadoService sacadoService,
 			final IMovimentoService movimentoService,
 			final ITipoRecebivelService tipoRecebivelService,
-			final IConfGlobalService confGlobalService) {
+			final IConfGlobalService confGlobalService,
+			  final IGeradorCnab geradorCnab) {
 
 		this.fundoService = fundoService;
 		this.originadorService = originadorService;
@@ -128,6 +129,7 @@ public class GerarCnabRecompra extends JPanel {
 		this.movimentoService = movimentoService;
 		this.tipoRecebivelService = tipoRecebivelService;
 		this.confGlobalService = confGlobalService;
+		this.geradorCnab = geradorCnab;
 		
 		try {
 			
@@ -194,7 +196,7 @@ public class GerarCnabRecompra extends JPanel {
 			
 			this.add(new Botao("Adicionar Título", 400, 490, 150, 20, getActionAdicionarTituloAquisicao()));
 		
-			
+			importacaoAutomatica = new CheckBox("Importação Automática?", 10, 630, 180, 20, 14, getActionImportacaoAutomatica());
 			this.add(new Label("Salvar Cnab em: ", 10, 650, 110, 20, 14, Color.BLACK));
 			path = new Text(130, 650, 500, 20, true);
 			this.add(new Botao("Gerar Cnab", 650, 650, 100, 20, getActionGerarCnab()));
@@ -236,6 +238,7 @@ public class GerarCnabRecompra extends JPanel {
 			this.add(valorAquisicao);
 			this.add(chaveNfe);
 			this.add(termoCessao);
+			this.add(importacaoAutomatica);
 			this.add(path);
 			this.repaint();
 		
@@ -466,34 +469,13 @@ public class GerarCnabRecompra extends JPanel {
 					ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 					cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 					confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-					confGlobal.setPath(path.getText());
+					if(!importacaoAutomatica.isSelected()) {
+						confGlobal.setPath(path.getText());
+					}
+					
 					confGlobal.save();
 					
-					StreamFactory factory = StreamFactory.newInstance();
-			        
-					factory.loadResource("beanio.xml");
-			        
-			        File pathArquivo = new File(path.getText());
-			        
-			        if(!pathArquivo.exists()) {
-			        	pathArquivo.mkdirs();
-			        }
-			        
-			        File arquivoFinal = new File(pathArquivo, getNomeArquivo(cnab.getNumSeqArquivo()));
-			        
-			        BeanWriter out = factory.createWriter(cnab.getLayout().getNmLayout(),arquivoFinal );        
-			                
-			        out.write(new CnabHeader(cnab));
-			        int qtdeTitulos = 2;
-			        for(TituloDto dto : cnab.getTitulos()) {
-			        	out.write(new CnabDetail(dto, qtdeTitulos++));
-			        }
-			        out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));
-			        
-			        out.flush();
-			        out.close();
-			        
-			        System.out.println("Fim da Geração");
+					geradorCnab.gerar(cnab, "RECOMPRA", importacaoAutomatica.isSelected(), path.getText());
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
@@ -709,8 +691,27 @@ public class GerarCnabRecompra extends JPanel {
 		}
 	}
 	
-	private String getNomeArquivo(Integer seq) {
-		return "CNAB_" + cnab.getLayout().getTamLayout() + "_RECOMPRA_" + LocalDate.now().toString().replaceAll("-", "")+ "_" + seq +".txt";
+	private ActionListener getActionImportacaoAutomatica() {
+		return new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				try {
+					
+					Base base = ((Base)cbBase.getSelectedItem());
+					FundoDto fundoSelecionado = ((FundoDto)cbFundo.getSelectedItem());
+					
+					Preconditions.checkNotNull(base, "É obrigatório selecionar uma base");
+					Preconditions.checkArgument(!base.getUrl().equals("Selecione"), "É obrigatório selecionar uma base");
+					Preconditions.checkNotNull(fundoSelecionado, "É obrigatório selecionar uma base");
+					
+					path.setText(confGlobalService.getPathSalvarArquivo(Conexao.getConnection(base), importacaoAutomatica.isSelected(), base.getVersaoMercado(), fundoSelecionado));
+
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, e1.getMessage());
+					e1.printStackTrace();
+				}
+			}
+		};
 	}
 
 

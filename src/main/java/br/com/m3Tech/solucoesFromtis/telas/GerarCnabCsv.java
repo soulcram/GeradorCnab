@@ -23,14 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.beanio.BeanWriter;
-import org.beanio.StreamFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import br.com.m3Tech.solucoesFromtis.beanio.CnabDetail;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabHeader;
-import br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler;
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
@@ -46,6 +41,7 @@ import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.service.IBancoService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Botao;
@@ -57,7 +53,6 @@ import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxMovimentoDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxOriginadorDto;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Text;
-import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.utils.LocalDateUtils;
 
 @Controller
@@ -89,19 +84,22 @@ public class GerarCnabCsv extends JPanel {
 	private final IBancoService bancoService;
 	private final IMovimentoService movimentoService;
 	private final IConfGlobalService confGlobalService;
+	private final IGeradorCnab geradorCnab;
 
 	@Autowired
 	public GerarCnabCsv(final IFundoService fundoService,
 			final IOriginadorService originadorService,
 			final IBancoService bancoService,
 			final IMovimentoService movimentoService,
-			final IConfGlobalService confGlobalService) {
+			final IConfGlobalService confGlobalService,
+			  final IGeradorCnab geradorCnab) {
 
 		this.fundoService = fundoService;
 		this.originadorService = originadorService;
 		this.bancoService = bancoService;
 		this.movimentoService = movimentoService;
 		this.confGlobalService = confGlobalService;
+		this.geradorCnab = geradorCnab;
 		
 		try {
 			
@@ -213,18 +211,6 @@ public class GerarCnabCsv extends JPanel {
 					confGlobal.setPath(path.getText());
 					confGlobal.save();
 					
-					StreamFactory factory = StreamFactory.newInstance();
-			        
-					factory.loadResource("beanio.xml");
-								        
-			        File pathArquivo = new File(path.getText());
-			        
-			        if(!pathArquivo.exists()) {
-			        	pathArquivo.mkdirs();
-			        }
-			        
-			        File arquivoFinal = new File(pathArquivo, getNomeArquivo(cnab.getNumSeqArquivo()));
-			        			        
 			        carregarTitulosApartirDoCSv();
 
 			        if(cnab.getTitulos().isEmpty()) {
@@ -237,19 +223,9 @@ public class GerarCnabCsv extends JPanel {
 						return;
 					}
 			        
-			        BeanWriter out = factory.createWriter(cnab.getLayout().getNmLayout(),arquivoFinal );        
-			                
-			        out.write(new CnabHeader(cnab));
-			        int qtdeTitulos = 2;
-			        for(TituloDto dto : cnab.getTitulos()) {
-			        	out.write(new CnabDetail(dto, qtdeTitulos++));
-			        }
-			        out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));
-			        
-			        out.flush();
-			        out.close();
-			        
-			        System.out.println("Fim da Geração");
+			     
+					
+					geradorCnab.gerar(cnab, "AQUISICAO", false, path.getText());
 			        
 			        erro.setText("Cnab Gerado com sucesso");
 			        
