@@ -6,7 +6,7 @@ public class Testando {
 
 	public static void main(String[] args) throws IOException {
 		
-			System.out.println("Maquina Sinqia - Testando GIT");
+			System.out.println("Maquina Sinqia - Testando GIT novo Teste");
 		
 	}
 
