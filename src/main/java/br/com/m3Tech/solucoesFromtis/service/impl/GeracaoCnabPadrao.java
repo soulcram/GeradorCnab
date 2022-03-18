@@ -23,6 +23,7 @@ import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
 import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.service.IBancoService;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
@@ -68,7 +69,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 	private TituloDto titulo;
 
 	@Override
-	public void gerarCnabAquisicao(Connection con, FundoDto fundo) throws Exception {
+	public void gerarCnabAquisicao(Connection con, FundoDto fundo, Base base) throws Exception {
 		
 			cnab = new CnabDto();
 			titulo = new TituloDto();
@@ -80,7 +81,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 			
 	
 			BigDecimal valor = ValorAleatorioUtil.getValorDecimal();
-			CedenteDto cedenteSelecionado = getCedenteSelecionado(con, fundo.getIdFundo());
+			CedenteDto cedenteSelecionado = getCedenteSelecionado(con, fundo.getIdFundo(), base);
 			SacadoDto sacadoSelecionado = getSacadoSelecionado(con, fundo.getIdFundo());
 	
 			titulo.setValorTitulo(valor);
@@ -169,8 +170,8 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 		return sacadoService.getPrimeiroSacado(con, idFundo);
 	}
 
-	private CedenteDto getCedenteSelecionado(Connection con, Integer idFundo) throws SQLException {
-		return cedenteService.getPrimeiroCedente(con, idFundo);
+	private CedenteDto getCedenteSelecionado(Connection con, Integer idFundo, Base base) throws SQLException {
+		return cedenteService.getPrimeiroCedente(con, idFundo, base);
 	}
 
 }

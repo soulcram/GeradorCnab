@@ -284,6 +284,8 @@ public class GerarCnabCsv extends JPanel {
 						colunas[12], //termoCessao, 
 						colunas[13], //chaveNfe, 
 						null,
+						null,
+						null,
 						null, //valorPago, 
 						new BigDecimal(colunas[14].replaceAll(",", ".")), //valorTitulo, 
 						new BigDecimal(colunas[15].replaceAll(",", ".")), //valorAquisicao, 
@@ -421,10 +423,7 @@ public class GerarCnabCsv extends JPanel {
 			
 		}
 	}
-	
-	private String getNomeArquivo(Integer seq) {
-		return "CNAB_" + cnab.getLayout().getTamLayout() + "_AQUISICAO_" + LocalDate.now().toString().replaceAll("-", "")+ "_" + seq +".txt";
-	}
+
 
 
 }

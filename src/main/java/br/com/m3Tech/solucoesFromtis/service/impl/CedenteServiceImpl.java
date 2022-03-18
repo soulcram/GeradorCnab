@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
-import br.com.m3Tech.solucoesFromtis.querys.Querys;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 
 
@@ -21,12 +21,17 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 	private static final long serialVersionUID = 1L;
 
 
-	public List<CedenteDto> findAll(Connection con, Integer idFundo) {
+	public List<CedenteDto> findAll(Connection con, Integer idFundo, Base base) {
 		
 		List<CedenteDto> cedentes = new ArrayList<CedenteDto>();
 		
+		String coob =  base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
+		
+		String sqlQuery =  "SELECT ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, "
+				 + coob + " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = ?";
+		
 		try {
-			PreparedStatement ps = con.prepareStatement(Querys.ALL_CEDENTES);
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, idFundo);
 			
@@ -38,7 +43,7 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 				CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 											  rs.getString("NM_CEDENTE"), 
 											  rs.getString("NU_CPF_CNPJ"),
-											  rs.getString("TP_COOBRIGACAO"));
+											  base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
 				
 				cedentes.add(cedente);
 			}
@@ -51,11 +56,16 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 		return cedentes;
 	}
 
-	public CedenteDto findOneById(Connection con, Integer idCedente) {
+	public CedenteDto findOneById(Connection con, Integer idCedente, Base base) {
 		CedenteDto cedente = null;
 		
+		String coob =  base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
+		
+		String sqlQuery = " SELECT ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, " 
+				+ coob +  " FROM TB_FUNDO_CEDENTE WHERE ID_CEDENTE = ?";
+		
 		try {
-			PreparedStatement ps = con.prepareStatement(Querys.ONE_CEDENTE);
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, idCedente);
 			
@@ -67,7 +77,7 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 				cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 											  rs.getString("NM_CEDENTE"), 
 											  rs.getString("NU_CPF_CNPJ"),
-											  rs.getString("TP_COOBRIGACAO"));
+											  base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
 				
 			}
 			
@@ -80,11 +90,14 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 	}
 
 	@Override
-	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo) throws SQLException {
+	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo, Base base) throws SQLException {
 
 		CedenteDto cedente = null;
+		
+		String coob =  base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
 
-		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, TP_COOBRIGACAO FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
+		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, "
+				+ coob + " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
 
 		PreparedStatement ps = con.prepareStatement(sqlQuery);
 
@@ -96,7 +109,7 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
 					rs.getString("NM_CEDENTE"), 
 					rs.getString("NU_CPF_CNPJ"), 
-					rs.getString("TP_COOBRIGACAO"));
+					base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
 
 		}
 

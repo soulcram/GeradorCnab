@@ -338,7 +338,7 @@ public class TestesDiversos extends JPanel {
 				try {
 					
 					if(testarProcedures.isSelected()) {
-						List<ResultadoTesteDto> retorno = testeService.testarProcedures(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()));
+						List<ResultadoTesteDto> retorno = testeService.testarProcedures(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()), ((Base) cbBase.getSelectedItem()));
 						
 						retorno.forEach(r -> {
 							

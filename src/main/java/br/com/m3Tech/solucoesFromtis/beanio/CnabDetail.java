@@ -45,6 +45,9 @@ public class CnabDetail {
 	private String tipoJuros;
 	private String variacaoCambial;
 	private String risco;
+	private String tipoPessoaOrigRecebivel;
+	private String cpfCnpjOrigRecebivel;
+	private String nomeOrigRecebivel;
 	
 	public CnabDetail(TituloDto dto,Integer numSeq) {
 		
@@ -67,16 +70,19 @@ public class CnabDetail {
 		this.dataEmissao = LocalDate.now();
 		this.tipoPessoaCedente = dto.getCedente().getDocCedente().length() == 11 ? "01" : "02";
 		this.docCedente = dto.getCedente().getDocCedente();
-		this.nomeCedente = dto.getCedente().getNomeCedente();
+		this.nomeCedente = StringUtils.removerAcentos(dto.getCedente().getNomeCedente());
 		this.termoCessao = dto.getTermoCessao();
 		this.valorAquisicao = dto.getValorAquisicao();
 		this.valorAbatimento = dto.getValorAbatimento();
 		this.tipoPessoaSacado = dto.getSacado().getDocSacado().length() == 11 ? "01" : "02";
 		this.docSacado = dto.getSacado().getDocSacado();
-		this.nomeSacado = dto.getSacado().getNomeSacado();
+		this.nomeSacado = StringUtils.removerAcentos(dto.getSacado().getNomeSacado());
 		this.enderecoSacado = dto.getSacado().getEndereco();
 		this.cepSacado = dto.getSacado().getCep();
 		this.chaveNfe = dto.getChaveNfe();
+//		this.tipoPessoaOrigRecebivel = dto.getDocOrigRecebivel().length() == 11 ? "01" : "02";;
+//		this.cpfCnpjOrigRecebivel = dto.getDocOrigRecebivel();
+//		this.nomeOrigRecebivel = dto.getNomeOrigRecebivel();
 		this.numSeqRegistro = StringUtils.getNumeroComZerosAEsquerda(numSeq,6) ;
 		
 		

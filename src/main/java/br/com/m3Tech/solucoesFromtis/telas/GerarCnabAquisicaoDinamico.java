@@ -230,7 +230,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 						return;
 					}
 					
-					cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
+					cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo(), (Base)cbBase.getSelectedItem());
 					sacados = sacadoService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
 					
 					cnab.setBanco((BancoDto)cbBanco.getSelectedItem());

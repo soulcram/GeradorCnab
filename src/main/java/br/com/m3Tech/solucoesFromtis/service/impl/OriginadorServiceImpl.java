@@ -24,8 +24,13 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 		
 		List<OriginadorDto> originadores = new ArrayList<OriginadorDto>();
 		
+		String sqlQuery = " SELECT ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA, NU_CPF_CNPJ\r\n" + 
+				" FROM TB_FUNDO_ORIGINADOR FO \r\n" + 
+				" INNER JOIN TB_PESSOA P ON P.ID_PESSOA = FO.ID_ORIGINADOR  \r\n" + 
+				" WHERE ID_FUNDO = ?";
+		
 		try {
-			PreparedStatement ps = con.prepareStatement(Querys.ALL_ORIGINADORES);
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, idFundo);
 			
@@ -36,7 +41,8 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 			while(rs.next()) {
 				OriginadorDto originador = new OriginadorDto(rs.getInt("ID_FUNDO_ORIGINADOR"), 
 											  rs.getString("DS_CODIGO_CEDENTE"),
-											  rs.getString("NM_PESSOA"));
+											  rs.getString("NM_PESSOA"),
+											  rs.getString("NU_CPF_CNPJ"));
 				
 				originadores.add(originador);
 			}
@@ -52,6 +58,8 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 	public OriginadorDto findOneById(Connection con, Integer idOriginador) {
 		OriginadorDto originador = null;
 		
+		String sqlQuery = "";
+		
 		try {
 			PreparedStatement ps = con.prepareStatement(Querys.ONE_ORIGINADOR);
 			
@@ -64,7 +72,8 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 			while(rs.next()) {
 				originador = new OriginadorDto(rs.getInt("ID_FUNDO_ORIGINADOR"), 
 											  rs.getString("DS_CODIGO_CEDENTE"),
-											  rs.getString("NM_PESSOA"));
+											  rs.getString("NM_PESSOA"),
+											  rs.getString("NU_CPF_CNPJ"));
 				
 			}
 			
@@ -80,7 +89,7 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 	public OriginadorDto getPrimeiroOriginador(Connection con, Integer idFundo) throws SQLException {
 		OriginadorDto originador = null;
 
-		String sqlQuery = "SELECT TOP 1 ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA\r\n"
+		String sqlQuery = "SELECT TOP 1 ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA,NU_CPF_CNPJ\r\n"
 				+ "FROM TB_FUNDO_ORIGINADOR FO \r\n" + "INNER JOIN TB_PESSOA P ON P.ID_PESSOA = FO.ID_ORIGINADOR  \r\n"
 				+ "WHERE ID_FUNDO = " + idFundo;
 		
@@ -92,7 +101,7 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 
 		while (rs.next()) {
 			originador = new OriginadorDto(rs.getInt("ID_FUNDO_ORIGINADOR"), rs.getString("DS_CODIGO_CEDENTE"),
-					rs.getString("NM_PESSOA"));
+					rs.getString("NM_PESSOA"),rs.getString("NU_CPF_CNPJ"));
 
 		}
 

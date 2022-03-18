@@ -748,7 +748,7 @@ private static final long serialVersionUID = 1L;
 	}
 	
 	private void preencherComboCedente() throws Exception {
-		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
+		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo(),((Base)cbBase.getSelectedItem()));
 		cbCedente.removeAllItems();
 		if(cedentes != null && !cedentes.isEmpty()) {
 			for(CedenteDto cedente : cedentes) {

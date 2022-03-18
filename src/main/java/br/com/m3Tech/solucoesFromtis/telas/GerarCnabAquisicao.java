@@ -98,6 +98,8 @@ public class GerarCnabAquisicao extends JPanel {
 	private Text termoCessao;
 	private Text path;
 	private Text variacaoCambial;
+	private Text docOrigRecebivel;
+	private Text nomeOrigRecebivel;
 	
 	private CheckBox importacaoAutomatica;
 	
@@ -204,6 +206,11 @@ public class GerarCnabAquisicao extends JPanel {
 			this.add(new Label("Valor Aquisição: ", 270, 190, 100, 20, 14, Color.BLACK));
 			valorAquisicao = new Text(380, 190, 150, 20, true);
 			
+			this.add(new Label("Doc Orig Recebivel: ", 10, 220, 100, 20, 14, Color.BLACK, true )); //LayoutEnum.in(((LayoutEnum)cbLayout.getSelectedItem()),94)
+			docOrigRecebivel = new Text(120, 220, 280, 20, true);
+			this.add(new Label("Nome Orig Recebivel: ", 410, 220, 100, 20, 14, Color.BLACK, true));
+			nomeOrigRecebivel = new Text(520, 220, 280, 20, true);
+			
 
 			
 			this.add(new Label("Indexador: ", 10, 330, 100, 20, 14, Color.BLACK));
@@ -267,6 +274,8 @@ public class GerarCnabAquisicao extends JPanel {
 			this.add(valorAquisicao);
 			this.add(chaveNfe);
 			this.add(termoCessao);
+			this.add(docOrigRecebivel);
+			this.add(nomeOrigRecebivel);
 			this.add(importacaoAutomatica);
 			this.add(path);
 			this.repaint();
@@ -480,6 +489,12 @@ public class GerarCnabAquisicao extends JPanel {
 				if(!"".equals(dataCarencia.getText())) {
 					titulo.setDataCarencia(LocalDateUtils.parseDate(dataCarencia.getText()));
 				}
+				if(!"".equals(docOrigRecebivel.getText())) {
+					titulo.setDocOrigRecebivel(docOrigRecebivel.getText());
+				}
+				if(!"".equals(nomeOrigRecebivel.getText())) {
+					titulo.setNomeOrigRecebivel(nomeOrigRecebivel.getText());
+				}
 				DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
 				
 //				"Seu Numero","Valor Título","Cedente","Sacado"
@@ -641,7 +656,7 @@ public class GerarCnabAquisicao extends JPanel {
 	}
 	
 	private void preencherComboCedente() throws Exception {
-		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo());
+		List<CedenteDto> cedentes = cedenteService.findAll(Conexao.getConnection((Base)cbBase.getSelectedItem()), ((FundoDto) cbFundo.getSelectedItem()).getIdFundo(), ((Base)cbBase.getSelectedItem()));
 		cbCedente.removeAllItems();
 		if(cedentes != null && !cedentes.isEmpty()) {
 			for(CedenteDto cedente : cedentes) {

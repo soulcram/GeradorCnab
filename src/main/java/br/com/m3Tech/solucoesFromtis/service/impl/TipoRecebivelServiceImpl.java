@@ -56,6 +56,42 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 		
 		return retorno;
 	}
+	
+	@Override
+	public TipoRecebivelDto findTipoRecebivel(Connection con, Integer cdLayout, Integer especie) {
+		
+		
+		String sqlQuery ="SELECT DISTINCT TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n" + 
+				"FROM TB_LAYOUT_RECEBIVEL LR\r\n" + 
+				"INNER JOIN TB_TIPO_RECEBIVEL TR ON LR.ID_TIPO_RECEBIVEL = TR.ID_TIPO_RECEBIVEL\r\n" + 
+				"WHERE LR.CD_LAYOUT = ? \r\n" +
+				"AND LR.ID_TIPO_ESPECIE = ?";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.setInt(1, cdLayout);
+			ps.setInt(2, especie);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			if(rs.next()) {
+				return  new TipoRecebivelDto(rs.getInt("ID_TIPO_RECEBIVEL"), 
+											  			  rs.getString("ID_TIPO_ESPECIE"),
+											  			  rs.getString("NM_TIPO_RECEBIVEL"));
+				
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null	;
+	}
 
 	public TipoRecebivelDto findOneTipoRecebivelById(Connection con, Integer idTipoRecebivel) {
 		TipoRecebivelDto retorno = null;

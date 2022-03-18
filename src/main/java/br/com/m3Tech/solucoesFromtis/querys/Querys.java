@@ -3,9 +3,8 @@ package br.com.m3Tech.solucoesFromtis.querys;
 public class Querys {
 	
 	private static final String FUNDO = "ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO";
-	private static final String CEDENTE = "ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, TP_COOBRIGACAO";
 	private static final String SACADO = "ID_SACADO, NM_SACADO, NU_CPF_CNPJ,DS_LOGRADOURO,NU_CEP";
-	private static final String ORIGINADOR = "ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA";
+	private static final String ORIGINADOR = "ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA,NU_CPF_CNPJ";
 	private static final String BANCO = "ID_BANCO, NM_BANCO, NU_BANCO";
 	
 	
@@ -13,12 +12,7 @@ public class Querys {
 										    " FROM TB_FUNDO";
 	public static final String ONE_FUNDO = " SELECT " + FUNDO + " \r\n" + 
 		    " FROM TB_FUNDO WHERE ID_FUNDO = ?";
-	
-	
-	public static final String ALL_CEDENTES = " SELECT " + CEDENTE + " \r\n" + 
-		    " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = ?";
-	public static final String ONE_CEDENTE = " SELECT " + CEDENTE + " \r\n" + 
-		    " FROM TB_FUNDO_CEDENTE WHERE ID_CEDENTE = ?";
+
 	
 	
 	public static final String ALL_SACADOS = " SELECT " + SACADO + " \r\n" + 

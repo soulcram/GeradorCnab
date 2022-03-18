@@ -31,6 +31,7 @@ public class Header extends JPanel {
 	private final CompararVersoes compararVersoes;
 	private final CadastrarBase cadastrarBase;
 	private final TestesDiversos testesDiversos;
+	private final GerarInsertAquisicaoCustodia3 gerarInsertAquisicaoCustodia3;
 
 	private JComboBox<String> cbTelas;
 	
@@ -46,7 +47,8 @@ public class Header extends JPanel {
 				  final GerarCnabCsv gerarCnabCsv,
 				  final CompararVersoes compararVersoes,
 				  final CadastrarBase cadastrarBase,
-				  final TestesDiversos testesDiversos) {
+				  final TestesDiversos testesDiversos,
+				  final GerarInsertAquisicaoCustodia3 gerarInsertAquisicaoCustodia3) {
 		
 		this.conteudo= conteudo;
 		this.gerarCnabAquisicao = gerarCnabAquisicao;
@@ -60,6 +62,7 @@ public class Header extends JPanel {
 		this.compararVersoes = compararVersoes;
 		this.cadastrarBase = cadastrarBase;
 		this.testesDiversos = testesDiversos;
+		this.gerarInsertAquisicaoCustodia3 = gerarInsertAquisicaoCustodia3;
 
 		this.setBounds(10, 10, ConfigTela.largura, 80);
 		this.setLayout(null);
@@ -146,6 +149,13 @@ public class Header extends JPanel {
 						conteudo.atualizarConteudo(testesDiversos);
 						
 						break;
+						
+					case "Gerar Insert Aquisição Custodia 3":
+						conteudo.atualizarConteudo(gerarInsertAquisicaoCustodia3);
+						
+						break;
+						
+						
 
 					default:
 

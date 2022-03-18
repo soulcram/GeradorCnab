@@ -57,6 +57,42 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 		
 		return retorno;
 	}
+	
+	@Override
+	public MovimentoDto findMovimento(Connection con, Integer cdLayout, Integer cdOcorrencia) {
+		
+		
+		String sqlQuery ="SELECT DISTINCT LM.ID_TIPO_MOVIMENTO, LM.CD_OCORRENCIA, TM.NM_TIPO_MOVIMENTO\r\n" + 
+				"FROM TB_LAYOUT_MOVIMENTO LM\r\n" + 
+				"INNER JOIN TB_TIPO_MOVIMENTO TM ON TM.ID_TIPO_MOVIMENTO = LM.ID_TIPO_MOVIMENTO\r\n" + 
+				"WHERE CD_LAYOUT = ?\r\n" + 
+				"AND CD_OCORRENCIA = ?";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.setInt(1, cdLayout);
+			ps.setInt(2, cdOcorrencia);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			if(rs.next()) {
+				return  new MovimentoDto(rs.getInt("ID_TIPO_MOVIMENTO"), 
+											  			  rs.getString("CD_OCORRENCIA"),
+											  			  rs.getString("NM_TIPO_MOVIMENTO"));
+				
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null	;
+	}
 
 	public List<MovimentoDto> findAllMovimentosAquisicao(Connection con, Integer cdLayout) {
 		

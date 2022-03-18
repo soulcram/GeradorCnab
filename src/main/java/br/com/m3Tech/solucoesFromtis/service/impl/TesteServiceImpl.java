@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import br.com.m3Tech.solucoesFromtis.dto.ArquivoDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.dto.ResultadoTesteDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
@@ -61,7 +62,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 	}
 
 	@Override
-	public List<ResultadoTesteDto> testarProcedures(Connection con, FundoDto fundo) {
+	public List<ResultadoTesteDto> testarProcedures(Connection con, FundoDto fundo, Base base) {
 		
 		List<ResultadoTesteDto> retorno = Lists.newArrayList();
 		
@@ -77,7 +78,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		FundoDto fundoDepois = fundoService.findOneById(con, fundo.getIdFundo());
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando a data do fundo" , "O fundo " + fundo.getNomeFundo()+ " está na data: " + fundoDepois.getDataFundo().toString()));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Gerando arquivo de aquisição" , gerarCnabAquisicao(con, fundoDepois)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Gerando arquivo de aquisição" , gerarCnabAquisicao(con, fundoDepois, base)));
 		
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Inserindo arquivo na base" , inserirArquivoNaBase(con, fundoDepois)));
 		
@@ -269,7 +270,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String gerarCnabAquisicao(Connection con, FundoDto fundo) {
+	private String gerarCnabAquisicao(Connection con, FundoDto fundo, Base base) {
 		
 		try {
 			
@@ -277,7 +278,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			
 			FileUtil.limparDiretorio(confGlobal.getPath());
 			
-			geracaoCnabPadrao.gerarCnabAquisicao(con, fundo);
+			geracaoCnabPadrao.gerarCnabAquisicao(con, fundo, base);
 			
 			File diretorio = new File(confGlobal.getPath());
 			

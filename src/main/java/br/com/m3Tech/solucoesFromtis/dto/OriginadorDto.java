@@ -12,6 +12,7 @@ public class OriginadorDto {
 	private Integer idOriginador;
 	private String codigoOriginador;
 	private String nomeOriginador;
+	private String docOriginador;
 	
 	@Override
 	public String toString() {

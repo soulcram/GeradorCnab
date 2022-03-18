@@ -24,6 +24,7 @@ public class ComboBoxTela{
 		cb.addItem("Comparar Versões");
 		cb.addItem("Cadastrar Base");
 		cb.addItem("Testes diversos");
+		cb.addItem("Gerar Insert Aquisição Custodia 3");
 		
 		
 		cb.addActionListener(acao);

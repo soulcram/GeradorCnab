@@ -29,6 +29,8 @@ public class TituloDto {
 	private String termoCessao;
 	private String chaveNfe;
 	private String variacaoCambial;
+	private String docOrigRecebivel;
+	private String nomeOrigRecebivel;
 	private BigDecimal valorPago;
 	private BigDecimal valorTitulo;
 	private BigDecimal valorAquisicao;
@@ -53,6 +55,8 @@ public class TituloDto {
 							 termoCessao, 
 							 chaveNfe, 
 							 variacaoCambial,
+							 docOrigRecebivel,
+							 nomeOrigRecebivel,
 							 valorPago, 
 							 valorTitulo, 
 							 valorAquisicao, 

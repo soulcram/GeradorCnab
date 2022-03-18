@@ -35,6 +35,8 @@ public interface IMovimentoService {
 
 	public MovimentoDto getPrimeiroMovimentoAquisicao(Connection con, Integer cdLayout) throws SQLException;
 
+	public MovimentoDto findMovimento(Connection con, Integer cdLayout, Integer cdOcorrencia);
+
 	
 
 

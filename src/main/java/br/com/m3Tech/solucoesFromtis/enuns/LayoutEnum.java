@@ -9,11 +9,14 @@ import lombok.Getter;
 public enum LayoutEnum {
 	
 	CNAB_REMESSA_444(16,"Remessa_444","R",444),
+	CNAB_240_REMESSA(17,"remessa_240","R",240),
+	CNAB_500_REMESSA_CREDSYSTEM(24,"cnab500RemessaCredSystem", "R", 500),
 //	CNAB_500_REMESSA_FIDD(41,"cnab500RemessaFidd","R",500),
-	
+	CNAB_500_REMESSA_CCB(94,"cnab500RemessaCcb","R",500),
 	CNAB_600_PLANNER_REM03(43,"cnab600RemessaPlanner03","R",600),
-	CNAB_400_COBRANCA_BRADESCO(5,"cobrancaBradesco_400","C",400),
+	
 	CNAB_400_COBRANCA_BANCO_BRASIL(4,"cobrancaBancoBrasil_400","C",400),
+	CNAB_400_COBRANCA_BRADESCO(5,"cobrancaBradesco_400","C",400),
 	CNAB_400_COBRANCA_HSBC(6,"cobrancaHsbc_400","C",400),
 	CNAB_400_COBRANCA_ITAU(7,"cobrancaItau_400","C",400),
 	CNAB_400_COBRANCA_SAFRA(9,"cobrancaSafra_400","C",400),
@@ -26,7 +29,8 @@ public enum LayoutEnum {
 	CNAB_400_COBRANCA_SOCIEDADE_CREDITO(45,"cobrancaSociedadeCredito_400","C",400),
 	CNAB_240_COBRANCA_ABC(46,"cobrancaAbc_240","C",240),
 	CNAB_240_COBRANCA_SANTANDER(25,"cobrancaSantander_240","C",240),
-	CNAB_240_COBRANCA_SICOOB(26,"cobrancaSiccob_240","C",240)
+	CNAB_240_COBRANCA_SICOOB(26,"cobrancaSiccob_240","C",240),
+	CNAB_400_COBRANCA_BANCO_RENDIMENTO(51,"cobrancaBancoRendimento_400","C",400)
 	;
 	
 	private Integer cdLayout;
@@ -76,6 +80,16 @@ public enum LayoutEnum {
 		
 		return retorno;
 		
+	}
+
+	public static boolean in(LayoutEnum layoutEnum, Integer ... codigosLayout) {
+		
+		for(Integer i :  codigosLayout) {
+			if(layoutEnum.getCdLayout().equals(i)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	

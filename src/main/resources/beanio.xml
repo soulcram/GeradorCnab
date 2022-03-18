@@ -2,7 +2,7 @@
 
 <typeHandler name="bigDecimalConvertTypeHandler" class="br.com.m3Tech.solucoesFromtis.typeHandler.BigDecimalConvertTypeHandler"/>
 <typeHandler name="bigDecimalConvertTaxaTypeHandler" class="br.com.m3Tech.solucoesFromtis.typeHandler.BigDecimalConvertTaxaTypeHandler"/>
-<typeHandler type="java.time.LocalDate" class="br.com.m3Tech.solucoesFromtis.typeHandler.FromtisDateTypeHandler"/>
+<typeHandler type="java.time.LocalDate" class="br.com.m3Tech.solucoesFromtis.typeHandler.LocalDateTypeHandler"/>
 
   <!-- 'format' identifies the type of stream -->
   <stream name="Remessa_444" format="fixedlength">
@@ -132,6 +132,137 @@
       <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
       
       <field name="numSeqRegistro"  position="594" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab500RemessaCcb" format="fixedlength">
+  
+    <record name="header_cnab500RemessaCcb" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeader">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="1" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="REMESSA" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoOriginador"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	<field name="identSistema" literal="MX" position="108" length="2" required="true" trim="true" ignore="true" />
+      	<field name="numSeqArquivo"  position="110" length="7" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab500RemessaCcb" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetail">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="coobrigacao" position="20" length="2" required="true" justify="right" trim="true"/>
+      <field name="risco" position="24" length="2" required="true" justify="right" trim="true"/>
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numeroBanco"  position="62" length="3" required="true" justify="right" trim="true"/>
+      <field name="nossoNumero" position="70" length="12" required="true" justify="right" trim="true"/>
+      <field name="valorPago" position="82" length="10" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="dataLiquidacao" position="94" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="identOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="numDocumento" position="110" length="10" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="120" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="126" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="especieTitulo" position="147" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="dataEmissao" position="150" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="tipoPessoaCedente" position="159" length="2" required="true" justify="right" trim="true"/>
+      <field name="docCedente" position="380" length="14" required="true" justify="right" trim="true"/>
+      <field name="nomeCedente" position="334" length="46" required="true" trim="true"/>
+      <field name="termoCessao" position="173" length="19" required="true" justify="right" trim="true"/>
+      <field name="valorAquisicao" position="192" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorAbatimento" position="205" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="tipoPessoaSacado" position="218" length="2" required="true" justify="right" trim="true"/>
+      <field name="docSacado" position="220" length="14" required="true" justify="right" trim="true"/>
+      <field name="nomeSacado" position="234" length="40" required="true" trim="true"/>
+      <field name="enderecoSacado" position="274" length="40"  trim="true"/>
+      <field name="cepSacado" position="326" length="8"  trim="true"/>
+<!--       <field name="chaveNfe" position="394" length="44"  trim="true"/> -->
+<!--  	  <field name="tipoPessoaOrigRecebivel" position="276" length="2" trim="true"/> -->
+<!--       <field name="cpfCnpjOrigRecebivel" position="278" length="14" trim="true"  maxLength="14"/> -->
+<!--       <field name="nomeOrigRecebivel" position="292" length="22" trim="true"/>   -->
+            
+      <field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab500RemessaCcb" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab500RemessaCredSystem" format="fixedlength" >
+  
+    <record name="header_cnab500RemessaCredSystem" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeader" >
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" rid="true" />
+    	
+    	<field name="identArquivoRemessa" literal="1" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="REMESSA" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoOriginador"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	<field name="identSistema" literal="MX" position="108" length="2" required="true" trim="true" ignore="true" />
+      	<field name="numSeqArquivo"  position="110" length="7" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab500RemessaCredSystem" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetail">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" rid="true"/>
+      
+      <field name="coobrigacao" position="20" length="2" required="true" justify="right" trim="true"/>
+      <field name="risco" position="149" length="1" justify="right" trim="true"/>
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numeroBanco"  position="62" length="3" required="true" justify="right" trim="true"/>
+<!--       <field name="nossoNumero" position="70" length="12" required="true" justify="right" trim="true"/> -->
+      <field name="valorPago" position="82" length="10" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="dataLiquidacao" position="94" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="identOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="numDocumento" position="110" length="10" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="120" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="126" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="especieTitulo" position="147" length="2" required="true" justify="right" trim="true" padding="0"/>
+<!--       <field name="dataEmissao" position="150" length="6" required="true" justify="right" trim="true" format="ddMMyy"/> -->
+      <field name="tipoPessoaCedente" position="159" length="2" required="true" justify="right" trim="true"/>
+      <field name="docCedente" position="380" length="14" required="true" justify="right" trim="true"/>
+      <field name="nomeCedente" position="334" length="46" required="true" trim="true"/>
+      <field name="termoCessao" position="173" length="19" required="true" justify="right" trim="true"/>
+      <field name="valorAquisicao" position="192" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorAbatimento" position="205" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="tipoPessoaSacado" position="218" length="2" required="true" justify="right" trim="true"/>
+      <field name="docSacado" position="220" length="14" required="true" justify="right" trim="true"/>
+      <field name="nomeSacado" position="234" length="40" required="true" trim="true"/>
+      <field name="enderecoSacado" position="274" length="40"  trim="true"/>
+      <field name="cepSacado" position="326" length="8"  trim="true"/>
+<!--       <field name="chaveNfe" position="394" length="44"  trim="true"/> -->
+            
+      <field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab500RemessaCredSystem" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" rid="true" />
+      
+      <field name="numSeqRegistro"  position="494" length="6" required="true" trim="true"/>
     </record>  
     
   </stream>

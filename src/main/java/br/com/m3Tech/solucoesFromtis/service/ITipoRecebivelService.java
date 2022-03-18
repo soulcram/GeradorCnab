@@ -15,6 +15,8 @@ public interface ITipoRecebivelService {
 	public TipoRecebivelDto findOneTipoRecebivelById(Connection con, Integer idMovimento);
 
 	public TipoRecebivelDto getPrimeiroTipoRecebivelAquisicao(Connection con, Integer cdLayout) throws SQLException;
+
+	public TipoRecebivelDto findTipoRecebivel(Connection con, Integer cdLayout, Integer especie);
 	
 
 }
