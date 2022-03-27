@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.ComboBoxTela;
 import br.com.m3Tech.solucoesFromtis.telas.componentes.Label;
 
-@Component
 public class Header extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -35,7 +34,6 @@ public class Header extends JPanel {
 
 	private JComboBox<String> cbTelas;
 	
-	@Autowired
 	public Header(final Conteudo conteudo,
 				  final GerarCnabAquisicao gerarCnabAquisicao,
 				  final GerarCnabAquisicaoDinamico gerarCnabAquisicaoDinamico,

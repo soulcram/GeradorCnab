@@ -1,0 +1,110 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid id="gridGeral" columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Visualizar Pedido
+    			</f:facet>
+    			
+    			<p:panel id="clienteCadastrado">
+    				<f:facet name="header">
+        			Cliente
+    				</f:facet>
+    				<p:panelGrid columns="1" layout="grid">
+	    				<p:outputLabel value="Telefone: #{vendaController.pedido.telefoneCliente}"/>
+	    				<p:outputLabel value="Nome: #{vendaController.pedido.nomeCliente}"/>
+	    				<p:outputLabel value="Endereço: #{vendaController.pedido.logradouro}"/>
+	    				<p:outputLabel value="Numero: #{vendaController.pedido.numeroResidencia}"/>
+    				</p:panelGrid>
+    			</p:panel>
+
+    			<p:panel id="carrinho" >
+    				<f:facet name="header">
+        			Carrinho
+    				</f:facet>
+    				<p:panelGrid columns="1" layout="grid">
+	    				<p:panel>
+	    					<f:facet name="header">
+		        			Produtos Selecionados
+		    				</f:facet>
+		    				<p:dataTable var="item" value="#{vendaController.pedido.produtos}">
+							    <p:column headerText="Nome">
+							        <h:outputText value="#{item.nome}" />
+							    </p:column>
+							 
+							    <p:column headerText="Valor">
+							        <p:inputNumber value="#{item.valor}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+							    </p:column>
+							    
+							    <p:column headerText="Quantidade">
+							        <h:outputText value="#{item.quantidade}" />
+							    </p:column>
+							    
+							    <p:column headerText="Sub Total">
+							        <p:inputNumber value="#{item.subTotal}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+							    </p:column>
+							    
+							    <p:column headerText="Adic. Ao Pedido">
+							    	<p:commandButton action="#{vendaController.diminuirQuantidade(item.idProduto)}"  value="-" update=":form:carrinho"/>
+							        <p:commandButton action="#{vendaController.addQuantidade(item.idProduto)}"  value="+" update=":form:carrinho"/>
+							    </p:column>
+						    
+							</p:dataTable>
+	    				</p:panel>
+	    				<p:column/>
+	    				<p:panel>
+	    					<f:facet name="header">
+		        			Forma Pagamento
+		    				</f:facet>
+		    				<p:panelGrid columns="2" layout="grid">
+		    					<p:outputLabel value="Valor do pedido"/>
+								<p:inputNumber value="#{vendaController.pedido.valorTotal}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+								
+								<p:outputLabel value="Taxa de entrega"/>
+								<p:inputNumber value="#{vendaController.pedido.taxaEntrega}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+								
+								<p:outputLabel value="Desconto"/>
+								<p:inputNumber value="#{vendaController.pedido.valorDesconto}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+								
+								<p:outputLabel value="Valor Total do pedido"/>
+								<p:inputNumber value="#{vendaController.valorTotalPedido}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+								
+								<p:outputLabel value="Entregador"/>
+								<h:outputText value="#{vendaController.pedido.entregador}" />
+						        
+						        <p:outputLabel value="Pagamento"/>
+						        <h:outputText value="#{vendaController.pedido.formaPagamento}" />
+								
+						        <p:outputLabel value="Troco"/>
+								<p:inputNumber id="troco" value="#{vendaController.pedido.troco}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+								
+							</p:panelGrid>
+	    				</p:panel>
+	    				<p:column/>
+    				</p:panelGrid>
+    			</p:panel>
+			</p:panelGrid>
+			
+			<p:panelGrid>
+				<p:commandButton action="#{vendaController.fecharVisualizacao}" icon="pi pi-arrow-left" value="Voltar" />
+				<p:commandButton action="#{vendaController.excluir}" icon="pi pi-trash" value="Excluir" />
+				<p:commandButton action="#{vendaController.imprimirPedido}" icon="pi pi-print" value="Imprimir" />
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

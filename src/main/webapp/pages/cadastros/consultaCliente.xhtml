@@ -1,0 +1,81 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+	
+			<p:messages id="messages" showDetail="true" closable="true">
+       			<p:autoUpdate/>
+    		</p:messages>
+    		
+			<p:panelGrid columns="4" layout="grid" contentStyleClass="p-align-baseline ui-fluid">
+
+				<f:facet name="header">
+        			Consultar Clientes
+    			</f:facet>
+				
+				<p:outputLabel value="Telefone"></p:outputLabel>
+				<p:outputLabel value="Nome"></p:outputLabel>
+				<p:outputLabel value="Cpf/Cnpj"></p:outputLabel>
+				<p:column/>
+				
+				<p:inputText value="#{clienteController.telefone}"></p:inputText>
+				<p:inputText value="#{clienteController.nomeCliente}"></p:inputText>
+				<p:inputText value="#{clienteController.docCliente}"></p:inputText>
+				<p:column/>
+
+
+
+			</p:panelGrid>
+			
+			<div align="right">
+				<p:panelGrid columns="2">
+					<p:commandButton action="#{clienteController.consultar}" value="Pesquisar" update="tabela"/> 
+					<p:commandButton action="#{clienteController.cadastrar}" value="Novo"/>
+				</p:panelGrid>
+			</div>
+			
+			<p:panelGrid columns="1">
+				<p:dataTable id="tabela" var="cli" value="#{clienteController.clientes}"
+					 paginator="true"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                     rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+				>
+				
+					
+					<p:column headerText="Telefone">
+						<h:outputText value="#{cli.telefone}"/>
+					</p:column>
+					
+					<p:column headerText="Nome">
+						<h:outputText value="#{cli.nome}" />
+					</p:column>
+
+					<p:column headerText="Cpf Cnpj">
+						<h:outputText value="#{cli.documento}"/>
+					</p:column>
+					
+					<p:column headerText="Alterar">
+						<div align="center">
+							<p:commandButton action="#{clienteController.alterar(cli.idCliente)}"  value="Alterar"/>
+						</div>
+					</p:column>
+				</p:dataTable>
+			</p:panelGrid>
+			
+			<div align="right">
+				<f:facet name="footer">
+	        			<p:commandButton action="#{clienteController.voltar}" value="Voltar"/>
+	    		</f:facet>
+    		</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

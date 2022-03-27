@@ -1,0 +1,62 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+	
+	<script type="text/javascript">
+	    function handleDrop(event, ui) {
+	        var droppedCar = ui.draggable;
+	 
+	        droppedCar.fadeOut('fast');
+	    }
+	</script>
+	
+		<h:form id="form" enctype="multipart/form-data">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Pratos do Dia
+    			</f:facet>
+
+    			    <p:pickList id="PojoPickList" value="#{ofertaController.produtos}" var="produto" effect="bounce"
+			                itemValue="#{produto}" itemLabel="#{produto.nome}" converter="produtoConverter" responsive="true">
+			 
+			        <f:facet name="sourceCaption">Disponíveis</f:facet>
+			        <f:facet name="targetCaption">Selecionados</f:facet>
+			 
+			        <p:column style="width:15%">
+			            <p:graphicImage id="idImagem" value="#{images.imagemProduto}" styleClass="ui-theme" cache="false" height="50" width="50">
+			            	    <f:param name="id" value="#{produto.idProduto}" />
+						</p:graphicImage>
+			        </p:column>
+			 
+			        <p:column style="width:85%;">
+			            <h:outputText value="#{produto.nome}" />
+			        </p:column>
+			    </p:pickList>
+				
+			</p:panelGrid>
+			
+			
+			<p:panel>
+	        	<p:panelGrid>
+					<p:commandButton action="#{ofertaController.voltar}" value="Voltar" />
+					<p:commandButton action="#{ofertaController.salvar}" value="Salvar" />
+				</p:panelGrid>
+	    	</p:panel>
+
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

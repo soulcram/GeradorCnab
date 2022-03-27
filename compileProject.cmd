@@ -1,1 +1,1 @@
-@mvn compile assembly:single
+@mvn clean install

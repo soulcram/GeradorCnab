@@ -5,15 +5,12 @@ import javax.swing.JFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
 public class Janela extends JFrame{
 
 	private static final long serialVersionUID = 1L;
 	
-	@Autowired
 	Conteudo conteudo;
 	
-	@Autowired
 	Header header;
 
 	public Janela () {

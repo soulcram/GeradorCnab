@@ -1,0 +1,74 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form" enctype="multipart/form-data">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Cadastrar Produto
+    			</f:facet>
+    			
+    			<p:panel>
+    				<p:panelGrid columns="1" layout="grid">
+    					<f:facet name="header">
+		        			Produto
+		    			</f:facet>
+		    			
+	    				<p:outputLabel value="Nome do Produto"/>
+						<p:inputText value="#{produtoController.produto.nome}" size="50"/>
+						<p:column/>
+						
+						<p:outputLabel value="Descrição"/>
+						<p:inputText id="descricao" value="#{produtoController.produto.descricao}" />
+						<p:column/>
+						
+						<p:outputLabel value="Valor"/>
+						<p:inputNumber id="valor" value="#{produtoController.produto.valor}"/>
+						<p:column/>
+						
+						<p:outputLabel value="Ativo?"/>
+						<p:selectBooleanButton onLabel="Sim" offLabel="Não"  value="#{produtoController.produto.ativo}"      
+						                                            onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+						
+						<p:outputLabel value="Categoria"/>
+						<p:selectOneMenu id="categoria" value="#{produtoController.produto.categoria}">
+				            <f:selectItems value="#{produtoController.categorias}" />
+				        </p:selectOneMenu>
+						<p:column/>
+						
+						<p:outputLabel value="Selecione uma imagem para o produto."/>
+						<p:fileUpload value="#{produtoController.file}" mode="simple" skinSimple="true"/>
+						<br />
+						<p:commandButton value="Carregar Imagem" ajax="false" action="#{produtoController.upload}" />
+					</p:panelGrid>
+    			
+    			</p:panel>
+    			
+    			
+				
+			</p:panelGrid>
+			
+			
+			<p:panel>
+	        	<p:panelGrid>
+					<p:commandButton action="#{produtoController.voltar}" value="Voltar" />
+					<p:commandButton action="#{produtoController.salvar}" value="Salvar" />
+				</p:panelGrid>
+	    	</p:panel>
+
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

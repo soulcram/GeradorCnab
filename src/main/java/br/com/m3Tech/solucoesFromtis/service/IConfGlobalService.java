@@ -12,6 +12,7 @@ public interface IConfGlobalService {
 	public ConfGlobal getConfGlobal();
 	public String getPathRepositorio(Connection con);
 	public String getPathSalvarArquivo(Connection con, Boolean importacaoAutomatica, Boolean versaoMercado, FundoDto fundo);
+	public void salvar(ConfGlobal configuracaoGlobal) throws Exception;
 	
 
 }

@@ -14,5 +14,7 @@ public class ConfGlobal extends Crud<ConfGlobal> {
 
 	private Integer seqArquivo;
 	private String path;
+	private String tema;
+	private String nomeApp;
 
 }

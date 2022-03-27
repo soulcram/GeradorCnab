@@ -1,0 +1,51 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+	
+			<p:messages id="messages" showDetail="true" closable="true">
+       			<p:autoUpdate/>
+    		</p:messages>
+			<p:panelGrid columns="4" layout="grid" contentStyleClass="p-align-baseline ui-fluid">
+
+				<f:facet name="header">
+        			Configurações Globais
+    			</f:facet>
+				
+				<p:outputLabel value="Sequecial do Arquivo"></p:outputLabel>
+				<p:outputLabel value="Path Default"></p:outputLabel>
+				<p:outputLabel value="Aparência preferida"></p:outputLabel>
+				<p:column/>
+				
+				
+				<p:inputText id="seqArquivo" value="#{configuracaoGlobalController.configuracaoGlobal.seqArquivo}" />
+		        <p:inputText id="pathDefault" value="#{configuracaoGlobalController.configuracaoGlobal.path}" />
+				<p:themeSwitcher value="#{configuracaoGlobalController.configuracaoGlobal.tema}">
+				    <f:selectItems value="#{configuracaoGlobalController.temasDisponiveis}" />
+				</p:themeSwitcher>
+				<p:column/>
+				
+
+				
+				
+
+
+
+			</p:panelGrid>
+
+			
+			<div align="right">
+	        	<p:commandButton action="#{configuracaoGlobalController.voltar}" value="Voltar"/>
+	        	<p:commandButton action="#{configuracaoGlobalController.salvar}" value="salvar"/>
+    		</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -16,8 +16,8 @@ import br.com.m3Tech.solucoesFromtis.dto.ArquivoDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoService;
 import br.com.m3Tech.solucoesFromtis.service.ITabelaService;
-import br.com.m3Tech.solucoesFromtis.util.LocalDateUtils;
 import br.com.m3Tech.solucoesFromtis.util.MontarQueryUtils;
+import br.com.m3Tech.utils.LocalDateUtils;
 
 
 @Service
