@@ -120,13 +120,13 @@ public class ArquivoServiceImpl implements IArquivoService, Serializable{
 		
 		ResultSet rs = ps.getResultSet();
 		
-		if(rs.next()) {
-			retorno = new ArquivoDto(rs.getInt("ID_ARQUIVO"), 
-                                     rs.getString("NM_ARQUIVO"), 
-                                     LocalDateUtils.getLocalDate(rs.getString("DT_ENTRADA"))
-                                      );
-		}
-		
+//		if(rs.next()) {
+//			retorno = new ArquivoDto(rs.getInt("ID_ARQUIVO"), 
+//                                     rs.getString("NM_ARQUIVO"), 
+//                                     LocalDateUtils.getLocalDate(rs.getString("DT_ENTRADA"))
+//                                      );
+//		}
+//		
 		return retorno;
 	}
 

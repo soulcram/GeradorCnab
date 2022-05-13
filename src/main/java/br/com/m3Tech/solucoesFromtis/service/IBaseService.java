@@ -12,6 +12,10 @@ public interface IBaseService {
 	public List<Base> findAll();
 
 	public void delete(Base base);
+
+	public Base findById(String id);
+
+	public Base findById(Integer id);
 	
 
 }

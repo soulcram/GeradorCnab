@@ -6,7 +6,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="refresh" content="1; url= pages/cadastros/home.xhtml" />
 	<link type="text/css" rel="stylesheet" href="/javax.faces.resource/theme.css.xhtml?ln=primefaces-#{temaBean.tema}"/>
 	<title >
 		<h:outputText value="#{configuracaoGlobalController.configuracaoGlobal.nomeApp}" ></h:outputText>
@@ -17,12 +17,10 @@
 		
 		<h:form>
 			<p:panel style="width:600px;height:400px; margin-left:auto; margin-right:auto;margin-top:200px;">
-				<p:messages id="messages" showDetail="true" closable="true">
-       				<p:autoUpdate/>
-    			</p:messages>
+				
 				<p:panelGrid columns="1" style="text-align:center;margin-left:auto; margin-right:auto;margin-top:10%;">
 
-					<p:commandButton action="#{loginController.init}" value="Iniciar"/> 
+					<p:outputLabel value="Bem Vindo ao Sistema #{configuracaoGlobalController.configuracaoGlobal.nomeApp}"/>
 
 				</p:panelGrid>
 			</p:panel>

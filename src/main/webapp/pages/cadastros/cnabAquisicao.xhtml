@@ -17,154 +17,210 @@
 			<p:panelGrid columns="1" layout="grid">
 
 				<f:facet name="header">
-        			Cadastrar Cliente
+        			Gerar Cnab de Aquisição
     			</f:facet>
-    			
-    			<p:panel>
-    				<p:panelGrid columns="1" layout="grid">
-    					<f:facet name="header">
-		        			Dados do Cliente
-		    			</f:facet>
-		    			
-		    			<p:outputLabel value="Telefone"/>
-						<p:inputText id="telefone" value="#{clienteController.cliente.telefone}">
-						</p:inputText>
-						<p:column/>
-		    			
-	    				<p:outputLabel value="Nome do Cliente"/>
-						<p:inputText value="#{clienteController.cliente.nome}" size="50"/>
-						<p:column/>
 
-						<p:outputLabel value="Cpf"/>
-						<p:inputMask id="cpf" value="#{clienteController.cliente.documento}" mask="999.999.999-99"/>
-						<p:column/>
-					</p:panelGrid>
-    			
-    			</p:panel>
-    			
-    			<p:panel>
-    			
-    			<p:panelGrid columns="1" layout="grid" rendered="#{clienteController.adicionandoNovo}">
-    					<f:facet name="header">
-		        			Adicionar Endereco do Cliente
-		    			</f:facet>
-		    			
-		    			<p:outputLabel value="CEP"/>
-						<p:inputMask id="cep" value="#{clienteController.clienteEndereco.endereco.cep}" mask="99999-999">
-							<p:ajax event="change"  update="logradouro bairro cidade estado cep" listener="#{clienteController.buscarPorCep}" />
-						</p:inputMask>
-						<p:column/>
-		    			
-	    				<p:outputLabel value="Nome da rua"/>
-						<p:inputText id="logradouro" value="#{clienteController.clienteEndereco.endereco.logradouro}" size="50">
-							<p:ajax event="keydown"  update="idTbEndereco idEnderecoCliente bairro cidade estado cep" listener="#{clienteController.buscarPorLogradouro}" />
-						</p:inputText>
-						<p:column/>
-						
-						
-						<p:panel id="idEnderecoCliente" >
-							<p:dataTable id="idTbEndereco" var="item" value="#{clienteController.enderecos}" rendered="#{clienteController.consultandoEnd}" >
-								    <p:column headerText="Cep">
-								        <h:outputText value="#{item.cep}" />
-								    </p:column>
-								 
-								    <p:column headerText="Rua">
-								        <h:outputText value="#{item.logradouro}" />
-								    </p:column>
-								    
-								    <p:column headerText="Bairro">
-								        <h:outputText value="#{item.bairro}" />
-								    </p:column>
-								    
-								    <p:column headerText="Cidade">
-								        <h:outputText value="#{item.cidade}" />
-								    </p:column>	
-								    								    
-								    <p:column headerText="Ação">
-								        <p:commandButton action="#{clienteController.selecionarEndereco(item)}" update="form" value="Selecionar" />
-								    </p:column>							    
-							</p:dataTable>
-							</p:panel>	
-						
-						
-											
-						<p:outputLabel value="Bairro"/>
-						<p:inputText id="bairro"  value="#{clienteController.clienteEndereco.endereco.bairro}"/>
-						<p:column/>
-						
-						<p:outputLabel value="Cidade"/>
-						<p:inputText id="cidade"  value="#{clienteController.clienteEndereco.endereco.cidade}"/>
-						<p:column/>
-						
-						<p:outputLabel value="Estado"></p:outputLabel>
-						<p:selectOneMenu id="estado" value="#{clienteController.clienteEndereco.endereco.estado}">
-				            <f:selectItem itemLabel="Selecione 1" itemValue="" />
-				            <f:selectItems value="#{clienteController.estados}" />
-				        </p:selectOneMenu>
-						<p:column/>
-						
-						<p:outputLabel value="Numero da Residência"/>
-						<p:inputText id="numRes"  value="#{clienteController.clienteEndereco.numero}"/>
-						<p:column/>
-						
-						<p:outputLabel value="Complemento"/>
-						<p:inputText id="compl"  value="#{clienteController.clienteEndereco.complemento}"/>
-						<p:column/>
-						<p:column/>
-						<p:commandButton action="#{clienteController.adicionarEndereco}" value="Adiconar" update="form"/>
-					</p:panelGrid>
-    			
-    			<p:panelGrid columns="1" layout="grid">
-    			
-    				<p:commandButton action="#{clienteController.novoEndereco}" value="Novo" icon="pi pi-plus" update="form"/>
-    				<p:column/>
-	    					<f:facet name="header">
-			        			Endereco do Cliente
-			    			</f:facet>
-		    				<p:dataTable id="tabela" var="end" value="#{clienteController.cliente.clienteEnderecos}">
-			    				
-			    				
-			    				<p:column headerText="CEP">
-									<h:outputText value="#{end.endereco.cep}" />
-								</p:column>
-								
-								<p:column headerText="Nome da rua">
-									<h:outputText value="#{end.endereco.logradouro}" />
-								</p:column>
-								
-								<p:column headerText="Bairro">
-									<h:outputText value="#{end.endereco.bairro}" />
-								</p:column>
-								
-								<p:column headerText="Numero da Residência">
-									<h:outputText value="#{end.numero}" />
-								</p:column>
-								
-								<p:column headerText="Complemento">
-									<h:outputText value="#{end.complemento}" />
-								</p:column>
-								
-								<p:column headerText="Alterar">
-									<div align="center">
-										<p:commandButton action="#{clienteController.alterarEndereco(end)}" icon="pi pi-pencil"  update="form"/>
-									</div>
-								</p:column>
-								
-								<p:column headerText="Excluir">
-									<div align="center">
-										<p:commandButton action="#{clienteController.excluirEndereco(end)}" icon="pi pi-trash" update="form"/>
-									</div>
-								</p:column>
-								
-		    				</p:dataTable>
-    				</p:panelGrid>
-    			</p:panel>
-				
+
+				<p:panelGrid columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:outputLabel value="Atualizar Combo Bases de Dados" />
+
+					<p:selectOneMenu id="bases" style="width: 90% !important"
+						value="#{cnabAquisicaoController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoBase}" process="@this" update="fundos bancos"/>
+
+					</p:selectOneMenu>
+					<p:column />
+					<p:commandButton value="Atualizar Bases"
+						action="#{cnabAquisicaoController.atualizarBases}" ajax="false"
+						immediate="true" update="bases"/>
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Data Gravação" />
+					
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoFundo}" 
+							    update="layout dataGravacao dataVencimento originadores" process="@this" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.layoutSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoLayout}" process="@this dataGravacao" />
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataGravacao" value="#{cnabAquisicaoController.dataGravacao}" />
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Originador" />
+					<p:outputLabel value="Vencimento" />
+					
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="originadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.originadorSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.originadores}" var="originador" itemLabel="#{originador.nomeOriginador}" itemValue="#{originador.idOriginador}"/>
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataVencimento" value="#{cnabAquisicaoController.dataVencimento}" />
+					
+					<p:column/>
+					<p:column/>
+					<p:column/>
+					
+					<p:column/>
+					<p:column/>
+					<p:column/>
+
+					<!-- 	    				<p:outputLabel value="Nome do Cliente"/> -->
+					<!-- 						<p:inputText value="#{clienteController.cliente.nome}" size="50"/> -->
+					<!-- 						<p:column/> -->
+
+					<!-- 						<p:outputLabel value="Cpf"/> -->
+					<!-- 						<p:inputMask id="cpf" value="#{clienteController.cliente.documento}" mask="999.999.999-99"/> -->
+					<!-- 						<p:column/> -->
+				</p:panelGrid>
+
+
+
+				<!--     			<p:panel> -->
+
+				<!--     			<p:panelGrid columns="1" layout="grid" rendered="#{clienteController.adicionandoNovo}"> -->
+				<!--     					<f:facet name="header"> -->
+				<!-- 		        			Adicionar Endereco do Cliente -->
+				<!-- 		    			</f:facet> -->
+
+				<!-- 		    			<p:outputLabel value="CEP"/> -->
+				<!-- 						<p:inputMask id="cep" value="#{clienteController.clienteEndereco.endereco.cep}" mask="99999-999"> -->
+				<!-- 							<p:ajax event="change"  update="logradouro bairro cidade estado cep" listener="#{clienteController.buscarPorCep}" /> -->
+				<!-- 						</p:inputMask> -->
+				<!-- 						<p:column/> -->
+
+				<!-- 	    				<p:outputLabel value="Nome da rua"/> -->
+				<!-- 						<p:inputText id="logradouro" value="#{clienteController.clienteEndereco.endereco.logradouro}" size="50"> -->
+				<!-- 							<p:ajax event="keydown"  update="idTbEndereco idEnderecoCliente bairro cidade estado cep" listener="#{clienteController.buscarPorLogradouro}" /> -->
+				<!-- 						</p:inputText> -->
+				<!-- 						<p:column/> -->
+
+
+				<!-- 						<p:panel id="idEnderecoCliente" > -->
+				<!-- 							<p:dataTable id="idTbEndereco" var="item" value="#{clienteController.enderecos}" rendered="#{clienteController.consultandoEnd}" > -->
+				<!-- 								    <p:column headerText="Cep"> -->
+				<!-- 								        <h:outputText value="#{item.cep}" /> -->
+				<!-- 								    </p:column> -->
+
+				<!-- 								    <p:column headerText="Rua"> -->
+				<!-- 								        <h:outputText value="#{item.logradouro}" /> -->
+				<!-- 								    </p:column> -->
+
+				<!-- 								    <p:column headerText="Bairro"> -->
+				<!-- 								        <h:outputText value="#{item.bairro}" /> -->
+				<!-- 								    </p:column> -->
+
+				<!-- 								    <p:column headerText="Cidade"> -->
+				<!-- 								        <h:outputText value="#{item.cidade}" /> -->
+				<!-- 								    </p:column>	 -->
+
+				<!-- 								    <p:column headerText="Ação"> -->
+				<!-- 								        <p:commandButton action="#{clienteController.selecionarEndereco(item)}" update="form" value="Selecionar" /> -->
+				<!-- 								    </p:column>							     -->
+				<!-- 							</p:dataTable> -->
+				<!-- 							</p:panel>	 -->
+
+
+
+				<!-- 						<p:outputLabel value="Bairro"/> -->
+				<!-- 						<p:inputText id="bairro"  value="#{clienteController.clienteEndereco.endereco.bairro}"/> -->
+				<!-- 						<p:column/> -->
+
+				<!-- 						<p:outputLabel value="Cidade"/> -->
+				<!-- 						<p:inputText id="cidade"  value="#{clienteController.clienteEndereco.endereco.cidade}"/> -->
+				<!-- 						<p:column/> -->
+
+				<!-- 						<p:outputLabel value="Estado"></p:outputLabel> -->
+				<!-- 						<p:selectOneMenu id="estado" value="#{clienteController.clienteEndereco.endereco.estado}"> -->
+				<!-- 				            <f:selectItem itemLabel="Selecione 1" itemValue="" /> -->
+				<!-- 				            <f:selectItems value="#{clienteController.estados}" /> -->
+				<!-- 				        </p:selectOneMenu> -->
+				<!-- 						<p:column/> -->
+
+				<!-- 						<p:outputLabel value="Numero da Residência"/> -->
+				<!-- 						<p:inputText id="numRes"  value="#{clienteController.clienteEndereco.numero}"/> -->
+				<!-- 						<p:column/> -->
+
+				<!-- 						<p:outputLabel value="Complemento"/> -->
+				<!-- 						<p:inputText id="compl"  value="#{clienteController.clienteEndereco.complemento}"/> -->
+				<!-- 						<p:column/> -->
+				<!-- 						<p:column/> -->
+				<!-- 						<p:commandButton action="#{clienteController.adicionarEndereco}" value="Adiconar" update="form"/> -->
+				<!-- 					</p:panelGrid> -->
+
+				<!--     			<p:panelGrid columns="1" layout="grid"> -->
+
+				<!--     				<p:commandButton action="#{clienteController.novoEndereco}" value="Novo" icon="pi pi-plus" update="form"/> -->
+				<!--     				<p:column/> -->
+				<!-- 	    					<f:facet name="header"> -->
+				<!-- 			        			Endereco do Cliente -->
+				<!-- 			    			</f:facet> -->
+				<!-- 		    				<p:dataTable id="tabela" var="end" value="#{clienteController.cliente.clienteEnderecos}"> -->
+
+
+				<!-- 			    				<p:column headerText="CEP"> -->
+				<!-- 									<h:outputText value="#{end.endereco.cep}" /> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Nome da rua"> -->
+				<!-- 									<h:outputText value="#{end.endereco.logradouro}" /> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Bairro"> -->
+				<!-- 									<h:outputText value="#{end.endereco.bairro}" /> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Numero da Residência"> -->
+				<!-- 									<h:outputText value="#{end.numero}" /> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Complemento"> -->
+				<!-- 									<h:outputText value="#{end.complemento}" /> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Alterar"> -->
+				<!-- 									<div align="center"> -->
+				<!-- 										<p:commandButton action="#{clienteController.alterarEndereco(end)}" icon="pi pi-pencil"  update="form"/> -->
+				<!-- 									</div> -->
+				<!-- 								</p:column> -->
+
+				<!-- 								<p:column headerText="Excluir"> -->
+				<!-- 									<div align="center"> -->
+				<!-- 										<p:commandButton action="#{clienteController.excluirEndereco(end)}" icon="pi pi-trash" update="form"/> -->
+				<!-- 									</div> -->
+				<!-- 								</p:column> -->
+
+				<!-- 		    				</p:dataTable> -->
+				<!--     				</p:panelGrid> -->
+				<!--     			</p:panel> -->
+
 			</p:panelGrid>
-			
+
 			<p:panelGrid>
-				<p:commandButton action="#{clienteController.voltar}" value="Voltar" />
-				<p:commandButton action="#{clienteController.salvar}" value="Salvar" />
+				<p:commandButton action="#{cnabAquisicaoController.voltar}"
+					value="Voltar" />
+				<p:commandButton action="#{cnabAquisicaoController.salvar}"
+					value="Salvar" />
 			</p:panelGrid>
 
 		</h:form>

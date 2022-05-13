@@ -39,6 +39,32 @@ public class BaseServiceImpl implements IBaseService {
 		
 	}
 
+	@Override
+	public Base findById(String id) {
+		
+		try {
+			return new Base().findById(Integer.valueOf(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
+	
+	@Override
+	public Base findById(Integer id) {
+		
+		try {
+			return new Base().findById(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+	}
+
 	
 
 }

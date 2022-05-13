@@ -7,8 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +14,6 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
-import br.com.m3Tech.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 

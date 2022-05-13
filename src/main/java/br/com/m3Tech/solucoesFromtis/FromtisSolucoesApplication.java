@@ -11,10 +11,12 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
 @ServletComponentScan
+@ComponentScan(basePackages = "br.com.m3Tech.solucoesFromtis")
 public class FromtisSolucoesApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {

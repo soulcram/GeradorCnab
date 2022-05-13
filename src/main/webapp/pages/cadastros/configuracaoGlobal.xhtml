@@ -22,7 +22,7 @@
 				<p:outputLabel value="Sequecial do Arquivo"></p:outputLabel>
 				<p:outputLabel value="Path Default"></p:outputLabel>
 				<p:outputLabel value="Aparência preferida"></p:outputLabel>
-				<p:column/>
+				<p:outputLabel value="Nome App"></p:outputLabel>
 				
 				
 				<p:inputText id="seqArquivo" value="#{configuracaoGlobalController.configuracaoGlobal.seqArquivo}" />
@@ -30,7 +30,7 @@
 				<p:themeSwitcher value="#{configuracaoGlobalController.configuracaoGlobal.tema}">
 				    <f:selectItems value="#{configuracaoGlobalController.temasDisponiveis}" />
 				</p:themeSwitcher>
-				<p:column/>
+				<p:inputText id="nomeApp" value="#{configuracaoGlobalController.configuracaoGlobal.nomeApp}" />
 				
 
 				
