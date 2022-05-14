@@ -20,6 +20,7 @@ public class CnabHeader {
 	private LocalDate dataGravacao;
 	private String numSeqArquivo;
 	private String numSeqRegistro;
+	private String coobrigacao;
 	
 	public CnabHeader(CnabDto dto) {
 		this.codigoOriginador = dto.getOriginador().getCodigoOriginador();

@@ -51,12 +51,13 @@
 						<f:selectItem itemLabel="Selecione" itemValue="" />
 						<f:selectItems value="#{cnabAquisicaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
 						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoFundo}" 
-							    update="layout dataGravacao dataVencimento originadores" process="@this" />
+							    update="layout dataGravacao dataVencimento originadores sacados cedentes coob tiposRecebiveis movimentos tabela" 
+							    process="@this" />
 
 					</p:selectOneMenu>
 					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
 						value="#{cnabAquisicaoController.layoutSelecionado}">
-						<f:selectItems value="#{cnabAquisicaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<f:selectItems value="#{cnabAquisicaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
 						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoLayout}" process="@this dataGravacao" />
 
 					</p:selectOneMenu>
@@ -77,150 +78,128 @@
 					</p:selectOneMenu>
 					<p:datePicker id="dataVencimento" value="#{cnabAquisicaoController.dataVencimento}" />
 					
+					<p:outputLabel value="Cedente" />
+					<p:outputLabel value="Sacado" />
+					<p:outputLabel value="Coobrigação" />
+					
+					<p:selectOneMenu id="cedentes" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.cedenteSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.cedentes}" var="cedente" itemLabel="#{cedente.nomeCedente}" itemValue="#{cedente.idCedente}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoCedente}" process="@this" update="coob"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="sacados" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.sacadoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.sacados}" var="sacado" itemLabel="#{sacado.nomeSacado}" itemValue="#{sacado.idSacado}"/>
+
+					</p:selectOneMenu>
+					<p:selectBooleanButton id="coob" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoController.coobrigacao}"      
+						                                            onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:outputLabel value="Tipo Recebivel" />
+					<p:outputLabel value="Chave NFe" />
+					
+					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.movimentoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.movimentos}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="tiposRecebiveis" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.tipoRecebivelSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.tiposRecebiveis}" var="item" itemLabel="#{item.cdEspecie} - #{item.nmTipoRecebivel}" itemValue="#{item.idTipoRecebivel}"/>
+
+					</p:selectOneMenu>
+					<h:panelGroup>
+						<p:inputText id="chaveNfe" value="#{cnabAquisicaoController.chaveNfe}" size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarNfe}" icon="pi pi-refresh" update="chaveNfe"  />
+					</h:panelGroup>
+					
+					<p:outputLabel value="Seu Numero" />
+					<p:outputLabel value="Numero Documento" />
+					<p:outputLabel value="Termo Cessão" />
+					
+					<h:panelGroup>
+						<p:inputText id="seuNumero" value="#{cnabAquisicaoController.seuNumero}" size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarSeuNumero}" icon="pi pi-refresh" update="seuNumero" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="numeroDocumento" value="#{cnabAquisicaoController.numeroDocumento}"  size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarNumeroDocumento}" icon="pi pi-refresh" update="numeroDocumento" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="termoCessao" value="#{cnabAquisicaoController.termoCessao}"  size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarTermoCessao}" icon="pi pi-refresh" update="termoCessao" />
+					</h:panelGroup>
+					
+					<p:outputLabel value="Valor Título" />
+					<p:outputLabel value="Valor Aquisição" />
+					<p:column/>
+					
+					<p:inputNumber id="valorTitulo" value="#{cnabAquisicaoController.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					<p:inputNumber id="valorAquisicao" value="#{cnabAquisicaoController.valorAquisicao}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					<p:column/>
+					
 					<p:column/>
 					<p:column/>
 					<p:column/>
 					
 					<p:column/>
 					<p:column/>
-					<p:column/>
+					<p:commandButton action="#{cnabAquisicaoController.adicionarTitulo}" icon="pi pi-plus" value="Adicionar Titulo" update="tabela"  />
 
-					<!-- 	    				<p:outputLabel value="Nome do Cliente"/> -->
-					<!-- 						<p:inputText value="#{clienteController.cliente.nome}" size="50"/> -->
-					<!-- 						<p:column/> -->
-
-					<!-- 						<p:outputLabel value="Cpf"/> -->
-					<!-- 						<p:inputMask id="cpf" value="#{clienteController.cliente.documento}" mask="999.999.999-99"/> -->
-					<!-- 						<p:column/> -->
 				</p:panelGrid>
-
-
-
-				<!--     			<p:panel> -->
-
-				<!--     			<p:panelGrid columns="1" layout="grid" rendered="#{clienteController.adicionandoNovo}"> -->
-				<!--     					<f:facet name="header"> -->
-				<!-- 		        			Adicionar Endereco do Cliente -->
-				<!-- 		    			</f:facet> -->
-
-				<!-- 		    			<p:outputLabel value="CEP"/> -->
-				<!-- 						<p:inputMask id="cep" value="#{clienteController.clienteEndereco.endereco.cep}" mask="99999-999"> -->
-				<!-- 							<p:ajax event="change"  update="logradouro bairro cidade estado cep" listener="#{clienteController.buscarPorCep}" /> -->
-				<!-- 						</p:inputMask> -->
-				<!-- 						<p:column/> -->
-
-				<!-- 	    				<p:outputLabel value="Nome da rua"/> -->
-				<!-- 						<p:inputText id="logradouro" value="#{clienteController.clienteEndereco.endereco.logradouro}" size="50"> -->
-				<!-- 							<p:ajax event="keydown"  update="idTbEndereco idEnderecoCliente bairro cidade estado cep" listener="#{clienteController.buscarPorLogradouro}" /> -->
-				<!-- 						</p:inputText> -->
-				<!-- 						<p:column/> -->
-
-
-				<!-- 						<p:panel id="idEnderecoCliente" > -->
-				<!-- 							<p:dataTable id="idTbEndereco" var="item" value="#{clienteController.enderecos}" rendered="#{clienteController.consultandoEnd}" > -->
-				<!-- 								    <p:column headerText="Cep"> -->
-				<!-- 								        <h:outputText value="#{item.cep}" /> -->
-				<!-- 								    </p:column> -->
-
-				<!-- 								    <p:column headerText="Rua"> -->
-				<!-- 								        <h:outputText value="#{item.logradouro}" /> -->
-				<!-- 								    </p:column> -->
-
-				<!-- 								    <p:column headerText="Bairro"> -->
-				<!-- 								        <h:outputText value="#{item.bairro}" /> -->
-				<!-- 								    </p:column> -->
-
-				<!-- 								    <p:column headerText="Cidade"> -->
-				<!-- 								        <h:outputText value="#{item.cidade}" /> -->
-				<!-- 								    </p:column>	 -->
-
-				<!-- 								    <p:column headerText="Ação"> -->
-				<!-- 								        <p:commandButton action="#{clienteController.selecionarEndereco(item)}" update="form" value="Selecionar" /> -->
-				<!-- 								    </p:column>							     -->
-				<!-- 							</p:dataTable> -->
-				<!-- 							</p:panel>	 -->
-
-
-
-				<!-- 						<p:outputLabel value="Bairro"/> -->
-				<!-- 						<p:inputText id="bairro"  value="#{clienteController.clienteEndereco.endereco.bairro}"/> -->
-				<!-- 						<p:column/> -->
-
-				<!-- 						<p:outputLabel value="Cidade"/> -->
-				<!-- 						<p:inputText id="cidade"  value="#{clienteController.clienteEndereco.endereco.cidade}"/> -->
-				<!-- 						<p:column/> -->
-
-				<!-- 						<p:outputLabel value="Estado"></p:outputLabel> -->
-				<!-- 						<p:selectOneMenu id="estado" value="#{clienteController.clienteEndereco.endereco.estado}"> -->
-				<!-- 				            <f:selectItem itemLabel="Selecione 1" itemValue="" /> -->
-				<!-- 				            <f:selectItems value="#{clienteController.estados}" /> -->
-				<!-- 				        </p:selectOneMenu> -->
-				<!-- 						<p:column/> -->
-
-				<!-- 						<p:outputLabel value="Numero da Residência"/> -->
-				<!-- 						<p:inputText id="numRes"  value="#{clienteController.clienteEndereco.numero}"/> -->
-				<!-- 						<p:column/> -->
-
-				<!-- 						<p:outputLabel value="Complemento"/> -->
-				<!-- 						<p:inputText id="compl"  value="#{clienteController.clienteEndereco.complemento}"/> -->
-				<!-- 						<p:column/> -->
-				<!-- 						<p:column/> -->
-				<!-- 						<p:commandButton action="#{clienteController.adicionarEndereco}" value="Adiconar" update="form"/> -->
-				<!-- 					</p:panelGrid> -->
-
-				<!--     			<p:panelGrid columns="1" layout="grid"> -->
-
-				<!--     				<p:commandButton action="#{clienteController.novoEndereco}" value="Novo" icon="pi pi-plus" update="form"/> -->
-				<!--     				<p:column/> -->
-				<!-- 	    					<f:facet name="header"> -->
-				<!-- 			        			Endereco do Cliente -->
-				<!-- 			    			</f:facet> -->
-				<!-- 		    				<p:dataTable id="tabela" var="end" value="#{clienteController.cliente.clienteEnderecos}"> -->
-
-
-				<!-- 			    				<p:column headerText="CEP"> -->
-				<!-- 									<h:outputText value="#{end.endereco.cep}" /> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Nome da rua"> -->
-				<!-- 									<h:outputText value="#{end.endereco.logradouro}" /> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Bairro"> -->
-				<!-- 									<h:outputText value="#{end.endereco.bairro}" /> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Numero da Residência"> -->
-				<!-- 									<h:outputText value="#{end.numero}" /> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Complemento"> -->
-				<!-- 									<h:outputText value="#{end.complemento}" /> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Alterar"> -->
-				<!-- 									<div align="center"> -->
-				<!-- 										<p:commandButton action="#{clienteController.alterarEndereco(end)}" icon="pi pi-pencil"  update="form"/> -->
-				<!-- 									</div> -->
-				<!-- 								</p:column> -->
-
-				<!-- 								<p:column headerText="Excluir"> -->
-				<!-- 									<div align="center"> -->
-				<!-- 										<p:commandButton action="#{clienteController.excluirEndereco(end)}" icon="pi pi-trash" update="form"/> -->
-				<!-- 									</div> -->
-				<!-- 								</p:column> -->
-
-				<!-- 		    				</p:dataTable> -->
-				<!--     				</p:panelGrid> -->
-				<!--     			</p:panel> -->
-
+				<p:panelGrid columns="1">
+					<p:dataTable id="tabela" var="item" value="#{cnabAquisicaoController.cnab.titulos}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabAquisicaoController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
 			</p:panelGrid>
 
-			<p:panelGrid>
-				<p:commandButton action="#{cnabAquisicaoController.voltar}"
-					value="Voltar" />
-				<p:commandButton action="#{cnabAquisicaoController.salvar}"
-					value="Salvar" />
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabAquisicaoController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabAquisicaoController.gerar}" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabAquisicaoController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
 			</p:panelGrid>
 
 		</h:form>
