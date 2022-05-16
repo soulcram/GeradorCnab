@@ -30,17 +30,39 @@ public class ValorAleatorioUtil {
 		return pos;
 	}
 
-	public static BigDecimal getValorDecimal() {
+	public static BigDecimal getValorDecimal(Integer min, Integer max) {
+		
+		if(min == null || min < 10) {
+			min = 10;
+		}
+		
+		if(max == null ) {
+			max = 1000;
+		}
+		
 		Random gerador = new Random();
 		
 		Double nextDouble = gerador.nextDouble();
 		
-		Double m = (nextDouble * (getValorNumerico(1000))) + 10; 
+		Double m = (nextDouble * (getValorNumerico(max))) + min; 
 		
 		
 		BigDecimal retorno = new BigDecimal(m);
 		
 		retorno = retorno.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+				
+		return retorno;
+	}
+	
+	public static BigDecimal getTaxaDecimal() {
+		
+		Random gerador = new Random();
+		
+		Double nextDouble = gerador.nextDouble();		
+		
+		BigDecimal retorno = new BigDecimal(nextDouble);
+		
+		retorno = retorno.setScale(4, BigDecimal.ROUND_HALF_EVEN);
 				
 		return retorno;
 	}

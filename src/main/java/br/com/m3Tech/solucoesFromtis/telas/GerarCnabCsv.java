@@ -290,6 +290,7 @@ public class GerarCnabCsv extends JPanel {
 						new BigDecimal(colunas[14].replaceAll(",", ".")), //valorTitulo, 
 						new BigDecimal(colunas[15].replaceAll(",", ".")), //valorAquisicao, 
 						null,
+						null,
 						null);
 
 				cnab.getTitulos().add(titulo.getCopy());

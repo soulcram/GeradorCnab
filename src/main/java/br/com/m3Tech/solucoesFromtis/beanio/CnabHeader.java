@@ -3,6 +3,7 @@ package br.com.m3Tech.solucoesFromtis.beanio;
 import java.time.LocalDate;
 
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
+import br.com.m3Tech.solucoesFromtis.util.LayoutUtils;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,7 @@ public class CnabHeader {
 	private String coobrigacao;
 	
 	public CnabHeader(CnabDto dto) {
+		this.coobrigacao = (LayoutUtils.coobrigacaoNoHeader(dto.getLayout()) ? ("01".equals(dto.getTitulos().get(0).getCoobrigacao()) ? "S" : "N") : null);
 		this.codigoOriginador = dto.getOriginador().getCodigoOriginador();
 		this.nomeOriginador = dto.getOriginador().getNomeOriginador();
 		this.numeroBanco = dto.getBanco().getCodigoBanco();

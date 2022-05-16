@@ -21,7 +21,7 @@
     			</f:facet>
 
 
-				<p:panelGrid columns="3" layout="grid">
+				<p:panelGrid id="geral" columns="3" layout="grid">
 
 
 					<p:outputLabel value="Base de Dados" />
@@ -51,14 +51,14 @@
 						<f:selectItem itemLabel="Selecione" itemValue="" />
 						<f:selectItems value="#{cnabAquisicaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
 						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoFundo}" 
-							    update="layout dataGravacao dataVencimento originadores sacados cedentes coob tiposRecebiveis movimentos tabela" 
+							    update="geral tabela auxiliares" 
 							    process="@this" />
 
 					</p:selectOneMenu>
 					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
 						value="#{cnabAquisicaoController.layoutSelecionado}">
 						<f:selectItems value="#{cnabAquisicaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
-						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoLayout}" process="@this dataGravacao" />
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoLayout}" process="@this" update="auxiliares geral" />
 
 					</p:selectOneMenu>
 					<p:datePicker id="dataGravacao" value="#{cnabAquisicaoController.dataGravacao}" />
@@ -97,7 +97,8 @@
 						     
 					<p:outputLabel value="Movimento" />
 					<p:outputLabel value="Tipo Recebivel" />
-					<p:outputLabel value="Chave NFe" />
+					<p:outputLabel value="Risco" rendered="#{cnabAquisicaoController.exibirRisco}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirRisco}"/>
 					
 					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
 						value="#{cnabAquisicaoController.movimentoSelecionado}" >
@@ -108,10 +109,13 @@
 						<f:selectItems value="#{cnabAquisicaoController.tiposRecebiveis}" var="item" itemLabel="#{item.cdEspecie} - #{item.nmTipoRecebivel}" itemValue="#{item.idTipoRecebivel}"/>
 
 					</p:selectOneMenu>
-					<h:panelGroup>
-						<p:inputText id="chaveNfe" value="#{cnabAquisicaoController.chaveNfe}" size="40"/> 
-						<p:commandButton action="#{cnabAquisicaoController.gerarNfe}" icon="pi pi-refresh" update="chaveNfe"  />
-					</h:panelGroup>
+					<p:selectOneMenu id="riscos" autoWidth="false" style="width: 90% !important"
+						rendered="#{cnabAquisicaoController.exibirRisco}"
+						value="#{cnabAquisicaoController.riscoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.riscos}" var="item" itemLabel="#{item.codRisco} - #{item.nomeRisco}" itemValue="#{item.idRisco}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoController.exibirRisco}"/>
 					
 					<p:outputLabel value="Seu Numero" />
 					<p:outputLabel value="Numero Documento" />
@@ -131,22 +135,80 @@
 					</h:panelGroup>
 					
 					<p:outputLabel value="Valor Título" />
-					<p:outputLabel value="Valor Aquisição" />
+					<p:outputLabel value="Valor Aquisição" rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+					<p:column rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+					<p:outputLabel value="Taxa de Juros" rendered="#{cnabAquisicaoController.exibirTaxaJuros}" />
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+					
+					<h:panelGroup>
+						<p:inputNumber id="valorTitulo" value="#{cnabAquisicaoController.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarValorTitulo}" icon="pi pi-refresh" update="valorTitulo" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="valorAquisicao" value="#{cnabAquisicaoController.valorAquisicao}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarValorAquisicao}" icon="pi pi-refresh" update="valorAquisicao" rendered="#{!cnabAquisicaoController.exibirTaxaJuros}" />
+						<p:column rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="taxaJuros" value="#{cnabAquisicaoController.taxaJuros}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarTaxaJuros}" icon="pi pi-refresh" update="taxaJuros" rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+						
+					</h:panelGroup>
+					<p:column/>
+					<p:column/>
 					<p:column/>
 					
-					<p:inputNumber id="valorTitulo" value="#{cnabAquisicaoController.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
-					<p:inputNumber id="valorAquisicao" value="#{cnabAquisicaoController.valorAquisicao}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
-					<p:column/>
 					
-					<p:column/>
-					<p:column/>
-					<p:column/>
+				</p:panelGrid>
+				
+				<p:panelGrid id="auxiliares" columns="3" layout="grid">
+				
+					<p:outputLabel value="Chave NFe" rendered="#{cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:outputLabel value="Indexador" rendered="#{cnabAquisicaoController.exibirIndexadores}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirIndexadores}"/>
+					<p:outputLabel value="Data Carência" rendered="#{cnabAquisicaoController.exibirDataCarencia}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDataCarencia}"/>
+				
+					<h:panelGroup rendered="#{cnabAquisicaoController.exibirChaveNfe}">
+						<p:inputText id="chaveNfe" value="#{cnabAquisicaoController.chaveNfe}" size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarNfe}" icon="pi pi-refresh" update="chaveNfe"  />
+					</h:panelGroup>
+					<p:column rendered="#{!cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:selectOneMenu id="indexadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.indexadorSelecionado}" rendered="#{cnabAquisicaoController.exibirIndexadores}">
+						<f:selectItem itemLabel="selecione" itemValue=""/>
+						<f:selectItems value="#{cnabAquisicaoController.indexadores}" var="item" itemLabel="#{item.codIndexador} - #{item.nomeIndexador}" itemValue="#{item.idIndexador}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoController.exibirIndexadores}"/>
+					<p:datePicker id="dataCarencia" value="#{cnabAquisicaoController.dataCarencia}" rendered="#{cnabAquisicaoController.exibirDataCarencia}" />
+					<p:column rendered="#{!cnabAquisicaoController.exibirDataCarencia}"/>
+				
+				
+					<p:outputLabel value="Taxa Juros Indexador" rendered="#{cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:outputLabel value="Variacao Cambial" rendered="#{cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column />
 					
+					<p:inputNumber id="taxaJurosIndexador" value="#{cnabAquisicaoController.taxaJurosIndexador}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:inputText value="#{cnabAquisicaoController.variacaoCambial}" size="50" rendered="#{cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column />
+					
+					
+				</p:panelGrid>
+
+				<p:panelGrid id="addTitulo" columns="3" layout="grid">
 					<p:column/>
 					<p:column/>
 					<p:commandButton action="#{cnabAquisicaoController.adicionarTitulo}" icon="pi pi-plus" value="Adicionar Titulo" update="tabela"  />
 
 				</p:panelGrid>
+
 				<p:panelGrid columns="1">
 					<p:dataTable id="tabela" var="item" value="#{cnabAquisicaoController.cnab.titulos}">
 						

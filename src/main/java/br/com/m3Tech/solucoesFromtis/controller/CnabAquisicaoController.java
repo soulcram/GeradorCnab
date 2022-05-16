@@ -23,8 +23,10 @@ import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
+import br.com.m3Tech.solucoesFromtis.dto.IndexadorDto;
 import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
+import br.com.m3Tech.solucoesFromtis.dto.RiscoDto;
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
@@ -37,11 +39,16 @@ import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
 import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
+import br.com.m3Tech.solucoesFromtis.service.IIndexadorService;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
+import br.com.m3Tech.solucoesFromtis.service.IRiscoService;
 import br.com.m3Tech.solucoesFromtis.service.ISacadoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
+import br.com.m3Tech.solucoesFromtis.util.LayoutUtils;
+import br.com.m3Tech.solucoesFromtis.util.NumericUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
+import br.com.m3Tech.utils.BigDecimalUtils;
 import br.com.m3Tech.utils.BooleanUtils;
 import br.com.m3Tech.utils.StringUtils;
 import lombok.Getter;
@@ -79,6 +86,10 @@ public class CnabAquisicaoController implements Serializable {
 	private IConfGlobalService confGlobalService;
 	@Autowired
 	private  IGeradorCnab geradorCnab;
+	@Autowired
+	private IIndexadorService indexadorService;
+	@Autowired
+	private IRiscoService riscoService;
 		
 	
 	
@@ -91,21 +102,27 @@ public class CnabAquisicaoController implements Serializable {
 	private Integer cedenteSelecionado;
 	private Integer movimentoSelecionado;
 	private Integer tipoRecebivelSelecionado;
+	private Integer indexadorSelecionado;
+	private Integer riscoSelecionado;
 	
 	private String chaveNfe;
 	private String seuNumero;
 	private String numeroDocumento;
 	private String termoCessao;
 	private String path;
+	private String variacaoCambial;
 	
 	private Boolean coobrigacao;
 	private Boolean importacaoAutomatica;
 	
 	private LocalDate dataGravacao;
 	private LocalDate dataVencimento;
+	private LocalDate dataCarencia;
 	
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorTitulo;
+	private BigDecimal taxaJuros;
+	private BigDecimal taxaJurosIndexador;
 	
 	private CnabDto cnab;
 	
@@ -118,6 +135,8 @@ public class CnabAquisicaoController implements Serializable {
 	private List<MovimentoDto> movimentos;
 	private List<TipoRecebivelDto> tiposRecebiveis;
 	private List<TituloDto> titulos;
+	private List<IndexadorDto> indexadores;
+	private List<RiscoDto> riscos;
 	
 	@PostConstruct
 	public void init() {
@@ -130,6 +149,8 @@ public class CnabAquisicaoController implements Serializable {
 		sacados = new ArrayList<>();
 		movimentos = new ArrayList<>();
 		tiposRecebiveis = new ArrayList<>();
+		indexadores = new ArrayList<>();
+		riscos = new ArrayList<>();
 		cnab = new CnabDto();
 		path = confGlobalService.getConfGlobal().getPath();
 
@@ -141,6 +162,8 @@ public class CnabAquisicaoController implements Serializable {
 		cnab = new CnabDto();
 		atualizarFundos();
 		atualizarBancos();
+		atualizarIndexadores();
+		atualizarRiscos();
 		
 	}
 	
@@ -186,6 +209,11 @@ public class CnabAquisicaoController implements Serializable {
 	
 	public void selecionandoLayout() {
 		try {
+			
+			if(baseSelecionada == null) {
+				return;
+			}
+			
 			Base base = baseService.findById(baseSelecionada);
 			
 			Connection con = Conexao.getConnection(base);
@@ -261,6 +289,32 @@ public class CnabAquisicaoController implements Serializable {
 		}
 	}
 	
+	private void atualizarIndexadores() {
+
+		try {
+
+			Base base = baseService.findById(baseSelecionada);
+
+			indexadores = indexadorService.findAll(Conexao.getConnection(base));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void atualizarRiscos() {
+
+		try {
+
+			Base base = baseService.findById(baseSelecionada);
+
+			riscos = riscoService.findAll(Conexao.getConnection(base));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void atualizarBases() {
 		System.out.println("Atualizar Base");
 		
@@ -280,8 +334,23 @@ public class CnabAquisicaoController implements Serializable {
 			return;
 		}
 		
-		if(valorAquisicao.compareTo(valorTitulo) > 0) {
+		if( BigDecimalUtils.isNullOrZero(valorTitulo)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor do título é obrigatório."));
+			return;
+		}
+		
+		if( 35 != layoutSelecionado && BigDecimalUtils.isNullOrZero(valorAquisicao)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor de aquisição é obrigatório."));
+			return;
+		}
+		
+		if( 35 != layoutSelecionado && valorAquisicao.compareTo(valorTitulo) > 0) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor de aquisição não pode ser maior que o valor do título."));
+			return;
+		}
+		
+		if( 35 == layoutSelecionado && BigDecimalUtils.isNullOrZero(taxaJuros)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Taxa de Juros é obrigatório."));
 			return;
 		}
 		
@@ -304,31 +373,39 @@ public class CnabAquisicaoController implements Serializable {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Termo Cessão é obrigatório."));
 			return;
 		}
+		Optional<CedenteDto> optionalCedente = cedentes.stream().filter(c -> c.getIdCedente().equals(cedenteSelecionado)).findFirst();
+		Optional<SacadoDto> optionalSacado = sacados.stream().filter(c -> c.getIdSacado().equals(sacadoSelecionado)).findFirst();
+		Optional<BancoDto> optionalBanco = bancos.stream().filter(c -> c.getIdBanco().equals(bancoSelecionado)).findFirst();
+		Optional<MovimentoDto> optionalMovimento = movimentos.stream().filter(c -> c.getIdMovimento().equals(movimentoSelecionado)).findFirst();
+		Optional<IndexadorDto> optionalIndexador = indexadores.stream().filter(c -> c.getIdIndexador().equals(indexadorSelecionado)).findFirst();
+		Optional<RiscoDto> optionalRisco = riscos.stream().filter(c -> c.getIdRisco().equals(riscoSelecionado)).findFirst();
+		Optional<TipoRecebivelDto> optionalTipoRecebivel = tiposRecebiveis.stream().filter(c -> c.getIdTipoRecebivel().equals(tipoRecebivelSelecionado)).findFirst();
 		
-		TituloDto titulo = new TituloDto(cedentes.stream().filter(c -> c.getIdCedente().equals(cedenteSelecionado)).findFirst().get(), 
-				sacados.stream().filter(c -> c.getIdSacado().equals(sacadoSelecionado)).findFirst().get(), 
-				bancos.stream().filter(c -> c.getIdBanco().equals(bancoSelecionado)).findFirst().get().getCodigoBanco(), 
+		TituloDto titulo = new TituloDto(optionalCedente.isPresent() ? optionalCedente.get() : null, 
+				optionalSacado.isPresent() ? optionalSacado.get() : null, 
+				optionalBanco.isPresent() ? optionalBanco.get().getCodigoBanco() : null, 
 				dataVencimento, 
 				null, //dataLiquidacao, 
-				null, //dataCarencia, 
-				movimentos.stream().filter(c -> c.getIdMovimento().equals(movimentoSelecionado)).findFirst().get(), 
-				null, //indexador, 
-				null, //risco, 
+				dataCarencia, //dataCarencia, 
+				optionalMovimento.isPresent() ? optionalMovimento.get() : null, 
+				optionalIndexador.isPresent() ? optionalIndexador.get() : null, //indexador, 
+				optionalRisco.isPresent() ? optionalRisco.get() : null, //risco, 
 				seuNumero, 
 				coobrigacao ? "01" : "02", 
 				null, //nossoNumero, 
 				numeroDocumento, 
-				tiposRecebiveis.stream().filter(c -> c.getIdTipoRecebivel().equals(tipoRecebivelSelecionado)).findFirst().get().getCdEspecie(), //especie, 
+				optionalTipoRecebivel.isPresent() ? optionalTipoRecebivel.get().getCdEspecie() : null, //especie, 
 				termoCessao, 
 				chaveNfe, 
-				null, //variacaoCambial, 
+				variacaoCambial, //variacaoCambial, 
 				null, //docOrigRecebivel, 
 				null, //nomeOrigRecebivel, 
 				null, //valorPago, 
 				valorTitulo, 
 				valorAquisicao, 
 				null, //valorAbatimento, 
-				null //taxaJurosIndexador
+				taxaJurosIndexador, //taxaJurosIndexador
+				taxaJuros
 				);
 		
 		cnab.getTitulos().add(titulo.getCopy());
@@ -396,10 +473,69 @@ public class CnabAquisicaoController implements Serializable {
 		this.termoCessao = ValorAleatorioUtil.getValor(10);
 	}
 	
+	public void gerarValorTitulo() {
+		this.valorTitulo = ValorAleatorioUtil.getValorDecimal(10,2000);
+		
+	}
+	
+	public void gerarValorAquisicao() {
+		if(BigDecimalUtils.isNullOrZero(valorTitulo)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "É necessário informar o valor do titulo."));
+		}else {
+			this.valorAquisicao = NumericUtils.getValorMenos20PorCento(valorTitulo);
+		}
+	}
+	
+	public void gerarTaxaJuros() {
+		this.taxaJuros = ValorAleatorioUtil.getTaxaDecimal();
+	}
+	
 	public void removerTitulo(TituloDto titulo) {
 		cnab.getTitulos().remove(titulo);
 	}
 	
+	public Boolean getExibirChaveNfe() {
+
+		return LayoutUtils.exibirChaveNfe(layoutSelecionado);
+	}
+	
+	public Boolean getExibirIndexadores() {
+
+		return LayoutUtils.exibirIndexadores(layoutSelecionado);
+	}
+	
+	public Boolean getExibirDataCarencia() {
+
+		return LayoutUtils.exibirDataCarencia(layoutSelecionado);
+	}
+	
+	public Boolean getExibirTaxaJurosIndexador() {
+
+		return LayoutUtils.exibirTaxaJurosIndexador(layoutSelecionado);
+	}
+	
+	public Boolean getExibirVariacaoCambial() {
+
+		return LayoutUtils.exibirVariacaoCambial(layoutSelecionado);
+	}
+	
+	public Boolean getExibirRisco() {
+
+		return LayoutUtils.exibirRisco(layoutSelecionado);
+	}
+	
+	public Boolean getExibirTaxaJuros() {
+		
+		if(layoutSelecionado == null) {
+			return false;
+		}
+		
+		if(layoutSelecionado == 35 ) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	public String voltar() {
 		return VOLTAR;

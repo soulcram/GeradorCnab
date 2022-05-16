@@ -39,7 +39,7 @@ public class GeradorCnabImpl implements IGeradorCnab {
         out.write(new CnabHeader(cnab));
         int qtdeTitulos = 2;
         for(TituloDto dto : cnab.getTitulos()) {
-        	out.write(new CnabDetail(dto, qtdeTitulos++));
+        	out.write(new CnabDetail(dto, qtdeTitulos++, cnab.getLayout()));
         }
         out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));
         
