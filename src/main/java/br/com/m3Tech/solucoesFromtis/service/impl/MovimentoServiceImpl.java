@@ -458,7 +458,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 		
 		try {
 			
-			String query = "DECLARE @IDFUNDO INT = 1\r\n" + 
+			String query = "DECLARE @IDFUNDO INT = " + idFundo  +  "\r\n" + 
 					"\r\n" + 
 					"Select TOP 30 x.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
 					"from (\r\n" + 

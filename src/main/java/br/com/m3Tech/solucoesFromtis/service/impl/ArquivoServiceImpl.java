@@ -17,7 +17,6 @@ import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoService;
 import br.com.m3Tech.solucoesFromtis.service.ITabelaService;
 import br.com.m3Tech.solucoesFromtis.util.MontarQueryUtils;
-import br.com.m3Tech.utils.LocalDateUtils;
 
 
 @Service
@@ -118,7 +117,7 @@ public class ArquivoServiceImpl implements IArquivoService, Serializable{
 		
 		ps.execute();
 		
-		ResultSet rs = ps.getResultSet();
+		// ResultSet rs = ps.getResultSet();
 		
 //		if(rs.next()) {
 //			retorno = new ArquivoDto(rs.getInt("ID_ARQUIVO"), 

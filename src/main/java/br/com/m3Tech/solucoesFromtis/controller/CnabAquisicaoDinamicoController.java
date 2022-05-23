@@ -50,7 +50,6 @@ import br.com.m3Tech.solucoesFromtis.util.NumericUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.BigDecimalUtils;
 import br.com.m3Tech.utils.BooleanUtils;
-import br.com.m3Tech.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -148,6 +147,7 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 		riscos = new ArrayList<>();
 		cnab = new CnabDto();
 		path = confGlobalService.getConfGlobal().getPath();
+		quantidadeTitulos = 1;
 
 				
 	}
