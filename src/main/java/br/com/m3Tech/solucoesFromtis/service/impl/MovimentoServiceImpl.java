@@ -460,7 +460,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			
 			String query = "DECLARE @IDFUNDO INT = " + idFundo  +  "\r\n" + 
 					"\r\n" + 
-					"Select TOP 30 x.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
+					"Select TOP 10 x.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
 					"from (\r\n" + 
 					"	SELECT DISTINCT R.ID_RECEBIVEL,\r\n" + 
 					"	R.DS_SEU_NUMERO, \r\n" + 
@@ -540,7 +540,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 				titulo.setSeuNumero(rs.getString("DS_SEU_NUMERO"));
 				titulo.setTermoCessao(rs.getString("TERMO_CESSAO"));
 				titulo.setValorAquisicao(rs.getBigDecimal("VL_AQUISICAO"));
-				titulo.setValorPago(rs.getBigDecimal("VL_NOMINAL"));
+				titulo.setValorPago(null);
 				titulo.setValorTitulo(rs.getBigDecimal("VL_NOMINAL"));
 				titulo.setDataVencimento(LocalDate.parse(rs.getString("DT_VENCIMENTO").substring(0, 10)));
 				titulo.setDataLiquidacao(LocalDate.now());
