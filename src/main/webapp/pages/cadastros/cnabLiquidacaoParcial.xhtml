@@ -15,7 +15,7 @@
 			<p:panelGrid columns="1" layout="grid">
 
 				<f:facet name="header">
-        			Gerar Cnab de Aquisição
+        			Gerar Cnab de Liquidação Parcial
     			</f:facet>
 
 
@@ -27,7 +27,7 @@
 					<p:column />
 
 					<h:panelGroup >
-						<p:selectOneMenu id="bases" style="width: 80% !important"
+						<p:selectOneMenu id="bases" style="width: 90% !important"
 							value="#{cnabLiquidacaoParcialController.baseSelecionada}">
 							<f:selectItem itemLabel="Selecione" itemValue="" />
 							<f:selectItems value="#{cnabLiquidacaoParcialController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>

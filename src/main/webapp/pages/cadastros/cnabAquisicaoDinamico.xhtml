@@ -17,7 +17,7 @@
 			<p:panelGrid columns="1" layout="grid">
 
 				<f:facet name="header">
-        			Gerar Cnab de Aquisição
+        			Gerar Cnab de Aquisição Dinâmico
     			</f:facet>
 
 
@@ -26,8 +26,9 @@
 
 					<p:outputLabel value="Base de Dados" />
 					<p:column />
-					<p:outputLabel value="Atualizar Combo Bases de Dados" />
-
+					<p:column />
+					
+					<h:panelGroup >
 					<p:selectOneMenu id="bases" style="width: 90% !important"
 						value="#{cnabAquisicaoDinamicoController.baseSelecionada}">
 						<f:selectItem itemLabel="Selecione" itemValue="" />
@@ -35,10 +36,12 @@
 						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoBase}" process="@this" update="fundos bancos"/>
 
 					</p:selectOneMenu>
+					<p:commandButton  action="#{cnabAquisicaoDinamicoController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
 					<p:column />
-					<p:commandButton value="Atualizar Bases"
-						action="#{cnabAquisicaoDinamicoController.atualizarBases}" ajax="false"
-						immediate="true" update="bases"/>
+					<p:column />
 					
 					
 					<p:outputLabel value="Fundos" />
