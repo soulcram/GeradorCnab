@@ -3,6 +3,7 @@ package br.com.m3Tech.solucoesFromtis.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,10 @@ import br.com.m3Tech.solucoesFromtis.util.NumericUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.BigDecimalUtils;
 import br.com.m3Tech.utils.BooleanUtils;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -132,6 +137,8 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 	private List<IndexadorDto> indexadores;
 	private List<RiscoDto> riscos;
 	
+	private Bucket bucket;
+	
 	@PostConstruct
 	public void init() {
 		
@@ -148,6 +155,11 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 		cnab = new CnabDto();
 		path = confGlobalService.getConfGlobal().getPath();
 		quantidadeTitulos = 1;
+		
+		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
+        this.bucket = Bucket4j.builder()
+            .addLimit(limit)
+            .build();
 
 				
 	}
@@ -450,6 +462,11 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 	
 	public void gerar() {
 		try {
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
 			
 			if(quantidadeTitulos == null || quantidadeTitulos == 0) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos é obrigatório"));

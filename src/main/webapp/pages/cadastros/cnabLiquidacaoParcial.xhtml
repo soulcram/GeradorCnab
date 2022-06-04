@@ -27,7 +27,7 @@
 					<p:column />
 
 					<h:panelGroup >
-						<p:selectOneMenu id="bases" style="width: 90% !important"
+						<p:selectOneMenu id="bases" style="width: 85% !important"
 							value="#{cnabLiquidacaoParcialController.baseSelecionada}">
 							<f:selectItem itemLabel="Selecione" itemValue="" />
 							<f:selectItems value="#{cnabLiquidacaoParcialController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
@@ -115,7 +115,7 @@
 						
 						<p:column headerText="Editar Valor Parcial">
 							<div align="center">
-								<p:commandButton action="#{cnabLiquidacaoParcialController.editarTitulo(item)}" update="form"  icon="pi pi-plus"/>
+								<p:commandButton action="#{cnabLiquidacaoParcialController.editarTitulo(item)}" update="form"  icon="pi pi-pencil"/>
 							</div>
 						</p:column>
 					</p:dataTable>

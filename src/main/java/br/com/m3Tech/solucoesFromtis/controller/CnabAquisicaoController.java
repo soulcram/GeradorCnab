@@ -3,6 +3,7 @@ package br.com.m3Tech.solucoesFromtis.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,10 @@ import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.BigDecimalUtils;
 import br.com.m3Tech.utils.BooleanUtils;
 import br.com.m3Tech.utils.StringUtils;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -91,7 +96,7 @@ public class CnabAquisicaoController implements Serializable {
 	@Autowired
 	private IRiscoService riscoService;
 		
-	
+	private Bucket bucket;
 	
 	private Integer baseSelecionada;
 	private Integer fundoSelecionado;
@@ -153,6 +158,11 @@ public class CnabAquisicaoController implements Serializable {
 		riscos = new ArrayList<>();
 		cnab = new CnabDto();
 		path = confGlobalService.getConfGlobal().getPath();
+		
+		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
+        this.bucket = Bucket4j.builder()
+            .addLimit(limit)
+            .build();
 
 				
 	}
@@ -405,7 +415,12 @@ public class CnabAquisicaoController implements Serializable {
 				valorAquisicao, 
 				null, //valorAbatimento, 
 				taxaJurosIndexador, //taxaJurosIndexador
-				taxaJuros
+				taxaJuros,
+				null,
+				null,
+				null,
+				null,
+				null
 				);
 		
 		cnab.getTitulos().add(titulo.getCopy());
@@ -416,6 +431,11 @@ public class CnabAquisicaoController implements Serializable {
 	
 	public void gerar() {
 		try {
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
 			
 			if(cnab.getTitulos() == null || cnab.getTitulos().isEmpty()) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum título foi adicionado.."));

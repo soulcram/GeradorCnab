@@ -1,0 +1,304 @@
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Recompra Parcial
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:column />
+
+					<h:panelGroup >
+						<p:selectOneMenu id="bases" style="width: 85% !important"
+							value="#{cnabRecompraParcialController.baseSelecionada}">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{cnabRecompraParcialController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+							<p:ajax event="change" listener="#{cnabRecompraParcialController.selecionandoBase}" process="@this" update="fundos bancos titulosEmEstoque"/>
+
+						</p:selectOneMenu>
+						<p:commandButton  action="#{cnabRecompraParcialController.atualizarBases}" ajax="false"
+						 			      immediate="true" update="bases" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Data Gravação" />
+					
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabRecompraParcialController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabRecompraParcialController.selecionandoFundo}" 
+							    update="geral titulosEmEstoque recompraAquisicao" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.layoutSelecionado}">
+						<f:selectItems value="#{cnabRecompraParcialController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabRecompraParcialController.selecionandoLayout}" process="@this" update="geral" />
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataGravacao" value="#{cnabRecompraParcialController.dataGravacao}" />
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Originador" />
+					<p:column />
+					
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabRecompraParcialController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="originadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.originadorSelecionado}">
+						<f:selectItems value="#{cnabRecompraParcialController.originadores}" var="originador" itemLabel="#{originador.nomeOriginador}" itemValue="#{originador.idOriginador}"/>
+
+					</p:selectOneMenu>
+					<p:column />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:column />
+					<p:column />
+					
+					<p:selectOneMenu id="movimentosBaixa" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.movimentoBaixaSelecionado}" >
+						<f:selectItems value="#{cnabRecompraParcialController.movimentosBaixaRecompra}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<p:column />
+					<p:column />
+					
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<f:facet name="header">
+                   	 	Baixa
+                	</f:facet>
+					<p:outputLabel value="Títulos em Estoque" />
+					<p:dataTable id="titulosEmEstoque" var="item" value="#{cnabRecompraParcialController.titulosEmEstoque}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="Editar Valor Parcial">
+							<div align="center">
+								<p:commandButton action="#{cnabRecompraParcialController.editarTituloBaixa(item)}" update="form"  icon="pi pi-pencil"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+				
+				<p:panelGrid id="parcial" columns="3" layout="grid">
+				
+					<p:outputLabel value="Seu Numero" />
+					<p:outputLabel value="Valor Titulo" />
+					<p:outputLabel value="Valor Parcial" />
+					
+					<p:inputText id="seuNumeroParcial" value="#{cnabRecompraParcialController.titulo.seuNumero}" size="40" disabled="true"/> 
+					<p:inputNumber id="valorTituloParcial" value="#{cnabRecompraParcialController.titulo.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+					<h:panelGroup>
+						<p:inputNumber id="valorParcial" value="#{cnabRecompraParcialController.titulo.valorPago}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+						<p:commandButton action="#{cnabRecompraParcialController.gerarValorParcial}" icon="pi pi-refresh" update="valorParcial" />
+					</h:panelGroup>
+					
+					<p:column />
+					<p:commandButton value="Adicionar Título" action="#{cnabRecompraParcialController.addTituloBaixa()}" update="form"  icon="pi pi-plus"/>
+					<p:column />
+				
+				</p:panelGrid>
+				
+				<p:panelGrid id="recompraAquisicao" columns="3" layout="grid">
+					
+					<f:facet name="header">
+                   	 	Aquisição
+                	</f:facet>
+				
+					<p:outputLabel value="Vencimento" />
+					<p:column />
+					<p:column />
+					
+					<p:datePicker id="dataVencimento" value="#{cnabRecompraParcialController.dataVencimento}" />
+					<p:column />
+					<p:column />
+					
+					<p:outputLabel value="Cedente" />
+					<p:outputLabel value="Sacado" />
+					<p:outputLabel value="Coobrigação" />
+					
+					<p:selectOneMenu id="cedentes" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.cedenteSelecionado}" >
+						<f:selectItems value="#{cnabRecompraParcialController.cedentes}" var="cedente" itemLabel="#{cedente.nomeCedente}" itemValue="#{cedente.idCedente}"/>
+						<p:ajax event="change" listener="#{cnabRecompraParcialController.selecionandoCedente}" process="@this" update="coob"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="sacados" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.sacadoSelecionado}">
+						<f:selectItems value="#{cnabRecompraParcialController.sacados}" var="sacado" itemLabel="#{sacado.nomeSacado}" itemValue="#{sacado.idSacado}"/>
+
+					</p:selectOneMenu>
+					<p:selectBooleanButton id="coob" onLabel="Sim" offLabel="Não"  value="#{cnabRecompraParcialController.coobrigacao}"      
+						                                            onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:outputLabel value="Tipo Recebivel" />
+					<p:outputLabel value="Risco" rendered="#{cnabRecompraParcialController.exibirRisco}"/>
+					<p:column rendered="#{!cnabRecompraParcialController.exibirRisco}"/>
+					
+					<p:selectOneMenu id="movimentosAquisicao" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.movimentoAquisicaoSelecionado}" >
+						<f:selectItems value="#{cnabRecompraParcialController.movimentosAquisicaoRecompra}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="tiposRecebiveis" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRecompraParcialController.tipoRecebivelSelecionado}">
+						<f:selectItems value="#{cnabRecompraParcialController.tiposRecebiveis}" var="item" itemLabel="#{item.cdEspecie} - #{item.nmTipoRecebivel}" itemValue="#{item.idTipoRecebivel}"/>
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="riscos" autoWidth="false" style="width: 90% !important"
+						rendered="#{cnabRecompraParcialController.exibirRisco}"
+						value="#{cnabRecompraParcialController.riscoSelecionado}">
+						<f:selectItems value="#{cnabRecompraParcialController.riscos}" var="item" itemLabel="#{item.codRisco} - #{item.nomeRisco}" itemValue="#{item.idRisco}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabRecompraParcialController.exibirRisco}"/>
+					
+					<p:outputLabel value="Seu Numero" />
+					<p:outputLabel value="Numero Documento" />
+					<p:outputLabel value="Termo Cessão" />
+					
+					<h:panelGroup>
+						<p:inputText id="seuNumero" value="#{cnabRecompraParcialController.seuNumero}" size="40"/> 
+						<p:commandButton action="#{cnabRecompraParcialController.gerarSeuNumero}" icon="pi pi-refresh" update="seuNumero" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="numeroDocumento" value="#{cnabRecompraParcialController.numeroDocumento}"  size="40"/> 
+						<p:commandButton action="#{cnabRecompraParcialController.gerarNumeroDocumento}" icon="pi pi-refresh" update="numeroDocumento" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="termoCessao" value="#{cnabRecompraParcialController.termoCessao}"  size="40"/> 
+						<p:commandButton action="#{cnabRecompraParcialController.gerarTermoCessao}" icon="pi pi-refresh" update="termoCessao" />
+					</h:panelGroup>
+					
+					<p:outputLabel value="Valor Título" />
+					<p:outputLabel value="Valor Aquisição" rendered="#{!cnabRecompraParcialController.exibirTaxaJuros}"/>
+					<p:column rendered="#{cnabRecompraParcialController.exibirTaxaJuros}"/>
+					<p:outputLabel value="Taxa de Juros" rendered="#{cnabRecompraParcialController.exibirTaxaJuros}" />
+					<p:column rendered="#{!cnabRecompraParcialController.exibirTaxaJuros}"/>
+					
+					<h:panelGroup>
+						<p:inputNumber id="valorTitulo" value="#{cnabRecompraParcialController.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." disabled="true"/>
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="valorAquisicao" value="#{cnabRecompraParcialController.valorAquisicao}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." rendered="#{!cnabRecompraParcialController.exibirTaxaJuros}" disabled="true"/>
+						<p:column rendered="#{cnabRecompraParcialController.exibirTaxaJuros}"/>
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="taxaJuros" value="#{cnabRecompraParcialController.taxaJuros}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabRecompraParcialController.exibirTaxaJuros}"/>
+						<p:commandButton action="#{cnabRecompraParcialController.gerarTaxaJuros}" icon="pi pi-refresh" update="taxaJuros" rendered="#{cnabRecompraParcialController.exibirTaxaJuros}"/>
+						<p:column rendered="#{!cnabRecompraParcialController.exibirTaxaJuros}"/>
+						
+					</h:panelGroup>
+					<p:column/>
+					<p:column/>
+					<p:column/>
+					
+					<p:column />
+					<p:commandButton value="Adicionar Título" action="#{cnabRecompraParcialController.addTituloAquisicao()}" update="form"  icon="pi pi-plus"/>
+					<p:column />
+				
+				</p:panelGrid>
+				
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos que serão baixados" />
+					<p:dataTable id="tabela" var="item" value="#{cnabRecompraParcialController.cnab.titulos}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabRecompraParcialController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabRecompraParcialController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabRecompraParcialController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabRecompraParcialController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabRecompraParcialController.gerar}" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabRecompraParcialController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

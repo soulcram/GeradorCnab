@@ -29,11 +29,11 @@
 					<p:column />
 					
 					<h:panelGroup >
-					<p:selectOneMenu id="bases" style="width: 90% !important"
-						value="#{cnabAquisicaoDinamicoController.baseSelecionada}">
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{cnabAquisicaoController.baseSelecionada}">
 						<f:selectItem itemLabel="Selecione" itemValue="" />
-						<f:selectItems value="#{cnabAquisicaoDinamicoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
-						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoBase}" process="@this" update="fundos bancos"/>
+						<f:selectItems value="#{cnabAquisicaoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoBase}" process="@this" update="fundos bancos"/>
 
 					</p:selectOneMenu>
 					<p:commandButton  action="#{cnabAquisicaoDinamicoController.atualizarBases}" ajax="false"

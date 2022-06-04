@@ -1,0 +1,187 @@
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Retorno Cobrança
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados"/>
+					<p:column />
+					<p:column />
+
+					<h:panelGroup >
+						<p:selectOneMenu id="bases" style="width: 85% !important"
+							value="#{cnabRetornoCobrancaController.baseSelecionada}">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{cnabRetornoCobrancaController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+							<p:ajax event="change" listener="#{cnabRetornoCobrancaController.selecionandoBase}" process="@this" update="fundos titulosEmEstoque"/>
+
+						</p:selectOneMenu>
+						<p:commandButton  action="#{cnabRetornoCobrancaController.atualizarBases}" ajax="false"
+						 			      immediate="true" update="bases" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:column />
+					<p:outputLabel value="Data Gravação" />
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRetornoCobrancaController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabRetornoCobrancaController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabRetornoCobrancaController.selecionandoFundo}" 
+							    update="geral titulosEmEstoque" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:column />
+					<p:datePicker id="dataGravacao" value="#{cnabRetornoCobrancaController.dataGravacao}" />
+					
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Movimento" />
+				
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRetornoCobrancaController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabRetornoCobrancaController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRetornoCobrancaController.layoutSelecionado}">
+						<f:selectItems value="#{cnabRetornoCobrancaController.layoutsCobranca}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabRetornoCobrancaController.selecionandoLayout}" process="@this" update="geral" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabRetornoCobrancaController.movimentoSelecionado}" >
+						<f:selectItems value="#{cnabRetornoCobrancaController.movimentos}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Id Cobrança" />
+					<p:outputLabel value="Agência Cobrança" />
+					<p:outputLabel value="Valor Desconto" />
+					
+					<p:inputText id="idCobranca" value="#{cnabRetornoCobrancaController.idCobranca}" size="40"/> 
+					<p:inputText id="agenciaCobranca" value="#{cnabRetornoCobrancaController.agenciaCobranca}" size="40"/> 
+					<p:inputNumber id="valorDesconto" value="#{cnabRetornoCobrancaController.valorDesconto}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					
+					<p:outputLabel value="Valor Abatimento" />
+					<p:outputLabel value="Valor Juros" />
+					<p:outputLabel value="Valor Despesas" />
+					
+					<p:inputNumber id="valorAbatimento" value="#{cnabRetornoCobrancaController.valorAbatimento}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					<p:inputNumber id="valorJuros" value="#{cnabRetornoCobrancaController.valorJuros}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					<p:inputNumber id="valorDespesas" value="#{cnabRetornoCobrancaController.valorDespesas}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+					
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos em Estoque" />
+					<p:dataTable id="titulosEmEstoque" var="item" value="#{cnabRetornoCobrancaController.titulosEmEstoque}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="Add Titulo">
+							<div align="center">
+								<p:commandButton action="#{cnabRetornoCobrancaController.addTitulo(item)}" update="form"  icon="pi pi-plus"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos adicionados" />
+					<p:dataTable id="tabela" var="item" value="#{cnabRetornoCobrancaController.cnab.titulos}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabRetornoCobrancaController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabRetornoCobrancaController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabRetornoCobrancaController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabRetornoCobrancaController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabRetornoCobrancaController.gerar}" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabRetornoCobrancaController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

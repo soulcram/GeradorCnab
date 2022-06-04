@@ -58,7 +58,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Controller
-public class CnabRecompraController implements Serializable {
+public class CnabRecompraParcialController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -203,7 +203,7 @@ public class CnabRecompraController implements Serializable {
 				
 
 				originadores = originadorService.findAll(con, fundo.getIdFundo());
-				movimentosBaixaRecompra = movimentoService.findAllMovimentosRecompraBaixa(con, layoutSelecionado);
+				movimentosBaixaRecompra = movimentoService.findAllMovimentosRecompraParcial(con, layoutSelecionado);
 				movimentosAquisicaoRecompra = movimentoService.findAllMovimentosRecompraAquisicao(con, layoutSelecionado);
 				cedentes = cedenteService.findAll(con, fundo.getIdFundo(), base);
 				sacados = sacadoService.findAll(con, fundo.getIdFundo());
@@ -235,7 +235,7 @@ public class CnabRecompraController implements Serializable {
 			
 			Connection con = Conexao.getConnection(base);
 			
-			movimentosBaixaRecompra = movimentoService.findAllMovimentosRecompraBaixa(con, layoutSelecionado);
+			movimentosBaixaRecompra = movimentoService.findAllMovimentosRecompraParcial(con, layoutSelecionado);
 			movimentosAquisicaoRecompra = movimentoService.findAllMovimentosRecompraAquisicao(con, layoutSelecionado);
 			tiposRecebiveis =  tipoRecebivelService.findAllTipoRecebivel(con, layoutSelecionado);
 			
@@ -349,27 +349,41 @@ public class CnabRecompraController implements Serializable {
 		bases = baseService.findAll();
 	}
 	
-	public void addTituloBaixa(TituloDto item) {
+	public void editarTituloBaixa(TituloDto item) {
+		
+		this.titulo = item;
+	}
+	
+	public void addTituloBaixa() {
+		
+		
+		if(!validarValorParcial()) {
+			return;
+		}
 		
 		Optional<MovimentoDto> optionalMovimento = movimentosBaixaRecompra.stream().filter(c -> c.getIdMovimento().equals(movimentoBaixaSelecionado)).findFirst();
 
 		if(optionalMovimento.isPresent()) {
-			item.setMovimento(optionalMovimento.get());
+			titulo.setMovimento(optionalMovimento.get());
 		}
 		
-		valorAquisicao = valorAquisicao.add(item.getValorAquisicao());
-		valorTitulo = valorTitulo.add(item.getValorTitulo());
+		valorAquisicao = valorAquisicao.add(titulo.getValorAquisicao());
+		valorTitulo = valorTitulo.add(titulo.getValorTitulo());
 		
-		this.cnab.getTitulos().add(item.getCopy());
-		titulosEmEstoque.remove(item);
+		this.cnab.getTitulos().add(titulo.getCopy());
+		titulosEmEstoque.remove(titulo);
+		
+		clear();
 	}
 	
 	public void addTituloAquisicao() {
+		
 		
 		if(fundoSelecionado == null || fundoSelecionado < 1) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Selecione um fundo."));
 			return;
 		}
+
 		
 		if( BigDecimalUtils.isNullOrZero(valorTitulo)) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor do título é obrigatório."));
@@ -480,7 +494,7 @@ public class CnabRecompraController implements Serializable {
 		
 			confGlobal.save();
 			
-			geradorCnab.gerar(cnab, "RECOMPRA", importacaoAutomatica, path);
+			geradorCnab.gerar(cnab, "RECOMPRA_PARCIAL", importacaoAutomatica, path);
 			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Cnab Gerado Com Sucesso."));
 			
@@ -511,6 +525,14 @@ public class CnabRecompraController implements Serializable {
 	
 	public void gerarTaxaJuros() {
 		this.taxaJuros = ValorAleatorioUtil.getTaxaDecimal();
+	}
+	
+	public void gerarValorParcial() {
+		if(BigDecimalUtils.isNullOrZero(this.titulo.getValorTitulo())) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "É necessário informar o valor do titulo."));
+		}else {
+			this.titulo.setValorPago(NumericUtils.getValorMenos20PorCento(this.titulo.getValorTitulo()));
+		}
 	}
 	
 	private boolean validarValorParcial() {

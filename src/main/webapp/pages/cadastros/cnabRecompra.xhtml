@@ -27,7 +27,7 @@
 					<p:column />
 
 					<h:panelGroup >
-						<p:selectOneMenu id="bases" style="width: 90% !important"
+						<p:selectOneMenu id="bases" style="width: 85% !important"
 							value="#{cnabRecompraController.baseSelecionada}">
 							<f:selectItem itemLabel="Selecione" itemValue="" />
 							<f:selectItems value="#{cnabRecompraController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
@@ -116,7 +116,7 @@
 	
 						
 						
-						<p:column headerText="Editar Valor Parcial">
+						<p:column headerText="Add Titulo">
 							<div align="center">
 								<p:commandButton action="#{cnabRecompraController.addTituloBaixa(item)}" update="form"  icon="pi pi-plus"/>
 							</div>

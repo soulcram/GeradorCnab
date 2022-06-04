@@ -105,4 +105,20 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 
 	}
 
+	@Override
+	public String getPathSalvarArquivoCobranca(Connection con, Boolean importacaoAutomatica, FundoDto fundo) {
+		if (importacaoAutomatica) {
+
+			String pathRepositorio = getPathRepositorio(con);
+
+
+			return pathRepositorio + File.separator + fundo.getCodigoIsin() + File.separator + "COBRANCA"
+						+ File.separator + fundo.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+
+
+		} else {
+			return getConfGlobal().getPath();
+		}
+	}
+
 }

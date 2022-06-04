@@ -35,5 +35,7 @@ public class FromtisSolucoesApplication extends SpringBootServletInitializer {
 	      srb.setLoadOnStartup(1);
 	      return srb;
 	  }
+	  
+
 
 }
