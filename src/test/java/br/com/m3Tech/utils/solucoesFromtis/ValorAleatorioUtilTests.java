@@ -9,7 +9,7 @@ public class ValorAleatorioUtilTests{
 	@Test
     void testaTaxaValorAleatorio(){
     	
-    	System.out.println(ValorAleatorioUtil.getTaxaDecimal());
+    	System.out.println(ValorAleatorioUtil.getValorNumerico(999999));
     }
 
 }

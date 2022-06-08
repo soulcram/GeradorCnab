@@ -273,6 +273,7 @@ public class GerarCnabCsv extends JPanel {
 						LocalDateUtils.parseDate(colunas[6]), //dataVencimento
 						null, 
 						null,
+						null,
 						((MovimentoDto)cbMovimento.getSelectedItem()), 
 						null,
 						null,

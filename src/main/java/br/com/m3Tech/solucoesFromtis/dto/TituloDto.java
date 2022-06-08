@@ -18,6 +18,7 @@ public class TituloDto {
 	private LocalDate dataVencimento;
 	private LocalDate dataLiquidacao;
 	private LocalDate dataCarencia;
+	private LocalDate dataAquisicao;
 	private MovimentoDto movimento;
 	private IndexadorDto indexador;
 	private RiscoDto risco;
@@ -50,6 +51,7 @@ public class TituloDto {
 							 dataVencimento, 
 							 dataLiquidacao, 
 							 dataCarencia,
+							 dataAquisicao,
 							 movimento, 
 							 indexador,
 							 risco,

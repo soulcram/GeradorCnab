@@ -20,7 +20,7 @@ import com.google.common.base.Preconditions;
 
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
-import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
+import br.com.m3Tech.solucoesFromtis.dto.CnabCobrancaDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoCobrancaDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
@@ -35,6 +35,8 @@ import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
 import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
+import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import br.com.m3Tech.utils.IntegerUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -73,20 +75,20 @@ public class CnabRetornoCobrancaController implements Serializable {
 	private Integer movimentoSelecionado;
 	
 	private String path;
-	private String agenciaCobranca;
-	private String idCobranca;
+	private String agenciaCobranca = StringUtils.getNumeroComZerosAEsquerda(ValorAleatorioUtil.getValorNumerico(9999), 4);
+	private String idCobranca = StringUtils.getNumeroComZerosAEsquerda(ValorAleatorioUtil.getValorNumerico(999999), 6);
 	
 	private Boolean importacaoAutomatica;
 	
 	private LocalDate dataGravacao;
 	
 	private BigDecimal valorPago;
-	private BigDecimal valorAbatimento;
-	private BigDecimal valorDesconto;
-	private BigDecimal valorJuros;
-	private BigDecimal valorDespesas;
+	private BigDecimal valorAbatimento = BigDecimal.ZERO;
+	private BigDecimal valorDesconto = BigDecimal.ZERO;
+	private BigDecimal valorJuros = BigDecimal.ZERO;
+	private BigDecimal valorDespesas = BigDecimal.ZERO;
 	
-	private CnabDto cnab;
+	private CnabCobrancaDto cnab;
 	
 	private List<Base> bases;
 	private List<FundoDto> fundos;
@@ -108,7 +110,7 @@ public class CnabRetornoCobrancaController implements Serializable {
 		movimentos = new ArrayList<>();
 		titulosEmEstoque = new ArrayList<>();
 		cobrancas = new ArrayList<>();
-		cnab = new CnabDto();
+		cnab = new CnabCobrancaDto();
 		path = confGlobalService.getConfGlobal().getPath();
 
 				
@@ -116,17 +118,16 @@ public class CnabRetornoCobrancaController implements Serializable {
 	
 	public void selecionandoBase() {
 		System.out.println("Selecionando Base " + baseSelecionada );
-		cnab = new CnabDto();
+		cnab = new CnabCobrancaDto();
 		atualizarFundos();
 		selecionandoLayout();
-		atualizarTitulosEmEstoque();
 		
 	}
 
 	
 	public void selecionandoFundo() {
 		System.out.println("Selecionando Fundo " + fundoSelecionado );
-		cnab = new CnabDto();
+		cnab = new CnabCobrancaDto();
 		Optional<FundoDto> optional = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst();
 		
 		if(optional.isPresent()) {
@@ -139,7 +140,7 @@ public class CnabRetornoCobrancaController implements Serializable {
 				dataGravacao = fundo.getDataFundo();				
 				selecionandoLayout(); 
 //				movimentos = movimentoService.findAllMovimentos(con, layoutSelecionado);
-				atualizarTitulosEmEstoque();
+//				atualizarTitulosEmEstoque();
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -182,7 +183,7 @@ public class CnabRetornoCobrancaController implements Serializable {
 				});
 			
 			movimentos = movimentoService.findAllMovimentos(Conexao.getConnection(base), layoutSelecionado == null ? layoutsCobranca.get(0).getCdLayout():layoutSelecionado);
-			 
+//			atualizarTitulosEmEstoque(); 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -228,7 +229,7 @@ public class CnabRetornoCobrancaController implements Serializable {
 	}
 	
 	
-	private void atualizarTitulosEmEstoque() {
+	public void atualizarTitulosEmEstoque() {
 
 		try {
 			Base base = baseService.findById(baseSelecionada);
@@ -307,11 +308,11 @@ public class CnabRetornoCobrancaController implements Serializable {
 		
 			confGlobal.save();
 			
-			geradorCnab.gerar(cnab, "RETORNO_COBRANCA", importacaoAutomatica, path);
+			geradorCnab.gerarRetornoCobrança(cnab, "RETORNO_COBRANCA", importacaoAutomatica, path);
 			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Cnab Gerado Com Sucesso."));
 			
-			cnab = new CnabDto();
+			cnab = new CnabCobrancaDto();
 			
 			clear();
 			

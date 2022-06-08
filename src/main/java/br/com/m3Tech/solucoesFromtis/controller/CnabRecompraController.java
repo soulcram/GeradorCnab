@@ -424,6 +424,7 @@ public class CnabRecompraController implements Serializable {
 				dataVencimento, 
 				null, //dataLiquidacao, 
 				dataCarencia, //dataCarencia, 
+				null,
 				optionalMovimento.isPresent() ? optionalMovimento.get() : null, 
 				optionalIndexador.isPresent() ? optionalIndexador.get() : null, //indexador, 
 				optionalRisco.isPresent() ? optionalRisco.get() : null, //risco, 

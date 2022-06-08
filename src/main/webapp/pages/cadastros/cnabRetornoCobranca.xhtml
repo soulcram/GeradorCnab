@@ -93,6 +93,12 @@
 					<p:inputNumber id="valorJuros" value="#{cnabRetornoCobrancaController.valorJuros}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
 					<p:inputNumber id="valorDespesas" value="#{cnabRetornoCobrancaController.valorDespesas}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
 					
+					<p:column />
+					<p:commandButton action="#{cnabRetornoCobrancaController.atualizarTitulosEmEstoque}" update="form" value="Atualizar titulos"  icon="pi pi-refresh"/>
+					<p:column />
+					
+	
+					
 				</p:panelGrid>
 
 				<p:panelGrid columns="1">
@@ -112,11 +118,13 @@
 						</p:column>
 		
 						<p:column headerText="Valor do titulo">
-							<h:outputText value="#{item.valorTitulo}" />
+							<p:inputNumber value="#{item.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+						</p:column>
+						
+						<p:column headerText="Data de Aquisição">
+							<h:outputText value="#{item.dataAquisicao}" />
 						</p:column>
 	
-						
-						
 						<p:column headerText="Add Titulo">
 							<div align="center">
 								<p:commandButton action="#{cnabRetornoCobrancaController.addTitulo(item)}" update="form"  icon="pi pi-plus"/>

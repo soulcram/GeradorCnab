@@ -706,8 +706,32 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			String query = "DECLARE @IDFUNDO INT = "+fundoSelecionado+",\r\n" + 
 					"        @ID_TIPO_MOVIMENTO INT = "+idMovimento+"\r\n" + 
 					"\r\n" + 
-					"Select TOP 10 x.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
-					"from (\r\n" + 
+					"SELECT TOP 10 X.*, D.ESPECIE AS ID_TIPO_ESPECIE\r\n" + 
+					"FROM (\r\n" + 
+					"\r\n" + 
+					"	SELECT DISTINCT R.ID_RECEBIVEL,\r\n" + 
+					"	R.DS_SEU_NUMERO, \r\n" + 
+					"	R.IC_COOBRIGACAO,\r\n" + 
+					"	R.DS_NU_DOCUMENTO, \r\n" + 
+					"	STG.TERMO_CESSAO, \r\n" + 
+					"	STG.CHAVE_NFE, \r\n" + 
+					"	R.VL_AQUISICAO,\r\n" + 
+					"	R.VL_NOMINAL AS VL_NOMINAL ,\r\n" + 
+					"	FC.ID_CEDENTE,FC.NM_CEDENTE,FC.NU_CPF_CNPJ AS DOC_CEDENTE, \r\n" + 
+					"	FS.ID_SACADO, FS.NM_SACADO, FS.NU_CPF_CNPJ AS DOC_SACADO, FS.DS_LOGRADOURO,FS.NU_CEP ,\r\n" + 
+					"	B.NU_BANCO, \r\n" + 
+					"	R.DT_VENCIMENTO  ,\r\n" + 
+					"	R.DT_AQUISICAO\r\n" + 
+					"	FROM TB_RECEBIVEL R  \r\n" + 
+					"	LEFT JOIN TB_HISTORICO_RECEBIVEL HR ON HR.ID_RECEBIVEL = R.ID_RECEBIVEL\r\n" + 
+					"	INNER JOIN TB_FUNDO F ON F.ID_FUNDO = R.ID_FUNDO \r\n" + 
+					"	INNER JOIN TB_FUNDO_CEDENTE FC ON FC.ID_CEDENTE = R.ID_CEDENTE \r\n" + 
+					"	INNER JOIN TB_FUNDO_SACADO FS ON FS.ID_SACADO = R.ID_SACADO \r\n" + 
+					"	INNER JOIN TB_BANCO B ON B.ID_BANCO = R.ID_BANCO \r\n" + 
+					"	INNER JOIN TB_STG_REMESSA STG ON STG.ID_ARQUIVO = R.ID_ARQUIVO AND STG.NU_SEQ_REGISTRO = R.NU_SEQ_REGISTRO  \r\n" + 
+					"	WHERE R.ID_FUNDO = @IDFUNDO\r\n" + 
+					"\r\n" + 
+					"	UNION ALL\r\n" + 
 					"	SELECT DISTINCT R.ID_RECEBIVEL,\r\n" + 
 					"	R.DS_SEU_NUMERO, \r\n" + 
 					"	R.IC_COOBRIGACAO,\r\n" + 
@@ -719,7 +743,8 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 					"	FC.ID_CEDENTE,FC.NM_CEDENTE,FC.NU_CPF_CNPJ AS DOC_CEDENTE, \r\n" + 
 					"	FS.ID_SACADO, FS.NM_SACADO, FS.NU_CPF_CNPJ AS DOC_SACADO, FS.DS_LOGRADOURO,FS.NU_CEP ,\r\n" + 
 					"	B.NU_BANCO, \r\n" + 
-					"	R.DT_VENCIMENTO \r\n" + 
+					"	R.DT_VENCIMENTO ,\r\n" + 
+					"	R.DT_AQUISICAO\r\n" + 
 					"	FROM TB_ESTOQUE E \r\n" + 
 					"	INNER JOIN TB_RECEBIVEL R ON R.ID_RECEBIVEL = E.ID_RECEBIVEL \r\n" + 
 					"	LEFT JOIN TB_HISTORICO_RECEBIVEL HR ON HR.ID_RECEBIVEL = R.ID_RECEBIVEL\r\n" + 
@@ -730,14 +755,16 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 					"	INNER JOIN TB_STG_REMESSA STG ON STG.ID_ARQUIVO = R.ID_ARQUIVO AND STG.NU_SEQ_REGISTRO = R.NU_SEQ_REGISTRO  \r\n" + 
 					"	WHERE E.ID_FUNDO = @IDFUNDO\r\n" + 
 					"	AND E.DT = DBO.FC_TRAZDIAUTIL(DATEADD(DD, - 1, F.DT_FUNDO), 'A') \r\n" + 
-					") as X\r\n" + 
+					"\r\n" + 
+					") AS X\r\n" + 
 					"INNER JOIN TB_RECEBIVEL REC ON REC.DS_SEU_NUMERO = X.DS_SEU_NUMERO\r\n" + 
 					"INNER JOIN VW_ARQUIVO_IMPORTADO_DETAIL D ON D.ID_ARQUIVO = REC.ID_ARQUIVO AND D.NU_SEQ_REGISTRO = REC.NU_SEQ_REGISTRO\r\n" + 
 					"WHERE NOT EXISTS(\r\n" + 
-					"	select * from TB_MOVIMENTO M \r\n" + 
-					"	INNER JOIN TB_RECEBIVEL R ON R.ID_RECEBIVEL = m.ID_RECEBIVEL\r\n" + 
+					"	SELECT * FROM TB_MOVIMENTO M \r\n" + 
 					"	WHERE M.ID_TIPO_MOVIMENTO = @ID_TIPO_MOVIMENTO\r\n" + 
-					")"; 
+					"	AND M.ID_RECEBIVEL = X.ID_RECEBIVEL\r\n" + 
+					")\r\n" + 
+					"ORDER BY X.DT_AQUISICAO DESC\r\n"; 
 
 			
 			PreparedStatement ps = con.prepareStatement(query);
@@ -780,6 +807,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 				titulo.setValorTitulo(rs.getBigDecimal("VL_NOMINAL"));
 				titulo.setDataVencimento(LocalDate.parse(rs.getString("DT_VENCIMENTO").substring(0, 10)));
 				titulo.setDataLiquidacao(LocalDate.now());
+				titulo.setDataAquisicao(LocalDate.parse(rs.getString("DT_AQUISICAO").substring(0, 10)));
 				
 				retorno.add(titulo);
 				
