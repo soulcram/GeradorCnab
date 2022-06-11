@@ -18,25 +18,25 @@ public enum LayoutEnum {
     CNAB_500_REMESSA_DAYMAXX(89, "cnab500RemessaDaymaxx", "R",500),
     CNAB_500_FINAXIS(35,"cnab500RemessaFinaxis", "R", 500),
 	
-//	CNAB_400_COBRANCA_BANCO_BRASIL(4,"cnab400RetornoCobrancaPadrao","C",400),
+	CNAB_400_COBRANCA_BANCO_BRASIL(4,"cnab400RetornoCobrancaBancoBrasil","C",400),
 	CNAB_400_COBRANCA_BRADESCO(5,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_HSBC(6,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_ITAU(7,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_SAFRA(9,"cnab400RetornoCobrancaPadrao","C",400),
+	CNAB_400_COBRANCA_HSBC(6,"cnab400RetornoCobrancaHsbc","C",400),
+	CNAB_400_COBRANCA_ITAU(7,"cnab400RetornoCobrancaItau","C",400),
+	CNAB_400_COBRANCA_SAFRA(9,"cnab400RetornoCobrancaSafra","C",400),
 //	CNAB_400_COBRANCA_FIBRA(11,"cnab400RetornoCobrancaPadrao","C",400),
 //	CNAB_240_COBRANCA_SANTANDER(25,"cnab400RetornoCobrancaPadrao","C",240),
 //	CNAB_240_COBRANCA_SICOOB(26,"cnab400RetornoCobrancaPadrao","C",240),
-//	CNAB_400_COBRANCA_BS2(27,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_CITIBANK(28,"cnab400RetornoCobrancaPadrao","C",400),
+	CNAB_400_COBRANCA_BS2(27,"cnab400RetornoCobrancaBs2","C",400),
 	CNAB_400_COBRANCA_STARBANK(32,"cnab400RetornoCobrancaPadrao","C",400),
 	CNAB_400_COBRANCA_SANTANDER(33,"cnab400RetornoCobrancaPadrao","C",400),
 	CNAB_400_COBRANCA_MONEYPLUS(38,"cnab400RetornoCobrancaPadrao","C",400),
 	CNAB_400_COBRANCA_SOCIEDADE_CREDITO(45,"cnab400RetornoCobrancaPadrao","C",400),
 //	CNAB_240_COBRANCA_ABC(46,"cnab400RetornoCobrancaPadrao","C",240),
 //	CNAB_400_COBRANCA_BANCO_RENDIMENTO(51,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_AUTBANK(91,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_ABC(96,"cnab400RetornoCobrancaPadrao","C",400),
-//	CNAB_400_COBRANCA_DELBANK(97,"cnab400RetornoCobrancaPadrao","C",400)	
+	CNAB_400_COBRANCA_AUTBANK(91,"cnab400RetornoCobrancaAutbank","C",400),
+	CNAB_400_COBRANCA_CITIBANK(95,"cnab400RetornoCobrancaCitibank","C",400),
+	CNAB_400_COBRANCA_ABC(96,"cnab400RetornoCobrancaAbc","C",400),
+	CNAB_400_COBRANCA_DELBANK(97,"cnab400RetornoCobrancaDelbank","C",400)	
 	;
 	
 	private Integer cdLayout;
@@ -95,22 +95,22 @@ public enum LayoutEnum {
             	return CNAB_400_COBRANCA_SANTANDER;
 //            case "353":
 //            	return CNAB_240_COBRANCA_SANTANDER;
-//            case "001":
-//            	return CNAB_400_COBRANCA_BANCO_BRASIL;
+            case "001":
+            	return CNAB_400_COBRANCA_BANCO_BRASIL;
             case "237":
             	return CNAB_400_COBRANCA_BRADESCO;
             case "574":
             	return CNAB_400_COBRANCA_STARBANK;
-//            case "246":
-//            	return CNAB_400_COBRANCA_ABC;
+            case "246":
+            	return CNAB_400_COBRANCA_ABC;
 //            case "341":
 //            	return CNAB_400_COBRANCA_ITAU;
-//            case "399":
-//            	return CNAB_400_COBRANCA_HSBC;
-//            case "422":
-//            	return CNAB_400_COBRANCA_SAFRA;
-//            case "218":
-//            	return CNAB_400_COBRANCA_BS2;
+            case "399":
+            	return CNAB_400_COBRANCA_HSBC;
+            case "422":
+            	return CNAB_400_COBRANCA_SAFRA;
+            case "218":
+            	return CNAB_400_COBRANCA_BS2;
 //            case "745":
 //            	return CNAB_400_COBRANCA_CITIBANK;
             case "274":

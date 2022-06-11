@@ -293,10 +293,18 @@ public class CnabRetornoCobrancaController implements Serializable {
 				return;
 			}
 			
-			cnab.setBanco(bancos.stream().filter(c -> c.getIdBanco().equals(bancoSelecionado)).findFirst().get());
+			BancoDto banco = bancos.stream().filter(c -> c.getIdBanco().equals(bancoSelecionado)).findFirst().get();
+			
+			cnab.setBanco(banco);
 			cnab.setDataGravacao(dataGravacao);
 			cnab.setFundo(fundos.stream().filter(c -> c.getIdFundo().equals(fundoSelecionado)).findFirst().get());
 			cnab.setLayout(LayoutEnum.parse(layoutSelecionado));
+			
+			
+			FundoCobrancaDto fundoCobrancaDto = cobrancas.stream().filter(c -> c.getNuBanco().equalsIgnoreCase(banco.getCodigoBanco())).findFirst().get();
+			
+			cnab.setCodigoCobranca(fundoCobrancaDto.getCodCobranca());
+			
 			
 			ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 			cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());

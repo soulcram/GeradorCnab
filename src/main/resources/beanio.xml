@@ -583,4 +583,473 @@
     </record>  
     
   </stream>
+  
+  <stream name="cnab400RetornoCobrancaAbc" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaAbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaAbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="110" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="62" length="11" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="295" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="5" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaAbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaBancoBrasil" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaBancoBrasil" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaBancoBrasil" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="7" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="38" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="63" length="17" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="175" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="5" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="181" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaBancoBrasil" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaHsbc" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaHsbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaHsbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="126" length="11" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="110" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="5" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaHsbc" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaSafra" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaSafra" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaSafra" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="62" length="10" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="295" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="5" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaSafra" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaBs2" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaBs2" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaBs2" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="3" length="14" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="70" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="109" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="59" length="11" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="145" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="80" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="153" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="252" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+<!--       <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/> -->
+      <field name="agenciaCobranca"  position="17" length="4" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="201" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaBs2" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaAutbank" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaAutbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaAutbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="37" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+<!--       <field name="idCobranca" position="59" length="11" required="true" justify="right" trim="true"/> -->
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="146" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="4" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="201" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaAutbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaCitibank" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaCitibank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaCitibank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="70" length="12" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="295" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="4" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+<!--       <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/> -->
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaCitibank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaDelbank" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaDelbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaDelbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="85" length="9" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="295" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="4" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+<!--       <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/> -->
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaDelbank" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
+  <stream name="cnab400RetornoCobrancaItau" format="fixedlength">
+  
+    <record name="header_cnab400RetornoCobrancaItau" class="br.com.m3Tech.solucoesFromtis.beanio.CnabHeaderCobranca">
+    
+    	<field name="identRegistro" literal="0" position="0" length="1" required="true" trim="true" ignore="true" />
+    	
+    	<field name="identArquivoRemessa" literal="2" position="1" length="1" required="true" trim="true" ignore="true" />
+    	<field name="literalRemessa" literal="RETORNO" position="2" length="7" required="true" trim="true" ignore="true" />
+    	<field name="codServico" literal="01" position="9" length="2" required="true" trim="true" ignore="true" />
+    	<field name="literalServico" literal="COBRANCA" position="11" length="15" required="true" trim="true" ignore="true" />
+    	<field name="codigoCobranca"  position="26" length="20" required="true" justify="right" trim="true"/>
+    	<field name="nomeOriginador"  position="46" length="30" required="true" trim="true"/>
+    	<field name="numeroBanco"  position="76" length="3" required="true" trim="true"/>
+    	<field name="nomeBanco"  position="79" length="15" required="true" trim="true"/>
+    	<field name="dataGravacao" position="94" length="6" format="ddMMyy" required="true" trim="true"/>
+      	
+      	<field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+      
+    </record>  
+  
+    <record name="detail_cnab400RetornoCobrancaItau" class="br.com.m3Tech.solucoesFromtis.beanio.CnabDetailCobranca">
+      
+      <field name="identRegistro" literal="1" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="seuNumero" position="37" length="25" required="true" justify="right" trim="true"/>
+      <field name="numDocumento" position="116" length="10" required="true" justify="right" trim="true"/>
+      <field name="codOcorrencia" position="108" length="2" required="true" justify="right" trim="true" padding="0"/>
+      <field name="idCobranca" position="126" length="8" required="true" justify="right" trim="true"/>
+      <field name="dataVencimento" position="146" length="6" required="true" justify="right" trim="true" format="ddMMyy"/>
+      <field name="dataLiquidacao" position="295" length="6"  justify="right" trim="true" format="ddMMyy"/>
+      <field name="valorTitulo" position="152" length="13"  justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorPago" position="253" length="13" required="true" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="bancoCobranca"  position="165" length="3" required="true" justify="right" trim="true"/>
+      <field name="agenciaCobranca"  position="168" length="4" required="true" justify="right" trim="true"/>
+      <field name="valorAbatimento" position="227" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDesconto" position="240" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorJuros" position="266" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+      <field name="valorDespesas" position="175" length="13" justify="right" trim="true" padding="0" typeHandler="bigDecimalConvertTypeHandler"/>
+
+            
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>
+
+    <record name="trailer_cnab400RetornoCobrancaItau" class="br.com.m3Tech.solucoesFromtis.beanio.CnabTrailler">
+      
+      <field name="identRegistro" literal="9" position="0" length="1" required="true" trim="true" ignore="true" />
+      
+      <field name="numSeqRegistro"  position="394" length="6" required="true" trim="true"/>
+    </record>  
+    
+  </stream>
+  
 </beanio>

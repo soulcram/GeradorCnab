@@ -32,7 +32,7 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 			ConfGlobal confGlobal;
 
 			if (confGlobais == null || confGlobais.isEmpty()) {
-				confGlobal = new ConfGlobal(1, pathPadrao,"blitzer","FromtisSoluções");
+				confGlobal = new ConfGlobal(1, pathPadrao,"blitzer","FromtisSoluções", null, null, null);
 			} else {
 				confGlobal = confGlobais.get(0);
 			}

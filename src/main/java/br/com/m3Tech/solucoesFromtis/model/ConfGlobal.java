@@ -16,5 +16,8 @@ public class ConfGlobal extends Crud<ConfGlobal> {
 	private String path;
 	private String tema;
 	private String nomeApp;
+	private String urlCustodia;
+	private String usuarioCustodia;
+	private String senhaCustodia;
 
 }
