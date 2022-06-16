@@ -285,7 +285,7 @@ public class GerarCnabAquisicaoDinamico extends JPanel {
 			gerarNovoTermoCessao();
 			gerarNovoChaveNfe();
 	
-			BigDecimal valor = ValorAleatorioUtil.getValorDecimal();
+			BigDecimal valor = ValorAleatorioUtil.getValorDecimal(10,1000);
 	
 			titulo.setValorTitulo(valor);
 			titulo.setValorAquisicao(NumericUtils.getValorMenos10PorCento(valor));

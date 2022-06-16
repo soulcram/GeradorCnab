@@ -49,8 +49,29 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String sqlQuery2 =  "SELECT ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = ?";
+			
+			try {
+				PreparedStatement ps = con.prepareStatement(sqlQuery2);
+				
+				ps.setInt(1, idFundo);
+				
+				ps.execute();
+				
+				ResultSet rs = ps.getResultSet();
+				
+				while(rs.next()) {
+					CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+												  rs.getString("NM_CEDENTE"), 
+												  rs.getString("NU_CPF_CNPJ"),
+												  "N");
+					
+					cedentes.add(cedente);
+				}
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 		
 		return cedentes;

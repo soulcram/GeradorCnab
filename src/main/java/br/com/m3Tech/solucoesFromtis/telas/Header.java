@@ -32,6 +32,7 @@ public class Header extends JPanel {
 	private final CadastrarBase cadastrarBase;
 	private final TestesDiversos testesDiversos;
 	private final GerarInsertAquisicaoCustodia3 gerarInsertAquisicaoCustodia3;
+	private final SimularImportacaoPortal simularImportacaoPortal;
 
 	private JComboBox<String> cbTelas;
 	
@@ -48,7 +49,8 @@ public class Header extends JPanel {
 				  final CompararVersoes compararVersoes,
 				  final CadastrarBase cadastrarBase,
 				  final TestesDiversos testesDiversos,
-				  final GerarInsertAquisicaoCustodia3 gerarInsertAquisicaoCustodia3) {
+				  final GerarInsertAquisicaoCustodia3 gerarInsertAquisicaoCustodia3,
+				  final SimularImportacaoPortal simularImportacaoPortal) {
 		
 		this.conteudo= conteudo;
 		this.gerarCnabAquisicao = gerarCnabAquisicao;
@@ -63,6 +65,7 @@ public class Header extends JPanel {
 		this.cadastrarBase = cadastrarBase;
 		this.testesDiversos = testesDiversos;
 		this.gerarInsertAquisicaoCustodia3 = gerarInsertAquisicaoCustodia3;
+		this.simularImportacaoPortal = simularImportacaoPortal;
 
 		this.setBounds(10, 10, ConfigTela.largura, 80);
 		this.setLayout(null);
@@ -133,12 +136,18 @@ public class Header extends JPanel {
 						conteudo.atualizarConteudo(gerarCnabCsv);
 
 						break;
+						
+					case "Simular Aquisições Via Portal":
 
-					case "Comparar Versões":
-
-						conteudo.atualizarConteudo(compararVersoes);
+						conteudo.atualizarConteudo(simularImportacaoPortal);
 
 						break;
+
+//					case "Comparar Versões":
+//
+//						conteudo.atualizarConteudo(compararVersoes);
+//
+//						break;
 					case "Cadastrar Base":
 
 						conteudo.atualizarConteudo(cadastrarBase);

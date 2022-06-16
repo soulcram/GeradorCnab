@@ -55,6 +55,41 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 	}
 	
 	@Override
+	public List<FundoDto> findAllComDataAtual(Connection con) {
+		
+		List<FundoDto> fundos = new ArrayList<FundoDto>();
+		
+		String sqlQuery = " SELECT ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO  FROM TB_FUNDO WHERE DT_FUNDO = '" + LocalDate.now() + "'\r\n";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			while(rs.next()) {
+				
+				String dataFundo = rs.getString("DT_FUNDO");
+				
+				FundoDto fundo = new FundoDto(rs.getInt("ID_FUNDO"), 
+											  rs.getString("NM_FUNDO"), 
+											  rs.getString("NU_CNPJ"),
+											  rs.getString("CODIGO_ISIN"),
+											  rs.getInt("LAYOUT_AQUISICAO"),
+											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
+				
+				fundos.add(fundo);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return fundos;
+	}
+	
+	@Override
 	public List<FundoDto> findAllProrrogacao(Connection con) {
 		
 		List<FundoDto> fundos = new ArrayList<FundoDto>();

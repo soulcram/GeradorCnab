@@ -21,6 +21,7 @@ public class ComboBoxTela{
 		cb.addItem("Gerar Cnab Recompra Parcial");
 		cb.addItem("Gerar Cnab Prorrogação");
 		cb.addItem("Gerar Cnab de um Arquivo Csv");
+		cb.addItem("Simular Aquisições Via Portal");
 		cb.addItem("Comparar Versões");
 		cb.addItem("Cadastrar Base");
 		cb.addItem("Testes diversos");

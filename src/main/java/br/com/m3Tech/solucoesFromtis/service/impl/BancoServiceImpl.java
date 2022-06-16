@@ -74,6 +74,35 @@ public class BancoServiceImpl implements IBancoService, Serializable{
 		return banco;
 	}
 	
+	@Override
+	public BancoDto findOneByNumBanco(Connection con, String nuBanco) {
+		BancoDto banco = null;
+		
+		try {
+			String query = "SELECT ID_BANCO, NM_BANCO, NU_BANCO \r\n" + 
+					" FROM TB_BANCO \r\n" + 
+					" WHERE NU_BANCO = '"+nuBanco+"'";
+			
+			PreparedStatement ps = con.prepareStatement(query);
+						
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			if(rs.next()) {
+				banco = new BancoDto(rs.getInt("ID_BANCO"), 
+											  rs.getString("NU_BANCO"),
+											  rs.getString("NM_BANCO"));
+				
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return banco;
+	}
+	
 	
 
 

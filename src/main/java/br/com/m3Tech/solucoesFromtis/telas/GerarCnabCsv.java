@@ -276,6 +276,7 @@ public class GerarCnabCsv extends JPanel {
 						((MovimentoDto)cbMovimento.getSelectedItem()), 
 						null,
 						null,
+						null,
 						colunas[7], //SeuNumero 
 						colunas[8], //coobrigacao, 
 						colunas[9], //nossoNumero, 

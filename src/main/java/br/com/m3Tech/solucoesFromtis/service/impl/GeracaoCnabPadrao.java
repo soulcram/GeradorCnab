@@ -80,7 +80,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 			cnab.setBanco(bancoService.findOneById(con, 2));
 			
 	
-			BigDecimal valor = ValorAleatorioUtil.getValorDecimal();
+			BigDecimal valor = ValorAleatorioUtil.getValorDecimal(10,1000);
 			CedenteDto cedenteSelecionado = getCedenteSelecionado(con, fundo.getIdFundo(), base);
 			SacadoDto sacadoSelecionado = getSacadoSelecionado(con, fundo.getIdFundo());
 	

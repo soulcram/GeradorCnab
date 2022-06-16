@@ -16,6 +16,7 @@ public enum LayoutEnum {
 	CNAB_600_PLANNER_REM03(43,"cnab600RemessaPlanner03","R",600),
 	CNAB_600_DAYCOVAL(88,"cnab600RemessaDaycoval", "R",600),
     CNAB_500_REMESSA_DAYMAXX(89, "cnab500RemessaDaymaxx", "R",500),
+    CNAB_500_FINAXIS(35,"cnab500RemessaFinaxis", "R", 500),
 	
 	CNAB_400_COBRANCA_BANCO_BRASIL(4,"cobrancaBancoBrasil_400","C",400),
 	CNAB_400_COBRANCA_BRADESCO(5,"cobrancaBradesco_400","C",400),
