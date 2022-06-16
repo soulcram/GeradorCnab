@@ -17,7 +17,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class CadastrarSacado implements ICadastroAutomatizado {
 
 	@Override
-	public void cadastrar(ParametrosCadastrosAutomaticos parametros) {
+	public String executar(ParametrosCadastrosAutomaticos parametros) {
 		
 		GeradorNomeFake nomeFake = new GeradorNomeFake();
 		GeradorCpfCnpjRgFake gerarDoc = new GeradorCpfCnpjRgFake();
@@ -107,6 +107,8 @@ public class CadastrarSacado implements ICadastroAutomatizado {
 			driver.findElement(By.xpath("//*[contains(text(), 'Salvar')]")).click();
 			
 			driver.close();
+			
+			return nomeSacado;
 					
 	}
 

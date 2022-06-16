@@ -4,6 +4,6 @@ import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 
 public interface ICadastroAutomatizado {
 	
-	public void cadastrar(ParametrosCadastrosAutomaticos parametros);
+	public String executar(ParametrosCadastrosAutomaticos parametros);
 
 }

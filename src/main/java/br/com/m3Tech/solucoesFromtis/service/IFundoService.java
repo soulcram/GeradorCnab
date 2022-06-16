@@ -20,4 +20,6 @@ public interface IFundoService {
 
 	public List<FundoCobrancaDto> findCodCobrancas(Connection con, Integer id);
 
+	public List<FundoDto> findAllComDataAtual(Connection con);
+
 }

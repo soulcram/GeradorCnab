@@ -17,7 +17,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class CadastrarEntidade implements ICadastroAutomatizado {
 
 	@Override
-	public void cadastrar(ParametrosCadastrosAutomaticos parametros) {
+	public String executar(ParametrosCadastrosAutomaticos parametros) {
 		
 		GeradorNomeFake nomeFake = new GeradorNomeFake();
 		GeradorCpfCnpjRgFake gerarDoc = new GeradorCpfCnpjRgFake();
@@ -132,6 +132,7 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 			
 			driver.close();
 					
+			return nomeEntidade;
 	}
 
 }

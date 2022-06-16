@@ -25,7 +25,10 @@ import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarEntidade;
+import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPdd;
+import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPddFaixaUnica;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarSacado;
+import br.com.m3Tech.solucoesFromtis.service.impl.ImportarCnabPortal;
 import br.com.m3Tech.utils.IntegerUtils;
 import br.com.m3Tech.utils.StringUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -137,9 +140,38 @@ public class CadastrosAutomatizadosController implements Serializable {
 					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get());
 			
 
-			cadastrarSacado.cadastrar(param);
+			String nomeSacado = cadastrarSacado.executar(param);
 			
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Sacado Cadastrado com sucesso"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Sacado " + nomeSacado + " Cadastrado com sucesso"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
+	public void importarCnab() {
+		try {
+			
+			if(validar(true)) {
+				return;
+			}
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
+			
+			ICadastroAutomatizado importar = new ImportarCnabPortal();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+					usuarioCustodia, 
+					senhaCustodia, 
+					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get());
+			
+
+			importar.executar(param);
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Cnab importado com sucesso"));
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
 			e.printStackTrace();
@@ -158,7 +190,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			ICadastroAutomatizado cadastrarSacado = new CadastrarEntidade();
+			ICadastroAutomatizado cadastrarEntidade = new CadastrarEntidade();
 			
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
@@ -166,9 +198,67 @@ public class CadastrosAutomatizadosController implements Serializable {
 					null);
 			
 
-			cadastrarSacado.cadastrar(param);
+			String nomeEntidade = cadastrarEntidade.executar(param);
 			
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Entidade Cadastrado com sucesso"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Entidade " + nomeEntidade + " Cadastrado com sucesso"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
+	public void cadastrarPddFaixaUnica() {
+		try {
+			
+			if(validar(false)) {
+				return;
+			}
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
+			
+			ICadastroAutomatizado cadastrarPdd = new CadastrarPddFaixaUnica();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+					usuarioCustodia, 
+					senhaCustodia, 
+					null);
+			
+
+			cadastrarPdd.executar(param);
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Pdd Faixa Única Cadastrado com sucesso"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
+	public void cadastrarPdd() {
+		try {
+			
+			if(validar(false)) {
+				return;
+			}
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
+			
+			ICadastroAutomatizado cadastrarPdd = new CadastrarPdd();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+					usuarioCustodia, 
+					senhaCustodia, 
+					null);
+			
+
+			cadastrarPdd.executar(param);
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Pdd Cadastrado com sucesso"));
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
 			e.printStackTrace();
@@ -176,7 +266,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 	}
 	
 	private boolean validar(boolean validarFundo) {
-		if(IntegerUtils.isZeroOrNull(baseSelecionada)) {
+		if(validarFundo && IntegerUtils.isZeroOrNull(baseSelecionada)) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório selecionar uma base"));
 			return true;
 			

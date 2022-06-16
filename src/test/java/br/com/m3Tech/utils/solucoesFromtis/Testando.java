@@ -1,20 +1,16 @@
 package br.com.m3Tech.utils.solucoesFromtis;
 
-import org.openqa.selenium.chrome.ChromeDriver;
-
-import br.com.m3Tech.solucoesFromtis.service.impl.GeradorCpfCnpjRgFake;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 
 public class Testando {
 
 	public static void main(String[] args) {
 		
 
-		GeradorCpfCnpjRgFake g = new GeradorCpfCnpjRgFake();
 		
-		for(int i = 0; i< 10; i++) {
+		for(int i = 0; i< 1000; i++) {
 			
-			System.out.println(g.cnpj(true));
+			System.out.println(ValorAleatorioUtil.getValorNumerico(10));
 			
 		}
 		

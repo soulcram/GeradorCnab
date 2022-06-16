@@ -23,7 +23,7 @@ public class GeradorCnabImpl implements IGeradorCnab {
 
 
 	@Override
-	public void gerar(CnabDto cnab, String tipo, Boolean importacaoAutomatica, String path) {
+	public File gerar(CnabDto cnab, String tipo, Boolean importacaoAutomatica, String path) {
 		
 		StreamFactory factory = StreamFactory.newInstance();
         
@@ -51,6 +51,7 @@ public class GeradorCnabImpl implements IGeradorCnab {
         
         System.out.println("Fim da Geração");
 		
+        return arquivoFinal;
 	}
 	
 	@Override

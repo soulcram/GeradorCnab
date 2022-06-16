@@ -144,7 +144,7 @@ public class CnabLiquidacaoParcialController implements Serializable {
 				
 
 				originadores = originadorService.findAll(con, fundo.getIdFundo());
-				movimentos = movimentoService.findAllMovimentosBaixa(con, layoutSelecionado);
+				movimentos = movimentoService.findAllMovimentosParcial(con, layoutSelecionado);
 				atualizarTitulosEmEstoque();
 				
 			} catch (Exception e) {
