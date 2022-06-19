@@ -192,7 +192,7 @@ public class SimularImportacaoPortal extends JPanel {
 					
 					String pathRepositorio = confGlobalService.getPathRepositorio(con);
 					
-					StringBuilder path = new StringBuilder();
+					
 					
 
 					BancoDto banco = bancoService.findOneByNumBanco(con, "001");
@@ -204,6 +204,8 @@ public class SimularImportacaoPortal extends JPanel {
 					for (int j = 0; j < quantidadeArquivos; j++) {
 						
 						FundoDto fundoAtual = fundos.get(ValorAleatorioUtil.getValorNumerico(fundos.size()));
+						
+						StringBuilder path = new StringBuilder();
 						
 						path.append(pathRepositorio)
 							.append(File.separator)

@@ -143,11 +143,11 @@ public class Header extends JPanel {
 
 						break;
 
-//					case "Comparar Versões":
-//
-//						conteudo.atualizarConteudo(compararVersoes);
-//
-//						break;
+					case "Comparar Versões":
+
+						conteudo.atualizarConteudo(compararVersoes);
+
+						break;
 					case "Cadastrar Base":
 
 						conteudo.atualizarConteudo(cadastrarBase);
