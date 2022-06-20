@@ -245,10 +245,12 @@ public class SimularImportacaoPortal extends JPanel {
 						cnab.setLayout(LayoutEnum.parse(fundoAtual.getLayoutAquisicao()));
 						cnab.setOriginador(originadores.get(ValorAleatorioUtil.getValorNumerico(originadores.size())) );
 						
+						CedenteDto cedenteAtual = cedentes.get(ValorAleatorioUtil.getValorNumerico(cedentes.size()));
+						
 						for (int i = 0; i < quantidadeTitulos; i++) {
 			
 							addTitulo(fundoAtual, 
-									  cedentes.get(ValorAleatorioUtil.getValorNumerico(cedentes.size())), 
+									  cedenteAtual, 
 									  sacados.get(ValorAleatorioUtil.getValorNumerico(sacados.size())),
 									  movimentos.stream().filter(c -> c.getCdOcorrencia().equals("1")).findFirst().get(),
 									  riscos.get(0)
