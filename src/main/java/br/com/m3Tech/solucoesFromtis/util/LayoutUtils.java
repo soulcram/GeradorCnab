@@ -10,7 +10,7 @@ public class LayoutUtils {
 	}
 
 	public static boolean coobrigacaoNoHeader(LayoutEnum layoutSelecionado) {
-		return Arrays.asList(LayoutEnum.CNAB_500_FINAXIS, LayoutEnum.CNAB_600_DAYCOVAL)
+		return Arrays.asList(LayoutEnum.CNAB_500_FINAXIS, LayoutEnum.CNAB_600_DAYCOVAL, LayoutEnum.CNAB_500_REMESSA_PAULISTA)
 				.contains(layoutSelecionado);
 
 	}

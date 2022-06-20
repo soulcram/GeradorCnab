@@ -10,6 +10,7 @@ public enum LayoutEnum {
 	
 	CNAB_REMESSA_444(16,"Remessa_444","R",444),
 	CNAB_240_REMESSA(17,"remessa_240","R",240),
+	CNAB_500_REMESSA_PAULISTA(23, "cnab500RemessaC3", "R",500),
 	CNAB_500_REMESSA_CREDSYSTEM(24,"cnab500RemessaCredSystem", "R", 500),
 //	CNAB_500_REMESSA_FIDD(41,"cnab500RemessaFidd","R",500),
 	CNAB_500_REMESSA_CCB(94,"cnab500RemessaCcb","R",500),

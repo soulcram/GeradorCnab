@@ -238,9 +238,6 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			Connection con = Conexao.getConnection(base);
 			
 			String pathRepositorio = confGlobalService.getPathRepositorio(con);
-			
-			StringBuilder path = new StringBuilder();
-			
 
 			BancoDto banco = bancoService.findOneByNumBanco(con, "001");
 			List<RiscoDto> riscos = riscoService.findAll(con);
@@ -248,6 +245,8 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			
 			
 			for (int j = 0; j < quantidadeArquivos; j++) {
+				
+				StringBuilder path = new StringBuilder();
 				
 				FundoDto fundoAtual = fundos.get(ValorAleatorioUtil.getValorNumerico(fundos.size()));
 				
@@ -289,10 +288,12 @@ public class simularImportacaoCnabPortalController implements Serializable {
 				cnab.setLayout(LayoutEnum.parse(fundoAtual.getLayoutAquisicao()));
 				cnab.setOriginador(originadores.get(ValorAleatorioUtil.getValorNumerico(originadores.size())) );
 				
+				CedenteDto cedenteAtual = cedentes.get(ValorAleatorioUtil.getValorNumerico(cedentes.size()));
+				
 				for (int i = 0; i < quantidadeTitulos; i++) {
 	
 					addTitulo(fundoAtual, 
-							  cedentes.get(ValorAleatorioUtil.getValorNumerico(cedentes.size())), 
+							  cedenteAtual, 
 							  sacados.get(ValorAleatorioUtil.getValorNumerico(sacados.size())),
 							  movimentos.stream().filter(c -> c.getCdOcorrencia().equals("1")).findFirst().get(),
 							  riscos.get(0)
