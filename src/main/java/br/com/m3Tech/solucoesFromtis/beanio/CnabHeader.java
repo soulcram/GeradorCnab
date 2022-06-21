@@ -23,6 +23,7 @@ public class CnabHeader {
 	private String numSeqArquivo;
 	private String numSeqRegistro;
 	private String coobrigacao;
+	private String nuReserva;
 	private Integer identificadorCoobrigacao;
 	private Integer tpPartRespTarifacao;
 	private BigDecimal percTarifacao;//" position="139" length="4" />
