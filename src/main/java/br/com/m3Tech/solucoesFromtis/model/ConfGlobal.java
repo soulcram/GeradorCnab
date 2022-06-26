@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConfGlobal extends Crud<ConfGlobal> {
 
+
 	private Integer seqArquivo;
 	private String path;
 	private String tema;
@@ -19,5 +20,18 @@ public class ConfGlobal extends Crud<ConfGlobal> {
 	private String urlCustodia;
 	private String usuarioCustodia;
 	private String senhaCustodia;
+	private String urlPortal;
+	private String usuarioPortal;
+	private String senhaPortal;
+	private String urlPortalServicos;
+	private String usuarioPortalServicos;
+	private String senhaPortalServicos;
+	
+	public ConfGlobal(Integer seqArquivo, String path, String tema, String nomeApp) {
+		this.seqArquivo = seqArquivo;
+		this.path = path;
+		this.tema = tema;
+		this.nomeApp = nomeApp;
+	}
 
 }

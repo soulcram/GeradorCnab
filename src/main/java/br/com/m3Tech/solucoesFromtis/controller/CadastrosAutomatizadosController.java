@@ -9,29 +9,31 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
+import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 import br.com.m3Tech.solucoesFromtis.service.IBaseService;
 import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
+import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedente;
+import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedenteAprovado;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarEntidade;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPdd;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPddFaixaUnica;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarSacado;
 import br.com.m3Tech.solucoesFromtis.service.impl.ImportarCnabPortal;
+import br.com.m3Tech.solucoesFromtis.util.CpfCnpjUtils;
 import br.com.m3Tech.utils.IntegerUtils;
 import br.com.m3Tech.utils.StringUtils;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
@@ -57,15 +59,24 @@ public class CadastrosAutomatizadosController implements Serializable {
 	private IFundoService fundoService;
 	@Autowired
 	private IConfGlobalService confGlobalService;
+	@Autowired
+	private ICedenteService cedenteService;
 		
 	private Bucket bucket;
 	
 	private Integer baseSelecionada;
 	private Integer fundoSelecionado;
+	private Integer repeticoes = 1;
+	private Integer repeticoesPortalServicos = 1;
+	
 	
 	private String urlCustodia;
 	private String usuarioCustodia;
 	private String senhaCustodia;
+	
+	private String urlPortalServicos;
+	private String usuarioPortalServicos;
+	private String senhaPortalServicos;
 	
 	private List<Base> bases;
 	private List<FundoDto> fundos;
@@ -137,7 +148,8 @@ public class CadastrosAutomatizadosController implements Serializable {
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
 					senhaCustodia, 
-					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get());
+					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get(),
+					repeticoes);
 			
 
 			String nomeSacado = cadastrarSacado.executar(param);
@@ -148,6 +160,83 @@ public class CadastrosAutomatizadosController implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	
+	public void cadastrarCedente() {
+		try {
+			
+			if(validar(true)) {
+				return;
+			}
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
+			
+			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedente();
+			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+					usuarioCustodia, 
+					senhaCustodia, 
+					fundo,
+					repeticoes
+					);
+			
+			String cnpjCedente = "";
+			
+			cnpjCedente = cadastroAutomatizado.executar(param);
+			System.out.println("Cedentes: " + cnpjCedente + " Cadastrado com Sucesso");
+			
+			
+			Base base = baseService.findById(baseSelecionada);
+						
+			CedenteDto cedenteRetornado = cedenteService.getCedenteByCpfCnpj(Conexao.getConnection(base), fundo.getIdFundo(), CpfCnpjUtils.removerFormatacao(cnpjCedente), base);
+			
+			if(cedenteRetornado != null && cedenteRetornado.getIdCedente() != null) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Cedentes Cadastrado com sucesso"));
+			}else {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Cedentes não Cadastrado"));
+			}
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
+	public void cadastrarCedenteAprovado() {
+		try {
+			
+			if(validarPortalServicos(true)) {
+				return;
+			}
+			
+			if (!bucket.tryConsume(1)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
+				return;
+			}
+			
+			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedenteAprovado();
+			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, 
+					usuarioPortalServicos, 
+					senhaPortalServicos, 
+					fundo,
+					repeticoesPortalServicos
+					);
+		
+			
+			String msg = cadastroAutomatizado.executar(param);
+
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", msg));
+			
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
 	
 	public void importarCnab() {
 		try {
@@ -166,7 +255,8 @@ public class CadastrosAutomatizadosController implements Serializable {
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
 					senhaCustodia, 
-					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get());
+					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get(),
+					repeticoes);
 			
 
 			importar.executar(param);
@@ -195,7 +285,8 @@ public class CadastrosAutomatizadosController implements Serializable {
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
 					senhaCustodia, 
-					null);
+					null,
+					1);
 			
 
 			String nomeEntidade = cadastrarEntidade.executar(param);
@@ -224,7 +315,8 @@ public class CadastrosAutomatizadosController implements Serializable {
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
 					senhaCustodia, 
-					null);
+					null,
+					1);
 			
 
 			cadastrarPdd.executar(param);
@@ -253,7 +345,8 @@ public class CadastrosAutomatizadosController implements Serializable {
 			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
 					usuarioCustodia, 
 					senhaCustodia, 
-					null);
+					null,
+					1);
 			
 
 			cadastrarPdd.executar(param);
@@ -292,6 +385,40 @@ public class CadastrosAutomatizadosController implements Serializable {
 		
 		if(StringUtils.emptyOrNull(senhaCustodia)) {
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório informar senha custódia"));
+			return true;
+			
+		}
+		
+		return false;
+	}
+	
+	private boolean validarPortalServicos(boolean validarFundo) {
+		if(validarFundo && IntegerUtils.isZeroOrNull(baseSelecionada)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório selecionar uma base"));
+			return true;
+			
+		}
+		
+		if(validarFundo && IntegerUtils.isZeroOrNull(fundoSelecionado)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório selecionar um fundo"));
+			return true;
+			
+		}
+		
+		if(StringUtils.emptyOrNull(urlPortalServicos)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório informar url Portal Servicos"));
+			return true;
+			
+		}
+		
+		if(StringUtils.emptyOrNull(usuarioPortalServicos)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório informar usuario Portal Servicos"));
+			return true;
+			
+		}
+		
+		if(StringUtils.emptyOrNull(senhaPortalServicos)) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Obrigatório informar senha Portal Servicos"));
 			return true;
 			
 		}

@@ -75,32 +75,20 @@
 		        <p:column />
 				<p:column />
 				
-				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarSacado}" value="Cadastrar Sacado" update="@all" />
-				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarEntidade}" value="Cadastrar Entidade" update="@all" />
-				<p:column />
-				
-				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarPddFaixaUnica}" value="Cadastrar Pdd Faixa Única" update="@all" />
-				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarPdd}" value="Cadastrar Pdd" update="@all" />
-			</p:panelGrid>
-			
-			<p:panelGrid columns="3" layout="grid">
-			
-				<f:facet name="header">
-        			Cadastros Portal
-    			</f:facet>
-				
-				<p:outputLabel value="Url Portal"></p:outputLabel>
-				<p:outputLabel value="Usuário Portal"></p:outputLabel>
-				<p:outputLabel value="Senha Portal"></p:outputLabel>
-					
-				<p:inputText id="urlPortal" value="#{cadastrosAutomatizadosController.urlCustodia}" />
-		        <p:inputText id="usuarioPortal" value="#{cadastrosAutomatizadosController.usuarioCustodia}" />
-		        <p:inputText id="senhaPortal" value="#{cadastrosAutomatizadosController.senhaCustodia}" />
-		        
-		        <p:outputLabel value="Ações"></p:outputLabel>
+				<p:outputLabel value="Repeticões"></p:outputLabel>
 		        <p:column />
 				<p:column />
 				
+				<p:inputNumber id="repeticoes" value="#{cadastrosAutomatizadosController.repeticoes}" />
+		        <p:column />
+				<p:column />
+				
+				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarSacado}" value="Cadastrar Sacado" update="@all" />
+				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarCedente}" value="Cadastrar Cedente" update="@all" />
+				<p:column />
+				
+				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarPddFaixaUnica}" value="Cadastrar Pdd Faixa Única" update="@all" />
+				<p:commandButton action="#{cadastrosAutomatizadosController.cadastrarEntidade}" value="Cadastrar Entidade" update="@all" />
 			</p:panelGrid>
 			
 		</h:form>

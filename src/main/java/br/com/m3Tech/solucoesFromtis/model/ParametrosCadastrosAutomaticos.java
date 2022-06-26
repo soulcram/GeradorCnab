@@ -16,5 +16,6 @@ public class ParametrosCadastrosAutomaticos {
 	private String usuario;
 	private String senha;
 	private FundoDto fundo;
+	private int repeticoes;
 
 }

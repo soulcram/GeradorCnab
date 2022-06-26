@@ -3,7 +3,7 @@ git status
 
 git add .
 
-git commit -m"corecao de bugs"
+git commit -m"commit padrao"
 
 git push
 
