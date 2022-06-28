@@ -1,43 +1,10 @@
 package br.com.m3Tech.solucoesFromtis.service.impl;
 
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import javax.xml.namespace.QName;
-import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
-import javax.xml.ws.handler.MessageContext;
 
-import org.apache.axis.message.SOAPHeaderElement;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.http.Header;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.Lists;
-
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.CadastroCedente;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.CadastroCedenteAprovado;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.CadastroCedenteAprovadoProxy;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.CadastroCedenteAprovadoServiceLocator;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.ContaCorrenteCadCedente;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.ErroValidacaoCedCedente;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.FundoCadCedente;
-import br.com.fromtis.fidc.portal.servicos.consulta.soap.RetornoCadastroCedente;
-import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
-import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
-import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
 
 public class CadastrarCedentePortalServicosTest {
 	

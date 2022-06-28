@@ -49,16 +49,18 @@ private void _initCadastroCedenteAprovadoProxy(String usuario, String senha) {
     	cadastroCedenteAprovado = locator.getCadastroCedenteAprovadoPortBinding();
     	if (cadastroCedenteAprovado != null) {
     	  
-    		Map<String, String> credentials = new Hashtable<String,String>();
-
- 		 	credentials.put("username", usuario);
- 		 	credentials.put("password", senha);
+    		
  		 
 	        if (_endpoint != null) {
 	          ((javax.xml.rpc.Stub)cadastroCedenteAprovado)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
 	        }else {
 	          _endpoint = (String)((javax.xml.rpc.Stub)cadastroCedenteAprovado)._getProperty("javax.xml.rpc.service.endpoint.address");
 	        }
+	        
+	        Map<String, String> credentials = new Hashtable<String,String>();
+
+ 		 	credentials.put("username", usuario);
+ 		 	credentials.put("password", senha);
 	        
 	        ((javax.xml.rpc.Stub)cadastroCedenteAprovado)._setProperty("HTTP-Request-Headers", credentials);
       }

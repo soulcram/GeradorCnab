@@ -32,6 +32,26 @@
 				</p:themeSwitcher>
 				<p:inputText id="nomeApp" value="#{configuracaoGlobalController.configuracaoGlobal.nomeApp}" />
 				
+				<p:outputLabel value="Base de Dados Padrao" />
+				<p:outputLabel value="Aprovar Consultoria Automático" />
+				<p:outputLabel value="Aprovar Gestor Automático" />
+				<p:outputLabel value="Enviar Retorno Certificadora Automático" />
+				
+				<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 80% !important"
+						value="#{configuracaoGlobalController.configuracaoGlobal.idBasePadrao}">
+						<f:selectItem itemLabel="Selecione" itemValue="0" />
+						<f:selectItems value="#{configuracaoGlobalController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{configuracaoGlobalController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh" style="width: 10% !important"/>
+	
+					</h:panelGroup>
+				<p:selectBooleanButton id="aprovarConsultoriaAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.aprovarConsultoriaAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="aprovarGestorAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.aprovarGestorAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="enviarRetornoAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.enviarRetornoAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				
 				<p:outputLabel value="Url Custódia"></p:outputLabel>
 				<p:outputLabel value="Usuário Custódia"></p:outputLabel>
 				<p:outputLabel value="Senha Custódia"></p:outputLabel>

@@ -1,0 +1,11 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date|%-5level|%thread|%mdc{login}|%mdc{session_id}|%mdc{server_ip}|%mdc{user_ip}|%logger{60}.%M:%L|%msg%n%rootException</pattern>
+    </encoder>
+  </appender>
+
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>

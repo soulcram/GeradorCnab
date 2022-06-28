@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
+import br.com.m3Tech.solucoesFromtis.service.IBaseService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,18 +33,21 @@ public class ConfiguracaoGlobalController implements Serializable {
 	@Autowired
 	private IConfGlobalService configuracaoGlobalService;
 	
+	@Autowired
+	private IBaseService baseService;
 	
 	private ConfGlobal configuracaoGlobal;
 	
 	private String temaSelecionado = "cupertino";
     private List<String> temasDisponiveis = new ArrayList<String>();
+    private List<Base> bases;
 
 	
 	@PostConstruct
 	public void init() {
 
 		this.configuracaoGlobal = configuracaoGlobalService.getConfGlobal();
-		
+		atualizarBases();
 		 //Populando os temas
         temasDisponiveis.add("afterdark");
         temasDisponiveis.add("afternoon");
@@ -83,6 +88,11 @@ public class ConfiguracaoGlobalController implements Serializable {
         temasDisponiveis.add("ui-lightness");
         temasDisponiveis.add("vader");
 				
+	}
+	
+	public void atualizarBases() {
+		
+		bases = baseService.findAll();
 	}
 	
 	public String salvar() {

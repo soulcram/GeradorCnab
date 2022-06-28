@@ -14,6 +14,7 @@ public class ConfGlobal extends Crud<ConfGlobal> {
 
 
 	private Integer seqArquivo;
+	private Integer idBasePadrao;
 	private String path;
 	private String tema;
 	private String nomeApp;
@@ -26,6 +27,9 @@ public class ConfGlobal extends Crud<ConfGlobal> {
 	private String urlPortalServicos;
 	private String usuarioPortalServicos;
 	private String senhaPortalServicos;
+	private Boolean aprovarConsultoriaAutomatico;
+	private Boolean aprovarGestorAutomatico;
+	private Boolean enviarRetornoAutomatico;
 	
 	public ConfGlobal(Integer seqArquivo, String path, String tema, String nomeApp) {
 		this.seqArquivo = seqArquivo;
