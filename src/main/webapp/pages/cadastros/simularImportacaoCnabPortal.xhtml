@@ -9,17 +9,18 @@
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="conteudo">
 		<h:form id="form">
-
+			<p:poll interval="3" update="termometro" />
 			<p:messages id="messages" showDetail="true" closable="true">
 				<p:autoUpdate />
 			</p:messages>
 
 			<p:panelGrid columns="1" layout="grid">
-
+				
 				<f:facet name="header">
         			Importação de Cnab Via Portal
     			</f:facet>
 
+    
 
 				<p:panelGrid id="geral" columns="3" layout="grid">
 
@@ -52,33 +53,27 @@
 					
 					<p:inputNumber id="quatTitulo" value="#{simularImportacaoCnabPortalController.quantidadeTitulos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
 					<p:inputNumber id="quatArquivo" value="#{simularImportacaoCnabPortalController.quantidadeArquivos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
-					<p:column/>
+					<p:commandButton action="#{simularImportacaoCnabPortalController.gerar}" value="Importar Cnab" update="@all" />
 					
 				</p:panelGrid>
 	
 			</p:panelGrid>
 
-			<p:panelGrid columns="3" layout="grid">
-				<p:column/>
-				<p:column/>
-				<p:column/>
+			<p:panelGrid id="termometro" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Validação Portal
+    				</f:facet>
+				
+					<p:chart id="statusValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.statusPieModelValidacaoPortal}" style="width:400px;height:300px"/>
 					
-				<p:column/>
-				<p:column/>
-				<p:column/>
-				
-				<p:column/>
-				<p:column/>
-				<p:column/>
-				
-				<p:commandButton action="#{simularImportacaoCnabPortalController.gerar}" value="Importar Cnab" update="@all" />
-				<p:column/>
-				<p:column/>
-				
-				<p:commandButton action="#{simularImportacaoCnabPortalController.voltar}" value="Voltar" />
-				<p:column/>
-				<p:column/>
-				
+					<p:chart id="quantPorMinutoValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.porMinutoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.tempoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
 			</p:panelGrid>
 
 		</h:form>

@@ -9,10 +9,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import br.com.m3Tech.solucoesFromtis.dto.ArquivosPorMinutoValidacaoDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
+import br.com.m3Tech.solucoesFromtis.dto.StatusValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.TempoValidacaoDto;
 import br.com.m3Tech.solucoesFromtis.service.IFilaService;
 
 
@@ -44,7 +49,7 @@ public class FilaServiceImpl implements IFilaService, Serializable{
 		try {
 			PreparedStatement ps = con.prepareStatement(sqlQuery,Statement.RETURN_GENERATED_KEYS);
 			
-			int affectedRows = ps.executeUpdate();
+			ps.executeUpdate();
 			
 	        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
 	            if (generatedKeys.next()) {
@@ -111,6 +116,109 @@ public class FilaServiceImpl implements IFilaService, Serializable{
 		return null;
 		
 	}
+	
+	
+	@Override
+	public StatusValidacaoDto getStatusArquivosFilaValidacao(Connection con) {
+		String sqlQuery = "SELECT  STATUS_FILA_IMPORTACAO  ,COUNT(*) AS QUANT\r\n" + 
+				"FROM TB_FILA_IMPORTACAO_ARQUIVO AI WITH(NOLOCK)\r\n" + 
+				"WHERE DT_ENTRADA > CONVERT(DATE,GETDATE())\r\n" + 
+				"GROUP BY STATUS_FILA_IMPORTACAO";
+		
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			StatusValidacaoDto retorno = new StatusValidacaoDto();
+			
+			while(rs.next()) {
+				 String status = rs.getString("STATUS_FILA_IMPORTACAO");
+				 
+				 if(status.equals("AGUARDANDO")) {
+					 retorno.setAguardando(rs.getInt("QUANT"));
+				 }else if(status.equals("ENVIADO")) {
+					 retorno.setEnviado(rs.getInt("QUANT"));
+				 }else if(status.equals("INVALIDO")) {
+					 retorno.setInvalido(rs.getInt("QUANT"));
+				 }else if(status.equals("VALIDADO")) {
+					 retorno.setValidado(rs.getInt("QUANT"));
+				 }
+			}
+			
+			return retorno;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return new StatusValidacaoDto();
+		
+	}
+	
+	@Override
+	public ArquivosPorMinutoValidacaoDto getArquivosPorMinutoFilaValidacao(Connection con) {
+		String sqlQuery = "SELECT MIN(PROCESSADOS) AS MINIMO, MAX(PROCESSADOS) AS MAXIMO , AVG(PROCESSADOS) AS MEDIA\r\n" + 
+				"FROM(\r\n" + 
+				"     SELECT LEFT(CONVERT(TIME,A.DT_FIM_VALIDACAO),5) AS HORARIO, COUNT(1) PROCESSADOS\r\n" + 
+				"     FROM TB_ARQUIVO_VALIDACAO  A WITH(NOLOCK)\r\n" + 
+				"     INNER JOIN TB_FILA_IMPORTACAO_ARQUIVO AI WITH(NOLOCK) ON A.ID_FILA_IMPORTACAO_ARQUIVO = AI.ID_FILA_IMPORTACAO_ARQUIVO\r\n" + 
+				"     WHERE AI.DT_ENTRADA > CONVERT(DATE,GETDATE())\r\n" + 
+				"     GROUP BY LEFT(CONVERT(TIME,A.DT_FIM_VALIDACAO),5) \r\n" + 
+				"	 ) AS X";
+		
+		
+		ArquivosPorMinutoValidacaoDto retorno = new ArquivosPorMinutoValidacaoDto();
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+
+			if(rs.next()) {
+				retorno.setMinimo(rs.getInt("MINIMO"));
+				retorno.setMaximo(rs.getInt("MAXIMO"));
+				retorno.setMedia(rs.getInt("MEDIA"));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return retorno;
+		
+	}
+	
+	@Override
+	public List<TempoValidacaoDto> getTemposFilaValidacao(Connection con) {
+		String sqlQuery = "select DATEDIFF(ss,DT_INICIO_IMPORTACAO, DT_FIM_IMPORTACAO) AS HORARIO, COUNT(1) PROCESSADOS\r\n" + 
+				"from TB_FILA_IMPORTACAO_ARQUIVO AI WITH(NOLOCK)\r\n" + 
+				"WHERE AI.DT_ENTRADA > CONVERT(DATE,GETDATE())\r\n" + 
+				"GROUP BY DATEDIFF(ss,DT_INICIO_IMPORTACAO, DT_FIM_IMPORTACAO)";
+		
+		
+		List<TempoValidacaoDto> retorno = new ArrayList<>();
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+
+			while(rs.next()) {
+				retorno.add(new TempoValidacaoDto(rs.getInt("HORARIO"), rs.getInt("PROCESSADOS")));
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return retorno;
+		
+	}
+
 
 	
 	

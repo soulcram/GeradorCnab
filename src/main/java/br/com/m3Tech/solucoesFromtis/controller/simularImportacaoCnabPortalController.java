@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.model.chart.PieChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
@@ -22,6 +23,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import com.google.common.base.Preconditions;
 
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
+import br.com.m3Tech.solucoesFromtis.dto.ArquivosPorMinutoValidacaoDto;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
@@ -31,6 +33,8 @@ import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
 import br.com.m3Tech.solucoesFromtis.dto.RiscoDto;
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
+import br.com.m3Tech.solucoesFromtis.dto.StatusValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.TempoValidacaoDto;
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
 import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
@@ -107,6 +111,9 @@ public class simularImportacaoCnabPortalController implements Serializable {
 	private Integer quantidadeTitulos;
 	private Integer quantidadeArquivos;
 	
+	private PieChartModel statusPieModelValidacaoPortal;
+	private PieChartModel porMinutoPieModelValidacaoPortal;
+	private PieChartModel tempoPieModelValidacaoPortal;
 
 	
 	private CnabDto cnab;
@@ -125,12 +132,109 @@ public class simularImportacaoCnabPortalController implements Serializable {
 		quantidadeTitulos = 1;
 		quantidadeArquivos = 1;
 		
-		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
-        this.bucket = Bucket4j.builder()
-            .addLimit(limit)
-            .build();
-
+		createStatusPieModel();
+		createPorMinutoPieModel();
+		createTempoPieModel();
 				
+	}
+	
+	private void createStatusPieModel() {
+		statusPieModelValidacaoPortal = new PieChartModel();
+ 
+		statusPieModelValidacaoPortal.set("Validos", 1);
+		
+		statusPieModelValidacaoPortal.setTitle("Status Validação");
+		statusPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+	
+	public PieChartModel getStatusPieModelValidacaoPortal() {
+		try {
+			if(baseSelecionada == null) {
+				return statusPieModelValidacaoPortal;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			StatusValidacaoDto statusValidacaoDto;
+
+			statusValidacaoDto = filaService.getStatusArquivosFilaValidacao(Conexao.getConnection(base));
+
+			statusPieModelValidacaoPortal.getData().put("Validos", statusValidacaoDto.getValidado());
+			statusPieModelValidacaoPortal.getData().put("Invalidos", statusValidacaoDto.getInvalido());
+			statusPieModelValidacaoPortal.getData().put("Aguardando", statusValidacaoDto.getAguardando());
+			statusPieModelValidacaoPortal.getData().put("Enviado", statusValidacaoDto.getEnviado());
+
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return statusPieModelValidacaoPortal;
+
+	}
+	
+	private void createPorMinutoPieModel() {
+		porMinutoPieModelValidacaoPortal = new PieChartModel();
+ 
+		porMinutoPieModelValidacaoPortal.set("Média", 1);
+		
+		porMinutoPieModelValidacaoPortal.setTitle("Validados por Minuto");
+		porMinutoPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+	
+	public PieChartModel getPorMinutoPieModelValidacaoPortal() {
+		try {
+			if(baseSelecionada == null) {
+				return porMinutoPieModelValidacaoPortal;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			ArquivosPorMinutoValidacaoDto dto = filaService.getArquivosPorMinutoFilaValidacao(Conexao.getConnection(base));
+
+			porMinutoPieModelValidacaoPortal.getData().put("Mínimo", dto.getMinimo());
+			porMinutoPieModelValidacaoPortal.getData().put("Máximo", dto.getMaximo());
+			porMinutoPieModelValidacaoPortal.getData().put("Média", dto.getMedia());
+
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return porMinutoPieModelValidacaoPortal;
+
+	}
+	
+	private void createTempoPieModel() {
+		tempoPieModelValidacaoPortal = new PieChartModel();
+ 
+		tempoPieModelValidacaoPortal.set("0 segundos", 1);
+		
+		tempoPieModelValidacaoPortal.setTitle("Tempos de Validação");
+		tempoPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+	
+	public PieChartModel getTempoPieModelValidacaoPortal() {
+		try {
+			if(baseSelecionada == null) {
+				return tempoPieModelValidacaoPortal;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			List<TempoValidacaoDto> tempos = filaService.getTemposFilaValidacao(Conexao.getConnection(base));
+
+			
+			tempos.forEach(t -> tempoPieModelValidacaoPortal.getData().put( t.getTempo() + " segundos", t.getQuantidade()));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tempoPieModelValidacaoPortal;
+
 	}
 	
 	public void selecionandoBase() {
@@ -205,11 +309,6 @@ public class simularImportacaoCnabPortalController implements Serializable {
 	
 	public void gerar() {
 		try {
-			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
 			
 			if(quantidadeTitulos == null || quantidadeTitulos == 0) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos é obrigatório"));
