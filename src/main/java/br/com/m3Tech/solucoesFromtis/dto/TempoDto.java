@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TempoValidacaoDto {
+public class TempoDto {
 
 	private Integer tempo = 0;
     private Integer quantidade = 0;

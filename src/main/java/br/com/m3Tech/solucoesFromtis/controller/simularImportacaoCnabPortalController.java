@@ -23,7 +23,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import com.google.common.base.Preconditions;
 
 import br.com.m3Tech.solucoesFromtis.dao.Conexao;
-import br.com.m3Tech.solucoesFromtis.dto.ArquivosPorMinutoValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.ArquivosPorMinutoDto;
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
@@ -33,8 +33,8 @@ import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
 import br.com.m3Tech.solucoesFromtis.dto.RiscoDto;
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
-import br.com.m3Tech.solucoesFromtis.dto.StatusValidacaoDto;
-import br.com.m3Tech.solucoesFromtis.dto.TempoValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.StatusDto;
+import br.com.m3Tech.solucoesFromtis.dto.TempoDto;
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
 import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
@@ -114,7 +114,16 @@ public class simularImportacaoCnabPortalController implements Serializable {
 	private PieChartModel statusPieModelValidacaoPortal;
 	private PieChartModel porMinutoPieModelValidacaoPortal;
 	private PieChartModel tempoPieModelValidacaoPortal;
+	
+	private PieChartModel statusPieModelCarregarCnab;
+	private PieChartModel porMinutoPieModelCarregarCnab;
+	private PieChartModel tempoPieModelCarregarCnab;
+	
+	private PieChartModel statusPieModelMovimentacao;
+	private PieChartModel porMinutoPieModelMovimentacao;
+	private PieChartModel tempoPieModelMovimentacao;
 
+	private LocalDate data;
 	
 	private CnabDto cnab;
 	
@@ -132,20 +141,27 @@ public class simularImportacaoCnabPortalController implements Serializable {
 		quantidadeTitulos = 1;
 		quantidadeArquivos = 1;
 		
-		createStatusPieModel();
-		createPorMinutoPieModel();
-		createTempoPieModel();
+		data = LocalDate.now();
+		
+		statusPieModelValidacaoPortal = new PieChartModel();
+		porMinutoPieModelValidacaoPortal = new PieChartModel();
+		tempoPieModelValidacaoPortal = new PieChartModel();
+		
+		statusPieModelCarregarCnab = new PieChartModel();
+		porMinutoPieModelCarregarCnab = new PieChartModel();
+		tempoPieModelCarregarCnab = new PieChartModel();
+		
+		statusPieModelMovimentacao = new PieChartModel();
+		porMinutoPieModelMovimentacao = new PieChartModel();
+		tempoPieModelMovimentacao = new PieChartModel();
+
 				
 	}
+
 	
-	private void createStatusPieModel() {
-		statusPieModelValidacaoPortal = new PieChartModel();
- 
-		statusPieModelValidacaoPortal.set("Validos", 1);
+	public void atualizarValidacao() {
 		
-		statusPieModelValidacaoPortal.setTitle("Status Validação");
-		statusPieModelValidacaoPortal.setLegendPosition("ne");
-    }
+	}
 	
 	public PieChartModel getStatusPieModelValidacaoPortal() {
 		try {
@@ -155,15 +171,24 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			
 			Base base = baseService.findById(baseSelecionada);
 
-			StatusValidacaoDto statusValidacaoDto;
+			StatusDto statusValidacaoDto = filaService.getStatusArquivosFilaValidacao(Conexao.getConnection(base), data);
 
-			statusValidacaoDto = filaService.getStatusArquivosFilaValidacao(Conexao.getConnection(base));
-
-			statusPieModelValidacaoPortal.getData().put("Validos", statusValidacaoDto.getValidado());
-			statusPieModelValidacaoPortal.getData().put("Invalidos", statusValidacaoDto.getInvalido());
-			statusPieModelValidacaoPortal.getData().put("Aguardando", statusValidacaoDto.getAguardando());
-			statusPieModelValidacaoPortal.getData().put("Enviado", statusValidacaoDto.getEnviado());
-
+			if(statusValidacaoDto == null || (statusValidacaoDto.getValidado() == null &&
+					statusValidacaoDto.getInvalido() == null &&
+					statusValidacaoDto.getEnviado() == null &&
+					statusValidacaoDto.getAguardando() == null) ) {
+				statusPieModelValidacaoPortal = new PieChartModel();
+			}else {
+				
+				statusPieModelValidacaoPortal = new PieChartModel();
+				statusPieModelValidacaoPortal.setTitle("Status Validação");
+				statusPieModelValidacaoPortal.setLegendPosition("ne");
+				
+				statusPieModelValidacaoPortal.getData().put("Validos", statusValidacaoDto.getValidado());
+				statusPieModelValidacaoPortal.getData().put("Invalidos", statusValidacaoDto.getInvalido());
+				statusPieModelValidacaoPortal.getData().put("Aguardando", statusValidacaoDto.getAguardando());
+				statusPieModelValidacaoPortal.getData().put("Enviado", statusValidacaoDto.getEnviado());
+			}
 			
 
 		} catch (Exception e) {
@@ -174,14 +199,6 @@ public class simularImportacaoCnabPortalController implements Serializable {
 
 	}
 	
-	private void createPorMinutoPieModel() {
-		porMinutoPieModelValidacaoPortal = new PieChartModel();
- 
-		porMinutoPieModelValidacaoPortal.set("Média", 1);
-		
-		porMinutoPieModelValidacaoPortal.setTitle("Validados por Minuto");
-		porMinutoPieModelValidacaoPortal.setLegendPosition("ne");
-    }
 	
 	public PieChartModel getPorMinutoPieModelValidacaoPortal() {
 		try {
@@ -191,13 +208,23 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			
 			Base base = baseService.findById(baseSelecionada);
 
-			ArquivosPorMinutoValidacaoDto dto = filaService.getArquivosPorMinutoFilaValidacao(Conexao.getConnection(base));
+			ArquivosPorMinutoDto dto = filaService.getArquivosPorMinutoFilaValidacao(Conexao.getConnection(base), data);
 
-			porMinutoPieModelValidacaoPortal.getData().put("Mínimo", dto.getMinimo());
-			porMinutoPieModelValidacaoPortal.getData().put("Máximo", dto.getMaximo());
-			porMinutoPieModelValidacaoPortal.getData().put("Média", dto.getMedia());
-
+			if(dto == null || (dto.getMinimo() == null && 
+					dto.getMaximo() == null &&
+					dto.getMedia() == null) ) {
+				porMinutoPieModelValidacaoPortal = new PieChartModel();
+			}else {
+				
+				porMinutoPieModelValidacaoPortal = new PieChartModel();
+				porMinutoPieModelValidacaoPortal.setTitle("Validados por Minuto");
+				porMinutoPieModelValidacaoPortal.setLegendPosition("ne");
 			
+				porMinutoPieModelValidacaoPortal.getData().put("Mínimo", dto.getMinimo());
+				porMinutoPieModelValidacaoPortal.getData().put("Máximo", dto.getMaximo());
+				porMinutoPieModelValidacaoPortal.getData().put("Média", dto.getMedia());
+
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -206,15 +233,7 @@ public class simularImportacaoCnabPortalController implements Serializable {
 		return porMinutoPieModelValidacaoPortal;
 
 	}
-	
-	private void createTempoPieModel() {
-		tempoPieModelValidacaoPortal = new PieChartModel();
- 
-		tempoPieModelValidacaoPortal.set("0 segundos", 1);
-		
-		tempoPieModelValidacaoPortal.setTitle("Tempos de Validação");
-		tempoPieModelValidacaoPortal.setLegendPosition("ne");
-    }
+
 	
 	public PieChartModel getTempoPieModelValidacaoPortal() {
 		try {
@@ -224,16 +243,258 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			
 			Base base = baseService.findById(baseSelecionada);
 
-			List<TempoValidacaoDto> tempos = filaService.getTemposFilaValidacao(Conexao.getConnection(base));
+			List<TempoDto> tempos = filaService.getTemposFilaValidacao(Conexao.getConnection(base), data);
 
-			
-			tempos.forEach(t -> tempoPieModelValidacaoPortal.getData().put( t.getTempo() + " segundos", t.getQuantidade()));
-
+			if(tempos.isEmpty()) {
+				tempoPieModelValidacaoPortal = new PieChartModel();
+			}else {
+				tempoPieModelValidacaoPortal = new PieChartModel();
+				tempoPieModelValidacaoPortal.setTitle("Tempos de Validação");
+				tempoPieModelValidacaoPortal.setLegendPosition("ne");
+				
+				int i = 0;
+				Integer quant = 0;
+				for(TempoDto t : tempos) {
+					if(i < 7) {
+						tempoPieModelValidacaoPortal.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}else if(i > 6 && i < tempos.size() -1) {
+						quant += t.getQuantidade();
+					}else if(i == tempos.size() -1) {
+						tempoPieModelValidacaoPortal.getData().put( "outros", quant);
+						tempoPieModelValidacaoPortal.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}
+					i++;
+				}
+				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return tempoPieModelValidacaoPortal;
+
+	}
+	
+	public PieChartModel getStatusPieModelCarregarCnab() {
+		try {
+			if(baseSelecionada == null) {
+				return statusPieModelCarregarCnab;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			StatusDto statusValidacaoDto = filaService.getStatusArquivosFilaCarregarCnab(Conexao.getConnection(base), data);
+
+			if(statusValidacaoDto == null || (statusValidacaoDto.getValidado() == null &&
+					statusValidacaoDto.getInvalido() == null &&
+					statusValidacaoDto.getEnviado() == null &&
+					statusValidacaoDto.getAguardando() == null) ) {
+				statusPieModelCarregarCnab = new PieChartModel();
+			}else {
+				
+				statusPieModelCarregarCnab = new PieChartModel();
+				statusPieModelCarregarCnab.setTitle("Status Validação");
+				statusPieModelCarregarCnab.setLegendPosition("ne");
+				
+				statusPieModelCarregarCnab.getData().put("Processando", statusValidacaoDto.getProcessando());
+				statusPieModelCarregarCnab.getData().put("Finalizado", statusValidacaoDto.getFinalizado());
+				statusPieModelCarregarCnab.getData().put("Aguardando", statusValidacaoDto.getAguardando());
+				statusPieModelCarregarCnab.getData().put("Erro", statusValidacaoDto.getErro());
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return statusPieModelCarregarCnab;
+
+	}
+	
+	
+	public PieChartModel getPorMinutoPieModelCarregarCnab() {
+		try {
+			if(baseSelecionada == null) {
+				return porMinutoPieModelCarregarCnab;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			ArquivosPorMinutoDto dto = filaService.getArquivosPorMinutoFilaCarregarCnab(Conexao.getConnection(base), data);
+
+			if(dto == null || (dto.getMinimo() == null && 
+					dto.getMaximo() == null &&
+					dto.getMedia() == null) ) {
+				porMinutoPieModelCarregarCnab = new PieChartModel();
+			}else {
+				
+				porMinutoPieModelCarregarCnab = new PieChartModel();
+				porMinutoPieModelCarregarCnab.setTitle("Validados por Minuto");
+				porMinutoPieModelCarregarCnab.setLegendPosition("ne");
+			
+				porMinutoPieModelCarregarCnab.getData().put("Mínimo", dto.getMinimo());
+				porMinutoPieModelCarregarCnab.getData().put("Máximo", dto.getMaximo());
+				porMinutoPieModelCarregarCnab.getData().put("Média", dto.getMedia());
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return porMinutoPieModelCarregarCnab;
+
+	}
+
+	
+	public PieChartModel getTempoPieModelCarregarCnab() {
+		try {
+			if(baseSelecionada == null) {
+				return tempoPieModelCarregarCnab;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			List<TempoDto> tempos = filaService.getTemposFilaCarregarCnab(Conexao.getConnection(base), data);
+
+			if(tempos.isEmpty()) {
+				tempoPieModelCarregarCnab = new PieChartModel();
+			}else {
+				tempoPieModelCarregarCnab = new PieChartModel();
+				tempoPieModelCarregarCnab.setTitle("Tempos de Validação");
+				tempoPieModelCarregarCnab.setLegendPosition("ne");
+			
+				int i = 0;
+				Integer quant = 0;
+				for(TempoDto t : tempos) {
+					if(i < 7) {
+						tempoPieModelCarregarCnab.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}else if(i > 6 && i < tempos.size() -1) {
+						quant += t.getQuantidade();
+					}else if(i == tempos.size() -1) {
+						tempoPieModelCarregarCnab.getData().put( "outros", quant);
+						tempoPieModelCarregarCnab.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}
+					i++;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tempoPieModelCarregarCnab;
+
+	}
+	
+	public PieChartModel getStatusPieModelMovimentacao() {
+		try {
+			if(baseSelecionada == null) {
+				return statusPieModelMovimentacao;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			StatusDto statusValidacaoDto = filaService.getStatusArquivosFilaMovimentacao(Conexao.getConnection(base), data);
+
+			if(statusValidacaoDto == null || (statusValidacaoDto.getValidado() == null &&
+					statusValidacaoDto.getInvalido() == null &&
+					statusValidacaoDto.getEnviado() == null &&
+					statusValidacaoDto.getAguardando() == null) ) {
+				statusPieModelMovimentacao = new PieChartModel();
+			}else {
+				
+				statusPieModelMovimentacao = new PieChartModel();
+				statusPieModelMovimentacao.setTitle("Status Validação");
+				statusPieModelMovimentacao.setLegendPosition("ne");
+				
+				statusPieModelMovimentacao.getData().put("Processando", statusValidacaoDto.getProcessando());
+				statusPieModelMovimentacao.getData().put("Finalizado", statusValidacaoDto.getFinalizado());
+				statusPieModelMovimentacao.getData().put("Aguardando", statusValidacaoDto.getAguardando());
+				statusPieModelMovimentacao.getData().put("Erro", statusValidacaoDto.getErro());
+			}
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return statusPieModelMovimentacao;
+
+	}
+	
+	
+	public PieChartModel getPorMinutoPieModelMovimentacao() {
+		try {
+			if(baseSelecionada == null) {
+				return porMinutoPieModelMovimentacao;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			ArquivosPorMinutoDto dto = filaService.getArquivosPorMinutoFilaMovimentacao(Conexao.getConnection(base), data);
+
+			if(dto == null || (dto.getMinimo() == null && 
+					dto.getMaximo() == null &&
+					dto.getMedia() == null) ) {
+				porMinutoPieModelMovimentacao = new PieChartModel();
+			}else {
+				
+				porMinutoPieModelMovimentacao = new PieChartModel();
+				porMinutoPieModelMovimentacao.setTitle("Validados por Minuto");
+				porMinutoPieModelMovimentacao.setLegendPosition("ne");
+			
+				porMinutoPieModelMovimentacao.getData().put("Mínimo", dto.getMinimo());
+				porMinutoPieModelMovimentacao.getData().put("Máximo", dto.getMaximo());
+				porMinutoPieModelMovimentacao.getData().put("Média", dto.getMedia());
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return porMinutoPieModelMovimentacao;
+
+	}
+
+	
+	public PieChartModel getTempoPieModelMovimentacao() {
+		try {
+			if(baseSelecionada == null) {
+				return tempoPieModelMovimentacao;
+			}
+			
+			Base base = baseService.findById(baseSelecionada);
+
+			List<TempoDto> tempos = filaService.getTemposFilaMovimentacao(Conexao.getConnection(base), data);
+
+			if(tempos.isEmpty()) {
+				tempoPieModelMovimentacao = new PieChartModel();
+			}else {
+				tempoPieModelMovimentacao = new PieChartModel();
+				tempoPieModelMovimentacao.setTitle("Tempos de Validação");
+				tempoPieModelMovimentacao.setLegendPosition("ne");
+			
+				int i = 0;
+				Integer quant = 0;
+				for(TempoDto t : tempos) {
+					if(i < 7) {
+						tempoPieModelMovimentacao.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}else if(i > 6 && i < tempos.size() -1) {
+						quant += t.getQuantidade();
+					}else if(i == tempos.size() -1) {
+						tempoPieModelMovimentacao.getData().put( "outros", quant);
+						tempoPieModelMovimentacao.getData().put( t.getTempo() + " segundos", t.getQuantidade());
+					}
+					i++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tempoPieModelMovimentacao;
 
 	}
 	

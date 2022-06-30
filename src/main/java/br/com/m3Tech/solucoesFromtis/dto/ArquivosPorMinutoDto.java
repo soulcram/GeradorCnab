@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArquivosPorMinutoValidacaoDto {
+public class ArquivosPorMinutoDto {
 
 	private Integer minimo = 0;
     private Integer maximo = 0;

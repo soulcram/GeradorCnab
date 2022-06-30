@@ -9,7 +9,6 @@
 	xmlns:p="http://primefaces.org/ui">
 	<ui:define name="conteudo">
 		<h:form id="form">
-			<p:poll interval="3" update="termometro" />
 			<p:messages id="messages" showDetail="true" closable="true">
 				<p:autoUpdate />
 			</p:messages>
@@ -27,7 +26,7 @@
 
 					<p:outputLabel value="Base de Dados" />
 					<p:column />
-					<p:column />
+					<p:outputLabel value="Data" />
 					
 					<h:panelGroup >
 					<p:selectOneMenu id="bases" style="width: 85% !important"
@@ -42,7 +41,7 @@
 	
 					</h:panelGroup>
 					<p:column />
-					<p:column />
+					<p:datePicker id="dataGravacao" value="#{simularImportacaoCnabPortalController.data}" immediate="true" />
 					
 					
 					
@@ -59,17 +58,54 @@
 	
 			</p:panelGrid>
 
-			<p:panelGrid id="termometro" columns="1" layout="grid">
+			<p:panelGrid id="termometroValidacao" columns="1" layout="grid">
 				<p:panelGrid columns="3" layout="grid">
 					<f:facet name="header">
-        				Validação Portal
+        				Validação Portal 
+        				<p:commandButton update="termometroValidacao" icon="pi pi-refresh"/>
     				</f:facet>
-				
+    								
 					<p:chart id="statusValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.statusPieModelValidacaoPortal}" style="width:400px;height:300px"/>
 					
 					<p:chart id="quantPorMinutoValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.porMinutoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
 					
 					<p:chart id="temposValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.tempoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+			
+			<p:panelGrid id="termometroCarregarCnab" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Carregar Cnab para Importados
+        				<p:commandButton update="termometroCarregarCnab" icon="pi pi-refresh"/>
+    				</f:facet>
+				
+					<p:chart id="statusCarregarCnab" type="pie" model="#{simularImportacaoCnabPortalController.statusPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoCarregarCnab" type="pie" model="#{simularImportacaoCnabPortalController.porMinutoPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposCarregarCnab" type="pie" model="#{simularImportacaoCnabPortalController.tempoPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+			
+			<p:panelGrid id="termometroMovimentacao" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Gerar Movimentação
+        				<p:commandButton update="termometroMovimentacao" icon="pi pi-refresh"/>
+    				</f:facet>
+				
+					<p:chart id="statusMovimentacao" type="pie" model="#{simularImportacaoCnabPortalController.statusPieModelMovimentacao}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoMovimentacao" type="pie" model="#{simularImportacaoCnabPortalController.porMinutoPieModelMovimentacao}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposMovimentacao" type="pie" model="#{simularImportacaoCnabPortalController.tempoPieModelMovimentacao}" style="width:400px;height:300px"/>
 					
 					
 				</p:panelGrid>
