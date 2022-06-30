@@ -1,3 +1,4 @@
+/*
 package br.com.m3Tech.solucoesFromtis.util;
 
 import java.io.File;
@@ -24,3 +25,4 @@ public class Testando {
 	}
 
 }
+*/

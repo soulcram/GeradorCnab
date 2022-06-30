@@ -46,7 +46,7 @@ public class CnabBaixaController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 
-	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
+	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
 
 
 	@Autowired
