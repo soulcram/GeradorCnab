@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,8 @@ import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoCustodia3Service;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
+
+import javax.swing.*;
 
 
 @Service
@@ -119,7 +120,6 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 			
 			if(tipoRecebivel == null) {
 				
-				JOptionPane.showMessageDialog(null,"Especie recebivel " +detail.getEspecieTitulo()+ " não cadastrada para o Layout 24");
 				return;
 			}
 			
@@ -127,7 +127,6 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 			
 			if(movimentoDto == null) {
 				
-				JOptionPane.showMessageDialog(null,"Ocorrencia " +detail.getIdentOcorrencia()+ "  não cadastrada para o Layout 24");
 				return;
 			}
 		

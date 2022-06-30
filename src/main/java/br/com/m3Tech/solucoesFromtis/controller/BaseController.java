@@ -8,7 +8,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.swing.JOptionPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -85,7 +84,6 @@ public class BaseController implements Serializable {
 			Connection con = Conexao.getConnection(base);
 
 			if (con == null) {
-				JOptionPane.showMessageDialog(null, "Erro ao conectar com a base informada", "Erro", 0);
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
 						"Base inválida", "Erro ao conectar com a base informada"));
 				return false;
