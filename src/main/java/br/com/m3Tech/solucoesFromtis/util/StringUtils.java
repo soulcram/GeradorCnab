@@ -72,7 +72,7 @@ public class StringUtils {
 		try {
 			return new String(Files.readAllBytes(arquivo.toPath()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		return null;

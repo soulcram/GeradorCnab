@@ -402,7 +402,7 @@ public class simularImportacaoCnabPortalController implements Serializable {
 				ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 				cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 				confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-				confGlobal.save();
+//				confGlobal.save();TODO
 				
 				File file = geradorCnab.gerar(cnab, "AQUISICAO_PORTAL", false, path.toString());
 				

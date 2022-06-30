@@ -96,7 +96,7 @@ public class CadastrarCedenteAprovado implements ICadastroAutomatizado {
 			
 			return cadastroCedenteAprovado[0].getMensagemRetorno().getDescricaoRetorno();
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 

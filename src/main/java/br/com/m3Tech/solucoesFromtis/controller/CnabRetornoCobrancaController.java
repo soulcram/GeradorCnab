@@ -314,7 +314,7 @@ public class CnabRetornoCobrancaController implements Serializable {
 			}
 		
 		
-			confGlobal.save();
+//			confGlobal.save();TODO
 			
 			geradorCnab.gerarRetornoCobrança(cnab, "RETORNO_COBRANCA", importacaoAutomatica, path);
 			

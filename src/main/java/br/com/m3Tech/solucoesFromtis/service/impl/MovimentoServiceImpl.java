@@ -469,7 +469,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -633,7 +633,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -663,7 +663,7 @@ public class MovimentoServiceImpl implements IMovimentoService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		

@@ -122,7 +122,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 		ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 		cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 		confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-		confGlobal.save();
+//		confGlobal.save();TODO
 		
 		StreamFactory factory = StreamFactory.newInstance();
         

@@ -479,7 +479,7 @@ public class CnabRecompraController implements Serializable {
 			}
 		
 		
-			confGlobal.save();
+//			confGlobal.save();TODO
 			
 			geradorCnab.gerar(cnab, "RECOMPRA", importacaoAutomatica, path);
 			

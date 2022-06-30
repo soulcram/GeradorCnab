@@ -500,7 +500,7 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 			}
 		
 		
-			confGlobal.save();
+//			confGlobal.save(); TODO
 			
 			geradorCnab.gerar(cnab, "AQUISICAO", importacaoAutomatica, path);
 			

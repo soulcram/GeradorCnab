@@ -1,16 +1,19 @@
 package br.com.m3Tech.solucoesFromtis.model;
 
-import br.com.m3Tech.noSql.Crud;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
+import javax.persistence.Entity;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConfGlobal extends Crud<ConfGlobal> {
+@Entity
+public class ConfGlobal extends AbstractPersistable<Integer> {
 
 
 	private Integer seqArquivo;

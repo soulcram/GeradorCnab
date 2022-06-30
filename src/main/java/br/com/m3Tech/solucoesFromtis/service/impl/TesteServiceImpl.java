@@ -416,7 +416,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 //			}
 //			
 //		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		}
 //		
@@ -452,7 +452,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 //			}
 //			
 //		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
+//			
 //			e.printStackTrace();
 //		}
 //		

@@ -272,7 +272,7 @@ public class CnabBaixaController implements Serializable {
 			}
 		
 		
-			confGlobal.save();
+//			confGlobal.save(); TODO
 			
 			geradorCnab.gerar(cnab, "BAIXA", importacaoAutomatica, path);
 			

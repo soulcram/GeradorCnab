@@ -288,7 +288,7 @@ public class CnabLiquidacaoParcialController implements Serializable {
 			}
 		
 		
-			confGlobal.save();
+//			confGlobal.save();TODO
 			
 			geradorCnab.gerar(cnab, "LIQUIDACAO_PARCIAL", importacaoAutomatica, path);
 			

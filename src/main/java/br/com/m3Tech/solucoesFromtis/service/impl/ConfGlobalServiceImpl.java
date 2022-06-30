@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -25,7 +26,8 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 		try {
 			List<ConfGlobal> confGlobais;
 
-			confGlobais = new ConfGlobal().findAll();
+//			confGlobais = new ConfGlobal().findAll(); TODO
+			confGlobais = new ArrayList<>();
 
 			String pathPadrao = "C:\\GeradorCnab\\" + LocalDate.now().toString().replaceAll("-", "") + "\\";
 
@@ -44,7 +46,7 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 			return confGlobal;
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -69,7 +71,7 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 			}
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -101,7 +103,7 @@ public class ConfGlobalServiceImpl implements IConfGlobalService {
 	@Override
 	public void salvar(ConfGlobal configuracaoGlobal) throws Exception {
 
-		configuracaoGlobal.save();
+//		configuracaoGlobal.save();TODO
 
 	}
 
