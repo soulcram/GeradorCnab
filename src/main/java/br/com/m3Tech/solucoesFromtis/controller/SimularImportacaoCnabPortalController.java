@@ -1,0 +1,412 @@
+package br.com.m3Tech.solucoesFromtis.controller;
+
+import java.io.File;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import org.primefaces.model.chart.PieChartModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.annotation.SessionScope;
+
+import br.com.m3Tech.solucoesFromtis.dao.Conexao;
+import br.com.m3Tech.solucoesFromtis.dto.ArquivosPorMinutoValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
+import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
+import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
+import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
+import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
+import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
+import br.com.m3Tech.solucoesFromtis.dto.RiscoDto;
+import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
+import br.com.m3Tech.solucoesFromtis.dto.StatusValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.TempoValidacaoDto;
+import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
+import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
+import br.com.m3Tech.solucoesFromtis.model.Base;
+import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
+import br.com.m3Tech.solucoesFromtis.service.IBancoService;
+import br.com.m3Tech.solucoesFromtis.service.IBaseService;
+import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
+import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
+import br.com.m3Tech.solucoesFromtis.service.IFilaService;
+import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.service.IGeradorCnab;
+import br.com.m3Tech.solucoesFromtis.service.IIndexadorService;
+import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
+import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
+import br.com.m3Tech.solucoesFromtis.service.IRiscoService;
+import br.com.m3Tech.solucoesFromtis.service.ISacadoService;
+import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
+import br.com.m3Tech.solucoesFromtis.util.NumericUtils;
+import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
+import io.github.bucket4j.Bucket;
+import lombok.Getter;
+import lombok.Setter;
+
+@SessionScope
+@Getter
+@Setter
+@Controller
+public class SimularImportacaoCnabPortalController implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+
+    private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+
+
+    @Autowired
+    private IBaseService baseService;
+    @Autowired
+    private IFundoService fundoService;
+    @Autowired
+    private IBancoService bancoService;
+    @Autowired
+    private IOriginadorService originadorService;
+    @Autowired
+    private ISacadoService sacadoService;
+    @Autowired
+    private ICedenteService cedenteService;
+    @Autowired
+    private IMovimentoService movimentoService;
+    @Autowired
+    private ITipoRecebivelService tipoRecebivelService;
+    @Autowired
+    private IConfGlobalService confGlobalService;
+    @Autowired
+    private IGeradorCnab geradorCnab;
+    @Autowired
+    private IIndexadorService indexadorService;
+    @Autowired
+    private IRiscoService riscoService;
+    @Autowired
+    private IFilaService filaService;
+
+
+    private Integer baseSelecionada;
+
+    private Integer quantidadeTitulos;
+    private Integer quantidadeArquivos;
+
+    private PieChartModel statusPieModelValidacaoPortal;
+    private PieChartModel porMinutoPieModelValidacaoPortal;
+    private PieChartModel tempoPieModelValidacaoPortal;
+
+
+    private CnabDto cnab;
+
+    private List<Base> bases;
+    private List<FundoDto> fundos;
+
+    private Bucket bucket;
+
+    @PostConstruct
+    public void init() {
+
+        bases = baseService.findAll();
+        fundos = new ArrayList<>();
+        cnab = new CnabDto();
+        quantidadeTitulos = 1;
+        quantidadeArquivos = 1;
+
+        createStatusPieModel();
+        createPorMinutoPieModel();
+        createTempoPieModel();
+
+    }
+
+    private void createStatusPieModel() {
+        statusPieModelValidacaoPortal = new PieChartModel();
+
+        statusPieModelValidacaoPortal.set("Validos", 1);
+
+        statusPieModelValidacaoPortal.setTitle("Status Validação");
+        statusPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+
+    public PieChartModel getStatusPieModelValidacaoPortal() {
+        try {
+            if (baseSelecionada == null) {
+                return statusPieModelValidacaoPortal;
+            }
+
+            Base base = baseService.findById(baseSelecionada);
+
+            StatusValidacaoDto statusValidacaoDto;
+
+            statusValidacaoDto = filaService.getStatusArquivosFilaValidacao(Conexao.getConnection(base));
+
+            statusPieModelValidacaoPortal.getData().put("Validos", statusValidacaoDto.getValidado());
+            statusPieModelValidacaoPortal.getData().put("Invalidos", statusValidacaoDto.getInvalido());
+            statusPieModelValidacaoPortal.getData().put("Aguardando", statusValidacaoDto.getAguardando());
+            statusPieModelValidacaoPortal.getData().put("Enviado", statusValidacaoDto.getEnviado());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return statusPieModelValidacaoPortal;
+
+    }
+
+    private void createPorMinutoPieModel() {
+        porMinutoPieModelValidacaoPortal = new PieChartModel();
+
+        porMinutoPieModelValidacaoPortal.set("Média", 1);
+
+        porMinutoPieModelValidacaoPortal.setTitle("Validados por Minuto");
+        porMinutoPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+
+    public PieChartModel getPorMinutoPieModelValidacaoPortal() {
+        try {
+            if (baseSelecionada == null) {
+                return porMinutoPieModelValidacaoPortal;
+            }
+
+            Base base = baseService.findById(baseSelecionada);
+
+            ArquivosPorMinutoValidacaoDto dto = filaService.getArquivosPorMinutoFilaValidacao(Conexao.getConnection(base));
+
+            porMinutoPieModelValidacaoPortal.getData().put("Mínimo", dto.getMinimo());
+            porMinutoPieModelValidacaoPortal.getData().put("Máximo", dto.getMaximo());
+            porMinutoPieModelValidacaoPortal.getData().put("Média", dto.getMedia());
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return porMinutoPieModelValidacaoPortal;
+
+    }
+
+    private void createTempoPieModel() {
+        tempoPieModelValidacaoPortal = new PieChartModel();
+
+        tempoPieModelValidacaoPortal.set("0 segundos", 1);
+
+        tempoPieModelValidacaoPortal.setTitle("Tempos de Validação");
+        tempoPieModelValidacaoPortal.setLegendPosition("ne");
+    }
+
+    public PieChartModel getTempoPieModelValidacaoPortal() {
+        try {
+            if (baseSelecionada == null) {
+                return tempoPieModelValidacaoPortal;
+            }
+
+            Base base = baseService.findById(baseSelecionada);
+
+            List<TempoValidacaoDto> tempos = filaService.getTemposFilaValidacao(Conexao.getConnection(base));
+
+
+            tempos.forEach(t -> tempoPieModelValidacaoPortal.getData().put(t.getTempo() + " segundos", t.getQuantidade()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return tempoPieModelValidacaoPortal;
+
+    }
+
+    public void selecionandoBase() {
+        System.out.println("Selecionando Base " + baseSelecionada);
+        cnab = new CnabDto();
+        atualizarFundos();
+
+    }
+
+    public List<LayoutEnum> getLayoutsRemessa() {
+        List<LayoutEnum> retorno = LayoutEnum.findAllRemessa();
+
+        return retorno;
+    }
+
+
+    private void atualizarFundos() {
+
+        try {
+
+            Base base = baseService.findById(baseSelecionada);
+
+            fundos = fundoService.findAllComDataAtual(Conexao.getConnection(base));
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void atualizarBases() {
+        System.out.println("Atualizar Base");
+
+        bases = baseService.findAll();
+    }
+
+    public void addTitulo(FundoDto fundoAtual, CedenteDto cedente, SacadoDto sacado, MovimentoDto movimento, RiscoDto risco) {
+
+        try {
+
+            TituloDto titulo = new TituloDto();
+
+            BigDecimal valor = ValorAleatorioUtil.getValorDecimal(null, null);
+
+            titulo.setValorTitulo(valor);
+            titulo.setValorAquisicao(NumericUtils.getValorMenos20PorCento(valor));
+            titulo.setTaxaJuros(ValorAleatorioUtil.getTaxaDecimal());
+            titulo.setEspecie("01");
+            titulo.setMovimento(movimento);
+            titulo.setCedente(cedente);
+            titulo.setSacado(sacado);
+            titulo.setDataVencimento(fundoAtual.getDataFundo().plusDays(45));
+            titulo.setSeuNumero(ValorAleatorioUtil.getValor(25));
+            titulo.setNumeroDocumento(ValorAleatorioUtil.getValor(10));
+            titulo.setTermoCessao(ValorAleatorioUtil.getValor(10));
+            titulo.setChaveNfe("31190600006388319890559240000000311006164587");
+            titulo.setCoobrigacao(cedente.getCoobrigacao().equalsIgnoreCase("N") ? "02" : "01");
+            titulo.setRisco(risco);
+
+            titulo.setNumBanco(cnab.getBanco().getCodigoBanco());
+            cnab.getTitulos().add(titulo.getCopy());
+
+            titulo = new TituloDto();
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+        }
+    }
+
+    public void gerar() {
+        try {
+
+            if (quantidadeTitulos == null || quantidadeTitulos == 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos é obrigatório"));
+                return;
+            }
+
+            if (quantidadeArquivos == null || quantidadeArquivos == 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Arquivos é obrigatório"));
+                return;
+            }
+
+            if (quantidadeTitulos > 999997) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos máxima é 999.997"));
+                return;
+            }
+
+            if (fundos.isEmpty()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum fundo encontrado com a data atual"));
+                return;
+            }
+
+
+            Base base = baseService.findById(baseSelecionada);
+
+            Connection con = Conexao.getConnection(base);
+
+            String pathRepositorio = confGlobalService.getPathRepositorio(con);
+
+            BancoDto banco = bancoService.findOneByNumBanco(con, "001");
+            List<RiscoDto> riscos = riscoService.findAll(con);
+
+
+            for (int j = 0; j < quantidadeArquivos; j++) {
+
+                StringBuilder path = new StringBuilder();
+
+                FundoDto fundoAtual = fundos.get(ValorAleatorioUtil.getValorNumerico(fundos.size()));
+
+                path.append(pathRepositorio)
+                        .append(File.separator)
+                        .append("VALIDACAO_ARQUIVO")
+                        .append(File.separator)
+                        .append(fundoAtual.getCodigoIsin())
+                        .append(File.separator)
+                        .append(fundoAtual.getDataFundo().format(DateTimeFormatter.ofPattern("dd_MM_yyyy")))
+                        .append(File.separator)
+                        .append("AGUARDANDO")
+                        .append(File.separator);
+
+                List<CedenteDto> cedentes = cedenteService.findAll(con, fundoAtual.getIdFundo(), base);
+                if (cedentes.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum Cedente encontrado para o fundo " + fundoAtual.getNomeFundo()));
+                    return;
+                }
+                List<SacadoDto> sacados = sacadoService.findAll(con, fundoAtual.getIdFundo());
+                if (sacados.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum Sacado encontrado para o fundo " + fundoAtual.getNomeFundo()));
+                    return;
+                }
+                List<OriginadorDto> originadores = originadorService.findAll(con, fundoAtual.getIdFundo());
+                if (originadores.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum Originador encontrado para o fundo " + fundoAtual.getNomeFundo()));
+                    return;
+                }
+                List<MovimentoDto> movimentos = movimentoService.findAllMovimentosAquisicao(con, fundoAtual.getLayoutAquisicao());
+                if (movimentos.isEmpty()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nenhum Movimento encontrado para o layout " + fundoAtual.getLayoutAquisicao()));
+                    return;
+                }
+
+                cnab.setBanco(banco);
+                cnab.setDataGravacao(LocalDate.now());
+                cnab.setFundo(fundoAtual);
+                cnab.setLayout(LayoutEnum.parse(fundoAtual.getLayoutAquisicao()));
+                cnab.setOriginador(originadores.get(ValorAleatorioUtil.getValorNumerico(originadores.size())));
+
+                CedenteDto cedenteAtual = cedentes.get(ValorAleatorioUtil.getValorNumerico(cedentes.size()));
+
+                for (int i = 0; i < quantidadeTitulos; i++) {
+
+                    addTitulo(fundoAtual,
+                            cedenteAtual,
+                            sacados.get(ValorAleatorioUtil.getValorNumerico(sacados.size())),
+                            movimentos.stream().filter(c -> c.getCdOcorrencia().equals("1")).findFirst().get(),
+                            riscos.get(0)
+                    );
+                }
+
+                ConfGlobal confGlobal = confGlobalService.getConfGlobal();
+                cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
+                confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
+                this.confGlobalService.salvar(confGlobal);
+
+                File file = geradorCnab.gerar(cnab, "AQUISICAO_PORTAL", false, path.toString());
+
+                filaService.inserirArquivoValidacao(con, filaService.inserirFilaImportacaoArquivo(con, fundoAtual), file, fundoAtual.getLayoutAquisicao());
+
+                cnab = new CnabDto();
+            }
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Importação simulada Com Sucesso."));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void removerTitulo(TituloDto titulo) {
+        cnab.getTitulos().remove(titulo);
+    }
+
+    public String voltar() {
+        return VOLTAR;
+    }
+
+}

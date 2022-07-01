@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
@@ -23,32 +24,32 @@ import lombok.Setter;
 @Getter
 @Setter
 @Controller
-public class ConfiguracaoGlobalController implements Serializable {
+public class ConfiguracaoGlobalController extends CrudControlller implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+    private static final String VOLTAR = "/pages/cadastros/index.xhtml";
 
 
-	@Autowired
-	private IConfGlobalService configuracaoGlobalService;
-	
-	@Autowired
-	private IBaseService baseService;
-	
-	private ConfGlobal configuracaoGlobal;
-	
-	private String temaSelecionado = "cupertino";
+    @Autowired
+    private IConfGlobalService configuracaoGlobalService;
+
+    @Autowired
+    private IBaseService baseService;
+
+    private ConfGlobal configuracaoGlobal;
+
+    private String temaSelecionado = "cupertino";
     private List<String> temasDisponiveis = new ArrayList<String>();
     private List<Base> bases;
 
-	
-	@PostConstruct
-	public void init() {
 
-		this.configuracaoGlobal = configuracaoGlobalService.getConfGlobal();
-		atualizarBases();
-		 //Populando os temas
+    @PostConstruct
+    public void init() {
+
+        this.configuracaoGlobal = configuracaoGlobalService.getConfGlobal();
+        atualizarBases();
+        //Populando os temas
         temasDisponiveis.add("afterdark");
         temasDisponiveis.add("afternoon");
         temasDisponiveis.add("afterwork");
@@ -87,32 +88,28 @@ public class ConfiguracaoGlobalController implements Serializable {
         temasDisponiveis.add("ui-darkness");
         temasDisponiveis.add("ui-lightness");
         temasDisponiveis.add("vader");
-				
-	}
-	
-	public void atualizarBases() {
-		
-		bases = baseService.findAll();
-	}
-	
-	public String salvar() {
-				
-		try {			
-			configuracaoGlobalService.salvar(this.configuracaoGlobal);
-		} catch (Exception e) {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
-			e.printStackTrace();
-		}
-		
-		
-		return VOLTAR;
-	}
-	
 
-	
+    }
 
-	public String voltar() {
-		return VOLTAR;
-	}
+    public void atualizarBases() {
+
+        bases = baseService.findAll();
+    }
+
+    public String salvar() {
+
+        try {
+            configuracaoGlobalService.salvar(this.configuracaoGlobal);
+            addSuccessMsg();
+        } catch (Exception e) {
+            addErrorMsg(e.getMessage());
+        }
+        return null;
+    }
+
+
+    public String voltar() {
+        return VOLTAR;
+    }
 
 }
