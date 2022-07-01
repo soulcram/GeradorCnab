@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.m3Tech.solucoesFromtis.repositories.ConfGlobalRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
@@ -18,109 +20,112 @@ import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 
 @Service
+@RequiredArgsConstructor
 public class ConfGlobalServiceImpl implements IConfGlobalService {
 
-	@Override
-	public ConfGlobal getConfGlobal() {
+    private final ConfGlobalRepository confGlobalRepository;
 
-		try {
-			List<ConfGlobal> confGlobais;
+    @Override
+    public ConfGlobal getConfGlobal() {
 
-//			confGlobais = new ConfGlobal().findAll(); TODO
-			confGlobais = new ArrayList<>();
+        try {
+            List<ConfGlobal> confGlobais = this.confGlobalRepository.findAll();
 
-			String pathPadrao = "C:\\GeradorCnab\\" + LocalDate.now().toString().replaceAll("-", "") + "\\";
+            String pathPadrao = "C:\\GeradorCnab\\" + LocalDate.now().toString().replaceAll("-", "") + "\\";
 
-			ConfGlobal confGlobal;
+            ConfGlobal confGlobal;
 
-			if (confGlobais == null || confGlobais.isEmpty()) {
-				confGlobal = new ConfGlobal(1, pathPadrao,"blitzer","FromtisSoluções");
-			} else {
-				confGlobal = confGlobais.get(0);
-			}
+            if (confGlobais == null || confGlobais.isEmpty()) {
+                confGlobal = new ConfGlobal(1, pathPadrao, "blitzer", "FromtisSoluções");
+            } else {
+                confGlobal = confGlobais.get(0);
+            }
 
-			if (StringUtils.EmptyOrNull(confGlobal.getPath())) {
-				confGlobal.setPath(pathPadrao);
-			}
+            if (StringUtils.EmptyOrNull(confGlobal.getPath())) {
+                confGlobal.setPath(pathPadrao);
+            }
 
-			return confGlobal;
+            return confGlobal;
 
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
 
-		return null;
-	}
+            e.printStackTrace();
+        }
 
-	@Override
-	public String getPathRepositorio(Connection con) {
+        return null;
+    }
 
-		try {
+    @Override
+    public String getPathRepositorio(Connection con) {
 
-			String sqlQuery = "SELECT TOP 1 DS_PATH_REPOSITORIO FROM TB_GLOBAL_CONFIG";
+        try {
 
-			PreparedStatement ps = con.prepareStatement(sqlQuery);
+            String sqlQuery = "SELECT TOP 1 DS_PATH_REPOSITORIO FROM TB_GLOBAL_CONFIG";
 
-			ps.execute();
+            PreparedStatement ps = con.prepareStatement(sqlQuery);
 
-			ResultSet rs = ps.getResultSet();
+            ps.execute();
 
-			if (rs.next()) {
-				return rs.getString("DS_PATH_REPOSITORIO");
-			}
+            ResultSet rs = ps.getResultSet();
 
-		} catch (SQLException e) {
-			
-			e.printStackTrace();
-		}
+            if (rs.next()) {
+                return rs.getString("DS_PATH_REPOSITORIO");
+            }
 
-		return "";
-	}
+        } catch (SQLException e) {
 
-	@Override
-	public String getPathSalvarArquivo(Connection con, Boolean importacaoAutomatica, Boolean versaoMercado,
-			FundoDto fundo) {
-		if (importacaoAutomatica) {
+            e.printStackTrace();
+        }
 
-			String pathRepositorio = getPathRepositorio(con);
+        return "";
+    }
 
-			if (versaoMercado != null && versaoMercado) {
-				return pathRepositorio + File.separator + "ENCONTRADOR_ARQUIVO";
+    @Override
+    public String getPathSalvarArquivo(Connection con, Boolean importacaoAutomatica, Boolean versaoMercado,
+                                       FundoDto fundo) {
+        if (importacaoAutomatica) {
 
-			} else {
+            String pathRepositorio = getPathRepositorio(con);
 
-				return pathRepositorio + File.separator + fundo.getCodigoIsin() + File.separator + "REMESSA"
-						+ File.separator + fundo.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+            if (versaoMercado != null && versaoMercado) {
+                return pathRepositorio + File.separator + "ENCONTRADOR_ARQUIVO";
 
-			}
+            } else {
 
-		} else {
-			return getConfGlobal().getPath();
-		}
-	}
+                return pathRepositorio + File.separator + fundo.getCodigoIsin() + File.separator + "REMESSA"
+                        + File.separator + fundo.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
 
-	@Override
-	public void salvar(ConfGlobal configuracaoGlobal) throws Exception {
+            }
 
-//		configuracaoGlobal.save();TODO
+        } else {
+            return getConfGlobal().getPath();
+        }
+    }
 
-	}
+    @Override
+    public void salvar(ConfGlobal configuracaoGlobal) {
+        this.confGlobalRepository.save(configuracaoGlobal);
+    }
 
-	@Override
-	public String getPathSalvarArquivoCobranca(Connection con, Boolean importacaoAutomatica, FundoDto fundo) {
-		if (importacaoAutomatica) {
+    @Override
+    public List<ConfGlobal> findAll() {
+        return this.confGlobalRepository.findAll();
+    }
 
-			String pathRepositorio = getPathRepositorio(con);
+    @Override
+    public String getPathSalvarArquivoCobranca(Connection con, Boolean importacaoAutomatica, FundoDto fundo) {
+        if (importacaoAutomatica) {
 
-
-			return pathRepositorio + File.separator + fundo.getCodigoIsin() + File.separator + "COBRANCA"
-						+ File.separator + fundo.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+            String pathRepositorio = getPathRepositorio(con);
 
 
-		} else {
-			return getConfGlobal().getPath();
-		}
-	}
+            return pathRepositorio + File.separator + fundo.getCodigoIsin() + File.separator + "COBRANCA"
+                    + File.separator + fundo.getDataFundo().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+
+
+        } else {
+            return getConfGlobal().getPath();
+        }
+    }
 
 }

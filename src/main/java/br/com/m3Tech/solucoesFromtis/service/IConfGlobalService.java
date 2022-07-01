@@ -1,19 +1,23 @@
 package br.com.m3Tech.solucoesFromtis.service;
 
 import java.sql.Connection;
+import java.util.List;
 
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
 
 
 public interface IConfGlobalService {
-	
-	
-	public ConfGlobal getConfGlobal();
-	public String getPathRepositorio(Connection con);
-	public String getPathSalvarArquivo(Connection con, Boolean importacaoAutomatica, Boolean versaoMercado, FundoDto fundo);
-	public String getPathSalvarArquivoCobranca(Connection con, Boolean importacaoAutomatica, FundoDto fundo);
-	public void salvar(ConfGlobal configuracaoGlobal) throws Exception;
-	
+    ConfGlobal getConfGlobal();
+
+    String getPathRepositorio(Connection con);
+
+    String getPathSalvarArquivo(Connection con, Boolean importacaoAutomatica, Boolean versaoMercado, FundoDto fundo);
+
+    String getPathSalvarArquivoCobranca(Connection con, Boolean importacaoAutomatica, FundoDto fundo);
+
+    void salvar(ConfGlobal configuracaoGlobal);
+
+    List<ConfGlobal> findAll();
 
 }
