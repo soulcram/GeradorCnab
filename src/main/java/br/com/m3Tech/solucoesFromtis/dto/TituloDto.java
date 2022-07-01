@@ -18,6 +18,7 @@ public class TituloDto {
 	private LocalDate dataVencimento;
 	private LocalDate dataLiquidacao;
 	private LocalDate dataCarencia;
+	private LocalDate dataAquisicao;
 	private MovimentoDto movimento;
 	private IndexadorDto indexador;
 	private RiscoDto risco;
@@ -36,6 +37,12 @@ public class TituloDto {
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
 	private BigDecimal taxaJurosIndexador;
+	private BigDecimal taxaJuros;
+	private String agenciaCobranca;
+	private String idCobranca;
+	private BigDecimal  valorDesconto;
+	private BigDecimal  valorJuros;
+	private BigDecimal  valorDespesas;
 
 	public TituloDto getCopy() {
 		return new TituloDto(cedente, 
@@ -44,6 +51,7 @@ public class TituloDto {
 							 dataVencimento, 
 							 dataLiquidacao, 
 							 dataCarencia,
+							 dataAquisicao,
 							 movimento, 
 							 indexador,
 							 risco,
@@ -61,7 +69,13 @@ public class TituloDto {
 							 valorTitulo, 
 							 valorAquisicao, 
 							 valorAbatimento,
-							 taxaJurosIndexador);
+							 taxaJurosIndexador,
+							 taxaJuros,
+							 agenciaCobranca,
+							 idCobranca,
+							 valorDesconto,
+							 valorJuros,
+							 valorDespesas);
 	}
 
 }

@@ -80,7 +80,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 			cnab.setBanco(bancoService.findOneById(con, 2));
 			
 	
-			BigDecimal valor = ValorAleatorioUtil.getValorDecimal();
+			BigDecimal valor = ValorAleatorioUtil.getValorDecimal(null,null);
 			CedenteDto cedenteSelecionado = getCedenteSelecionado(con, fundo.getIdFundo(), base);
 			SacadoDto sacadoSelecionado = getSacadoSelecionado(con, fundo.getIdFundo());
 	
@@ -122,7 +122,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 		ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 		cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 		confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-		confGlobal.save();
+//		confGlobal.save();TODO
 		
 		StreamFactory factory = StreamFactory.newInstance();
         
@@ -142,7 +142,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
         int qtdeTitulos = 2;
        
         for(TituloDto dto : cnab.getTitulos()) {
-        	out.write(new CnabDetail(dto, qtdeTitulos++));
+        	out.write(new CnabDetail(dto, qtdeTitulos++, cnab.getLayout()));
         }
         
         out.write(new CnabTrailler(StringUtils.getNumeroComZerosAEsquerda(qtdeTitulos,6)));

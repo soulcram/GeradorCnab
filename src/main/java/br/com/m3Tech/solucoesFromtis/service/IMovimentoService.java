@@ -37,6 +37,8 @@ public interface IMovimentoService {
 
 	public MovimentoDto findMovimento(Connection con, Integer cdLayout, Integer cdOcorrencia);
 
+	public List<TituloDto> findAllTituloEmEstoqueCobranca(Connection connection, Integer fundoSelecionado, Integer idMovimento);
+
 	
 
 

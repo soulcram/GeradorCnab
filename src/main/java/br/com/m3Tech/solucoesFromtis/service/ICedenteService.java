@@ -17,4 +17,6 @@ public interface ICedenteService {
 	
 	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo, Base base) throws SQLException;
 
+	public CedenteDto getCedenteByCpfCnpj(Connection connection, Integer idFundo, String cnpjCedente, Base base);
+
 }

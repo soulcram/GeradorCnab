@@ -1,5 +1,6 @@
 package br.com.m3Tech.solucoesFromtis.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,10 @@ public class CnabDto {
 	private LayoutEnum layout;
 	private Integer numSeqArquivo;
 	private List<TituloDto> titulos;
+	private Integer tpPartRespTarifacao;
+	private BigDecimal percTarifacao;//" position="139" length="4" />
+	private BigDecimal taxaCessaoAnual;//" position="143" length="5" />
+	private BigDecimal taxaCessao;
 	
 	public CnabDto() {
 		this.fundo = new FundoDto();

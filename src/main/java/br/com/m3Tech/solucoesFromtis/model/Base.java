@@ -1,16 +1,16 @@
 package br.com.m3Tech.solucoesFromtis.model;
 
-import br.com.m3Tech.noSql.Crud;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Base extends Crud<Base> {
+public class Base extends AbstractPersistable<Integer> {
 
 	private String url;
 	private String usuario;

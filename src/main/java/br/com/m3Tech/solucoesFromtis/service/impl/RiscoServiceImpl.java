@@ -44,7 +44,7 @@ public class RiscoServiceImpl implements IRiscoService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -75,7 +75,7 @@ public class RiscoServiceImpl implements IRiscoService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		

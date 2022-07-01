@@ -1,0 +1,81 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<p:poll interval="3" update="termometro" />
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+				
+				<f:facet name="header">
+        			Importação de Cnab Via Portal
+    			</f:facet>
+
+    
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:column />
+					
+					<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{simularImportacaoCnabPortalController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{simularImportacaoCnabPortalController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{simularImportacaoCnabPortalController.selecionandoBase}" process="@this"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{simularImportacaoCnabPortalController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					
+
+					<p:outputLabel value="Quantidade de Títulos" />
+					<p:outputLabel value="Quantidade de Arquivos" />
+					<p:column/>
+					
+					<p:inputNumber id="quatTitulo" value="#{simularImportacaoCnabPortalController.quantidadeTitulos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
+					<p:inputNumber id="quatArquivo" value="#{simularImportacaoCnabPortalController.quantidadeArquivos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
+					<p:commandButton action="#{simularImportacaoCnabPortalController.gerar}" value="Importar Cnab" update="@all" />
+					
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid id="termometro" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Validação Portal
+    				</f:facet>
+				
+					<p:chart id="statusValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.statusPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.porMinutoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposValidacaoPortal" type="pie" model="#{simularImportacaoCnabPortalController.tempoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

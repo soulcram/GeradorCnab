@@ -48,7 +48,6 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -58,7 +57,7 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 	public OriginadorDto findOneById(Connection con, Integer idOriginador) {
 		OriginadorDto originador = null;
 		
-		String sqlQuery = "";
+		// String sqlQuery = "";
 		
 		try {
 			PreparedStatement ps = con.prepareStatement(Querys.ONE_ORIGINADOR);
@@ -78,7 +77,6 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

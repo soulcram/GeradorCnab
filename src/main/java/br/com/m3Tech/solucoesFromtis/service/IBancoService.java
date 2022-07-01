@@ -13,4 +13,6 @@ public interface IBancoService {
 
 	public BancoDto findOneById(Connection con, Integer idBanco);
 
+	public BancoDto findOneByNumBanco(Connection connection, String nuBanco);
+
 }

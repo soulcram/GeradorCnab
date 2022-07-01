@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
+import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class CnabDetail {
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
 	private BigDecimal taxaJurosIndexador;
+	private BigDecimal taxaJuros;
 	private String tipoPessoaSacado;
 	private String docSacado;
 	private String nomeSacado;
@@ -49,14 +51,15 @@ public class CnabDetail {
 	private String cpfCnpjOrigRecebivel;
 	private String nomeOrigRecebivel;
 	
-	public CnabDetail(TituloDto dto,Integer numSeq) {
+	public CnabDetail(TituloDto dto,Integer numSeq, LayoutEnum layout) {
 		
 		this.dataCarencia = dto.getDataCarencia();
 		this.risco = dto.getRisco() != null ? dto.getRisco().getCodRisco() : null;
 		this.taxaJurosIndexador = dto.getTaxaJurosIndexador();
+		this.taxaJuros = dto.getTaxaJuros();
 		this.tipoJuros = dto.getIndexador() != null && dto.getIndexador().getCodIndexador() != null ? dto.getIndexador().getCodIndexador().toString() : null;
 		this.variacaoCambial = dto.getVariacaoCambial();
-		this.coobrigacao = dto.getCoobrigacao();
+		this.coobrigacao = (35 == layout.getCdLayout()) ? Integer.valueOf(dto.getCoobrigacao()).toString() : dto.getCoobrigacao();
 		this.seuNumero = dto.getSeuNumero();
 		this.numeroBanco = dto.getNumBanco();
 		this.nossoNumero = dto.getNossoNumero();

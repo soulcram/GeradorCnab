@@ -46,7 +46,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -86,7 +86,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -118,7 +118,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		

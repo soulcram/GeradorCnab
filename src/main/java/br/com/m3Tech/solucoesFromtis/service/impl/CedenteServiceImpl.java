@@ -49,8 +49,29 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String sqlQuery2 =  "SELECT ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ  FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = ?";
+			
+			try {
+				PreparedStatement ps = con.prepareStatement(sqlQuery2);
+				
+				ps.setInt(1, idFundo);
+				
+				ps.execute();
+				
+				ResultSet rs = ps.getResultSet();
+				
+				while(rs.next()) {
+					CedenteDto cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+												  rs.getString("NM_CEDENTE"), 
+												  rs.getString("NU_CPF_CNPJ"),
+												  "N");
+					
+					cedentes.add(cedente);
+				}
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 		
 		return cedentes;
@@ -82,8 +103,28 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String sqlQuery2 = " SELECT ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ FROM TB_FUNDO_CEDENTE WHERE ID_CEDENTE = ?";
+			
+			try {
+				PreparedStatement ps = con.prepareStatement(sqlQuery2);
+				
+				ps.setInt(1, idCedente);
+				
+				ps.execute();
+				
+				ResultSet rs = ps.getResultSet();
+				
+				while(rs.next()) {
+					cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+												  rs.getString("NM_CEDENTE"), 
+												  rs.getString("NU_CPF_CNPJ"),
+												  "N");
+					
+				}
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 		
 		return cedente;
@@ -93,24 +134,92 @@ public class CedenteServiceImpl implements ICedenteService, Serializable{
 	public CedenteDto getPrimeiroCedente(Connection con, Integer idFundo, Base base) throws SQLException {
 
 		CedenteDto cedente = null;
-		
-		String coob =  base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
 
-		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, "
-				+ coob + " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
+		String coob = base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
 
-		PreparedStatement ps = con.prepareStatement(sqlQuery);
+		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, " + coob
+				+ " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
-		ps.execute();
+			ps.execute();
 
-		ResultSet rs = ps.getResultSet();
+			ResultSet rs = ps.getResultSet();
 
-		if(rs.next()) {
-			cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
-					rs.getString("NM_CEDENTE"), 
-					rs.getString("NU_CPF_CNPJ"), 
-					base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
+			if (rs.next()) {
+				cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), rs.getString("NM_CEDENTE"),
+						rs.getString("NU_CPF_CNPJ"),
+						base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
 
+			}
+		} catch (SQLException e) {
+			try {
+
+				String sqlQuery2 = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo;
+
+				PreparedStatement ps = con.prepareStatement(sqlQuery2);
+
+				ps.execute();
+
+				ResultSet rs = ps.getResultSet();
+
+				if (rs.next()) {
+					cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+							                 rs.getString("NM_CEDENTE"),
+							                 rs.getString("NU_CPF_CNPJ"), 
+							                 "N");
+
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+		return cedente;
+	}
+
+	@Override
+	public CedenteDto getCedenteByCpfCnpj(Connection con, Integer idFundo, String cnpjCedente, Base base) {
+		CedenteDto cedente = null;
+
+		String coob = base.getVersaoMercado() ? "TP_COOBRIGACAO \r\n" : "IC_COOBRIGACAO \r\n";
+
+		String sqlQuery = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ, " + coob
+				+ " FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo + " AND NU_CPF_CNPJ = '" + cnpjCedente +"'";
+		try {
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+
+			ps.execute();
+
+			ResultSet rs = ps.getResultSet();
+
+			if (rs.next()) {
+				cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), rs.getString("NM_CEDENTE"),
+						rs.getString("NU_CPF_CNPJ"),
+						base.getVersaoMercado() ? rs.getString("TP_COOBRIGACAO") : rs.getString("IC_COOBRIGACAO"));
+
+			}
+		} catch (SQLException e) {
+			try {
+
+				String sqlQuery2 = "select TOP 1 ID_CEDENTE, NM_CEDENTE, NU_CPF_CNPJ FROM TB_FUNDO_CEDENTE WHERE ID_FUNDO = " + idFundo + " AND NU_CPF_CNPJ = '" + cnpjCedente +"'";
+
+				PreparedStatement ps = con.prepareStatement(sqlQuery2);
+
+				ps.execute();
+
+				ResultSet rs = ps.getResultSet();
+
+				if (rs.next()) {
+					cedente = new CedenteDto(rs.getInt("ID_CEDENTE"), 
+							                 rs.getString("NM_CEDENTE"),
+							                 rs.getString("NU_CPF_CNPJ"), 
+							                 "N");
+
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		return cedente;
