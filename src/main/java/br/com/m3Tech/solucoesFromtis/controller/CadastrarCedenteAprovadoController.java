@@ -124,7 +124,7 @@ public class CadastrarCedenteAprovadoController implements Serializable {
 		bases = baseService.findAll();
 	}
 
-	public void cadastrarCedenteAprovado() {
+	public void cadastrarCedenteAprovadoAleatorio() {
 		try {
 			
 			if(validarPortalServicos(true)) {

@@ -51,7 +51,7 @@ public class CadastrarCedenteAprovado implements ICadastroAutomatizado {
 				RepresentateCadCedente[] representantes = {representante};
 				
 				String nomeCedente = nomeFake.gerarNomeCompleto();
-				CadastroCedente cedente = new CadastroCedente(new FundoCadCedente("95523683000178", "Fromtis Serviços"), //fundo, 
+				CadastroCedente cedente = new CadastroCedente(new FundoCadCedente(parametros.getFundo().getCnpjFundo(), parametros.getFundo().getNomeFundo()), //fundo, 
 						"CNPJ", 
 						gerarDoc.cnpj(false), 
 						nomeCedente  ,//nome, 

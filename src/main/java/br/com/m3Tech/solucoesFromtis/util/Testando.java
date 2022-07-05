@@ -2,6 +2,8 @@ package br.com.m3Tech.solucoesFromtis.util;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import br.com.fromtis.fidc.portal.servicos.consulta.soap.ArquivoCnab;
 import br.com.fromtis.fidc.portal.servicos.consulta.soap.ImportacaoArquivoCnabProxy;
@@ -10,6 +12,8 @@ import br.com.fromtis.fidc.portal.servicos.consulta.soap.RetornoImportacao;
 public class Testando {
 
 	public static void main(String[] args) throws Exception {
+		
+		System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")));
 		
 //		String url = "http://localhost:8080/portal-servicos/servicos/soap/importacaoArquivoCnab?wsdl"; 
 //		String usuario = "soulcram.servicos"; 

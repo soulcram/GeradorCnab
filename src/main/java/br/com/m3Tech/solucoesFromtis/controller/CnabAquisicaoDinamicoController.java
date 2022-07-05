@@ -136,9 +136,7 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 	private List<TituloDto> titulos;
 	private List<IndexadorDto> indexadores;
 	private List<RiscoDto> riscos;
-	
-	private Bucket bucket;
-	
+		
 	@PostConstruct
 	public void init() {
 		
@@ -155,11 +153,6 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 		cnab = new CnabDto();
 		path = confGlobalService.getConfGlobal().getPath();
 		quantidadeTitulos = 1;
-		
-		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
-        this.bucket = Bucket4j.builder()
-            .addLimit(limit)
-            .build();
 
 				
 	}
@@ -327,99 +320,7 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 		
 		bases = baseService.findAll();
 	}
-	
-//	public void adicionarTitulo() {
-//
-////		BigDecimal vlTaxaJurosIndexador = null;
-////				
-////		if(!"".equals(taxaJurosIndexador.getText())) {
-////			vlTaxaJurosIndexador = new BigDecimal(taxaJurosIndexador.getText().replaceAll(",", "."));
-////		}
-//		
-//		if(fundoSelecionado == null || fundoSelecionado < 1) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Selecione um fundo."));
-//			return;
-//		}
-//		
-//		if( BigDecimalUtils.isNullOrZero(valorTitulo)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor do título é obrigatório."));
-//			return;
-//		}
-//		
-//		if( 35 != layoutSelecionado && BigDecimalUtils.isNullOrZero(valorAquisicao)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor de aquisição é obrigatório."));
-//			return;
-//		}
-//		
-//		if( 35 != layoutSelecionado && valorAquisicao.compareTo(valorTitulo) > 0) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Valor de aquisição não pode ser maior que o valor do título."));
-//			return;
-//		}
-//		
-//		if( 35 == layoutSelecionado && BigDecimalUtils.isNullOrZero(taxaJuros)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Taxa de Juros é obrigatório."));
-//			return;
-//		}
-//		
-//		if(cnab.getTitulos().size() > 999997) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos máxima é 999.997."));
-//			return;
-//		}
-//		
-//		if(StringUtils.emptyOrNull(seuNumero)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Seu Numero é obrigatório."));
-//			return;
-//		}
-//		
-//		if(StringUtils.emptyOrNull(numeroDocumento)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Numero Documento é obrigatório."));
-//			return;
-//		}
-//		
-//		if(StringUtils.emptyOrNull(termoCessao)) {
-//			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Termo Cessão é obrigatório."));
-//			return;
-//		}
-//		Optional<CedenteDto> optionalCedente = cedentes.stream().filter(c -> c.getIdCedente().equals(cedenteSelecionado)).findFirst();
-//		Optional<SacadoDto> optionalSacado = sacados.stream().filter(c -> c.getIdSacado().equals(sacadoSelecionado)).findFirst();
-//		Optional<BancoDto> optionalBanco = bancos.stream().filter(c -> c.getIdBanco().equals(bancoSelecionado)).findFirst();
-//		Optional<MovimentoDto> optionalMovimento = movimentos.stream().filter(c -> c.getIdMovimento().equals(movimentoSelecionado)).findFirst();
-//		Optional<IndexadorDto> optionalIndexador = indexadores.stream().filter(c -> c.getIdIndexador().equals(indexadorSelecionado)).findFirst();
-//		Optional<RiscoDto> optionalRisco = riscos.stream().filter(c -> c.getIdRisco().equals(riscoSelecionado)).findFirst();
-//		Optional<TipoRecebivelDto> optionalTipoRecebivel = tiposRecebiveis.stream().filter(c -> c.getIdTipoRecebivel().equals(tipoRecebivelSelecionado)).findFirst();
-//		
-//		TituloDto titulo = new TituloDto(optionalCedente.isPresent() ? optionalCedente.get() : null, 
-//				optionalSacado.isPresent() ? optionalSacado.get() : null, 
-//				optionalBanco.isPresent() ? optionalBanco.get().getCodigoBanco() : null, 
-//				dataVencimento, 
-//				null, //dataLiquidacao, 
-//				dataCarencia, //dataCarencia, 
-//				optionalMovimento.isPresent() ? optionalMovimento.get() : null, 
-//				optionalIndexador.isPresent() ? optionalIndexador.get() : null, //indexador, 
-//				optionalRisco.isPresent() ? optionalRisco.get() : null, //risco, 
-//				seuNumero, 
-//				coobrigacao ? "01" : "02", 
-//				null, //nossoNumero, 
-//				numeroDocumento, 
-//				optionalTipoRecebivel.isPresent() ? optionalTipoRecebivel.get().getCdEspecie() : null, //especie, 
-//				termoCessao, 
-//				chaveNfe, 
-//				variacaoCambial, //variacaoCambial, 
-//				null, //docOrigRecebivel, 
-//				null, //nomeOrigRecebivel, 
-//				null, //valorPago, 
-//				valorTitulo, 
-//				valorAquisicao, 
-//				null, //valorAbatimento, 
-//				taxaJurosIndexador, //taxaJurosIndexador
-//				taxaJuros
-//				);
-//		
-//		cnab.getTitulos().add(titulo.getCopy());
-//		
-//		clear();
-//		
-//	}
+
 	public void addTitulo() {
 		
 		try {
@@ -446,7 +347,7 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 			titulo.setSeuNumero(ValorAleatorioUtil.getValor(25));
 			titulo.setNumeroDocumento(ValorAleatorioUtil.getValor(10));
 			titulo.setTermoCessao(ValorAleatorioUtil.getValor(10));
-			titulo.setChaveNfe("31190600006388319890559240000000311006164587");
+//			titulo.setChaveNfe("31190600006388319890559240000000311006164587");
 			titulo.setCoobrigacao(coobrigacao ? "01" : "02");
 			titulo.setRisco(optionalRisco.isPresent() ? optionalRisco.get() : null);
 	
@@ -462,11 +363,6 @@ public class CnabAquisicaoDinamicoController implements Serializable {
 	
 	public void gerar() {
 		try {
-			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
 			
 			if(quantidadeTitulos == null || quantidadeTitulos == 0) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Quantidade de Títulos é obrigatório"));

@@ -554,7 +554,7 @@ public class simularImportacaoCnabPortalController implements Serializable {
 			titulo.setSeuNumero(ValorAleatorioUtil.getValor(25));
 			titulo.setNumeroDocumento(ValorAleatorioUtil.getValor(10));
 			titulo.setTermoCessao(ValorAleatorioUtil.getValor(10));
-			titulo.setChaveNfe("31190600006388319890559240000000311006164587");
+//			titulo.setChaveNfe("31190600006388319890559240000000311006164587");
 			titulo.setCoobrigacao(cedente.getCoobrigacao().equalsIgnoreCase("N") ? "02" : "01");
 			titulo.setRisco(risco);
 	
