@@ -1,11 +1,13 @@
 package br.com.m3Tech.solucoesFromtis.certificadora.service.impl;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
 import br.com.m3Tech.solucoesFromtis.certificadora.service.GuardadorRequisicoesCertificadora;
 import br.com.m3Tech.solucoesFromtis.certificadora.webservices.wrapper.RequisicaoCertificadoraDigitalWrapper;
+import br.com.m3Tech.solucoesFromtis.certificadora.webservices.wrapper.StatusEnum;
 import br.com.m3Tech.solucoesFromtis.certificadora.webservices.wrapper.StatusRequisicao;
 
 public class GuardadorRequisicaoCertificadoraImpl implements GuardadorRequisicoesCertificadora {
@@ -24,6 +26,12 @@ public class GuardadorRequisicaoCertificadoraImpl implements GuardadorRequisicoe
 	@Override
 	public Set<RequisicaoCertificadoraDigitalWrapper> pegaRequisicoes() {
 		return guardarRequisicoes;
+	}
+	
+	@Override
+	public Set<RequisicaoCertificadoraDigitalWrapper> pegaRequisicoesNaoEnviado() {
+		
+		return guardarRequisicoes.stream().filter(r -> StatusEnum.NAO_ENVIADO.equals(r.getStatusRequisicao().getStatus())).collect(Collectors.toSet());
 	}
 
 	@Override

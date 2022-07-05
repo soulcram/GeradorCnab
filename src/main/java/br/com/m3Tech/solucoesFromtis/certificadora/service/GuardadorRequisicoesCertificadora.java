@@ -16,4 +16,6 @@ public interface GuardadorRequisicoesCertificadora {
 	void atualizaRequisicao(RequisicaoCertificadoraDigitalWrapper requisicao, StatusRequisicao statusRequisicao);
 
 	void removerTudo();
+
+	Set<RequisicaoCertificadoraDigitalWrapper> pegaRequisicoesNaoEnviado();
 }

@@ -212,7 +212,12 @@ public class ExecucoesAutomaticas {
 				return;
 			}
 
-			Set<RequisicaoCertificadoraDigitalWrapper> requisicoes = guardadorRequisicao.pegaRequisicoes();
+			Set<RequisicaoCertificadoraDigitalWrapper> requisicoes = guardadorRequisicao.pegaRequisicoesNaoEnviado();
+			
+			if(requisicoes.isEmpty()) {
+				return;
+			}
+			
 			for (RequisicaoCertificadoraDigitalWrapper requisicaoWrapper : requisicoes) {
 				if (StatusEnum.NAO_ENVIADO.equals(requisicaoWrapper.getStatusRequisicao().getStatus())) {
 					logger.info("Encontrado Operacao: {} para Enviar Retorno.", requisicaoWrapper.getRequisicao().getId());

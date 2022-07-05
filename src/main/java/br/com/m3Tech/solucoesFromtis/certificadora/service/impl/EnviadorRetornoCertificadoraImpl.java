@@ -1,5 +1,6 @@
 package br.com.m3Tech.solucoesFromtis.certificadora.service.impl;
 
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.ws.BindingProvider;
@@ -15,9 +16,16 @@ import br.com.m3Tech.solucoesFromtis.certificadora.webservices.retorno.RetornoCe
 import br.com.m3Tech.solucoesFromtis.certificadora.webservices.retorno.RetornoCertificadoDigital;
 import lombok.extern.slf4j.Slf4j;
 
-@Service("enviadorRetorno")
+@Service
 @Slf4j
 public class EnviadorRetornoCertificadoraImpl implements EnviadorRetornoCertificadora {
+	
+	private final GeradorServiceWS geradorServiceWS;
+	
+	@Inject
+	public EnviadorRetornoCertificadoraImpl(final GeradorServiceWS geradorServiceWS) {
+		this.geradorServiceWS = geradorServiceWS;
+	}
 
 	@Override
 	public RetornoProcessamento enviarRetornoCertificadora(RequisicaoCertificadoDigital requisicaoCertificadoDigital) {
@@ -38,7 +46,7 @@ public class EnviadorRetornoCertificadoraImpl implements EnviadorRetornoCertific
 			} catch (Exception e) {
 			}
 			
-			RetornoCertificacaoDigital retorno = new GeradorServiceWS().criaRequestRetornoCertificadora();
+			RetornoCertificacaoDigital retorno = geradorServiceWS.criaRequestRetornoCertificadora();
 			BindingProvider bp  = (BindingProvider) retorno;
 			//bp.getRequestContext().put(BindingProviderProperties.REQUEST_TIMEOUT, 3000);
 			//bp.getRequestContext().put(BindingProviderProperties.CONNECT_TIMEOUT, 1000);

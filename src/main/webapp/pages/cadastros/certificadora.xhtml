@@ -61,8 +61,10 @@
 				</p:column>
 
 				<p:column headerText="Ações">
-					<p:commandButton id="btnEnviarRetorno" value="Deleta" action="#{certificadoraController.removeAquisicao(item)}" update=":formRequisicao:resultadoRequisicoes"  />
+					<p:commandButton id="btnEnviarRetorno" value="Enviar Retorno" action="#{certificadoraController.enviarRetorno(item)}" ajax="false" />
 					<p:commandButton id="btnDownloadXml" value="Download" action="#{certificadoraController.download(item)}" ajax="false" />
+					<p:commandButton id="btnDeleta" value="Deleta" action="#{certificadoraController.removeAquisicao(item)}" update=":formRequisicao:resultadoRequisicoes"  />
+					
 				</p:column>
 				
 			</p:dataTable>

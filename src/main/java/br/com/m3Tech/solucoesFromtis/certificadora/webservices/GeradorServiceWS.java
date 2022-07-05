@@ -3,6 +3,7 @@ package br.com.m3Tech.solucoesFromtis.certificadora.webservices;
 import java.net.URL;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
@@ -13,7 +14,6 @@ import javax.xml.ws.handler.PortInfo;
 import org.apache.axis.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -33,9 +33,16 @@ public class GeradorServiceWS  {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ExecucoesAutomaticas.class);
 	
+	private final IConfGlobalService confGlobalService;
+	
+	@Inject
+	public GeradorServiceWS(final IConfGlobalService confGlobalService) {
+		this.confGlobalService = confGlobalService;
+	}
+	
 	public RetornoCertificacaoDigital criaRequestRetornoCertificadora() {
 		try {
-			ConfGlobal confGlobal = new ConfGlobal().findAll().get(0);
+			ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 			
 			
 			if(confGlobal == null || StringUtils.isEmpty(confGlobal.getUrlPortal())) {
@@ -59,7 +66,7 @@ public class GeradorServiceWS  {
 	
 	public RequisicaoCertificacaoDigital criaRequestRequisicaoCertificadora() {
 		try {
-			ConfGlobal confGlobal = new ConfGlobal().findAll().get(0);
+			ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 			return criaServico(confGlobal.getUrlPortal() + "/portal/requisicaoCertificacaoDigital?wsdl", "RequisicaoCertificacaoDigital", false).getPort(new QName("http://webservices.portal.fidc.fromtis.com.br/", "RequisicaoCertificacaoDigitalPort"), RequisicaoCertificacaoDigital.class);
 		}catch(Exception e ) {
 			log.error("Erro ao criar o Servico com o Webservice Retorno");
