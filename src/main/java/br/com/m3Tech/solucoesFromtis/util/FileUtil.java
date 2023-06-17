@@ -30,8 +30,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.google.common.collect.Lists;
 
-import br.com.m3Tech.exception.DataInvalidaException;
-import br.com.m3Tech.exception.NumeroInvalidoException;
+import br.com.m3Tech.solucoesFromtis.exception.DataInvalidaException;
+import br.com.m3Tech.solucoesFromtis.exception.NumeroInvalidoException;
 
 public class FileUtil {
 	

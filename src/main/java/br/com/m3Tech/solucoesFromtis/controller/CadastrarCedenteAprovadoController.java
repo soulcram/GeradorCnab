@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
-import br.com.m3Tech.solucoesFromtis.dao.Conexao;
-import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
@@ -24,16 +22,9 @@ import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedente;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedenteAprovado;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarEntidade;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPdd;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPddFaixaUnica;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarSacado;
-import br.com.m3Tech.solucoesFromtis.service.impl.ImportarCnabPortal;
-import br.com.m3Tech.solucoesFromtis.util.CpfCnpjUtils;
-import br.com.m3Tech.utils.IntegerUtils;
-import br.com.m3Tech.utils.StringUtils;
+import br.com.m3Tech.solucoesFromtis.util.IntegerUtils;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
@@ -50,7 +41,7 @@ public class CadastrarCedenteAprovadoController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 
-	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
 
 
 	@Autowired
@@ -109,7 +100,7 @@ public class CadastrarCedenteAprovadoController implements Serializable {
 		
 			Base base = baseService.findById(baseSelecionada);
 		
-			fundos = fundoService.findAll(Conexao.getConnection(base));
+			fundos = fundoService.findAll(base);
 			
 			
 		} catch (Exception e) {
@@ -124,7 +115,7 @@ public class CadastrarCedenteAprovadoController implements Serializable {
 		bases = baseService.findAll();
 	}
 
-	public void cadastrarCedenteAprovado() {
+	public void cadastrarCedenteAprovadoAleatorio() {
 		try {
 			
 			if(validarPortalServicos(true)) {
@@ -139,7 +130,7 @@ public class CadastrarCedenteAprovadoController implements Serializable {
 			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedenteAprovado();
 			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, "fidcCustodia",
 					usuarioPortalServicos, 
 					senhaPortalServicos, 
 					fundo,

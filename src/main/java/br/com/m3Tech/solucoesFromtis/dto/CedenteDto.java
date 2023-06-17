@@ -13,6 +13,11 @@ public class CedenteDto {
 	private String nomeCedente;
 	private String docCedente;
 	private String coobrigacao;
+	private String bancoCedente;
+	private String agenciaCedente;
+	private String dgAgenciaCedente;
+	private String contaCedente;
+	private String dgContaCedente;
 	
 	@Override
 	public String toString() {

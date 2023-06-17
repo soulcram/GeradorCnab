@@ -25,7 +25,7 @@ public class BaseConverter implements Converter {
 		
 		String[] split = arg2.split(" - ");
 		
-		Base base  = baseService.findById(Integer.valueOf(split[0].trim()));
+		Base base  = baseService.findById(split[0].trim());
 		
 		return base;
 	}

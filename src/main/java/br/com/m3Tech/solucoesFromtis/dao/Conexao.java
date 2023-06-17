@@ -20,6 +20,7 @@ public class Conexao {
 			
 			if(con != null) {
 				con.close();
+				con = null;
 			}
 			
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");

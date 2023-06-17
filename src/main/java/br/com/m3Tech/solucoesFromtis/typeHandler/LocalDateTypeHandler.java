@@ -32,7 +32,7 @@ public class LocalDateTypeHandler implements ConfigurableTypeHandler {
     		return null;
     	}
     	
-    	if(StringUtils.EmptyOrNull(text.replaceAll("0", "").trim())){
+    	if(StringUtils.emptyOrNull(text.replaceAll("0", "").trim())){
     		return null;
     	}
     	

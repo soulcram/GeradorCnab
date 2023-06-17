@@ -1,19 +1,22 @@
 package br.com.m3Tech.solucoesFromtis.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 
 
 public interface ISacadoService {
 	
 	
-	public List<SacadoDto> findAll(Connection con, Integer idFundo);
+	public List<SacadoDto> findAll(Base base, Integer idFundo);
 
-	public SacadoDto findOneById(Connection con, Integer idSacado);
+	public SacadoDto findOneById(Base base, Integer idSacado);
 
-	public SacadoDto getPrimeiroSacado(Connection con, Integer idFundo) throws SQLException;
+	public SacadoDto getPrimeiroSacado(Base base, Integer idFundo) throws Exception;
+
+	public SacadoDto getSacadoByCpfCnpj(Base base, Integer idFundo, String docSacado);
+	
+	void deleteByIdSacado(Base base, Integer idSacado);
 
 }

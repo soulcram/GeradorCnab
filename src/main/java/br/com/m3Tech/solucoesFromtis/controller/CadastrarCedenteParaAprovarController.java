@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
-import br.com.m3Tech.solucoesFromtis.dao.Conexao;
-import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
@@ -24,21 +22,9 @@ import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
 import br.com.m3Tech.solucoesFromtis.service.ICedenteService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedente;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedenteAprovado;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedenteParaAprovar;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarEntidade;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPdd;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPddFaixaUnica;
-import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarSacado;
-import br.com.m3Tech.solucoesFromtis.service.impl.ImportarCnabPortal;
-import br.com.m3Tech.solucoesFromtis.util.CpfCnpjUtils;
-import br.com.m3Tech.utils.IntegerUtils;
-import br.com.m3Tech.utils.StringUtils;
-import io.github.bucket4j.Bandwidth;
-import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
-import io.github.bucket4j.Refill;
+import br.com.m3Tech.solucoesFromtis.util.IntegerUtils;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,7 +37,7 @@ public class CadastrarCedenteParaAprovarController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 
-	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
 
 
 	@Autowired
@@ -62,8 +48,6 @@ public class CadastrarCedenteParaAprovarController implements Serializable {
 	private IConfGlobalService confGlobalService;
 	@Autowired
 	private ICedenteService cedenteService;
-		
-	private Bucket bucket;
 	
 	private Integer baseSelecionada;
 	private Integer fundoSelecionado;
@@ -89,11 +73,6 @@ public class CadastrarCedenteParaAprovarController implements Serializable {
 		
 		bases = baseService.findAll();
 		fundos = new ArrayList<>();
-		
-		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
-        this.bucket = Bucket4j.builder()
-            .addLimit(limit)
-            .build();
 
 				
 	}
@@ -110,7 +89,7 @@ public class CadastrarCedenteParaAprovarController implements Serializable {
 		
 			Base base = baseService.findById(baseSelecionada);
 		
-			fundos = fundoService.findAll(Conexao.getConnection(base));
+			fundos = fundoService.findAll(base);
 			
 			
 		} catch (Exception e) {
@@ -132,15 +111,10 @@ public class CadastrarCedenteParaAprovarController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedenteParaAprovar();
 			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, "fidcCustodia",
 					usuarioPortalServicos, 
 					senhaPortalServicos, 
 					fundo,

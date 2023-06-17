@@ -1,0 +1,77 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="4" layout="grid"
+				contentStyleClass="p-align-baseline ui-fluid">
+
+				<f:facet name="header">
+        			Consultar Usuários
+    			</f:facet>
+
+				<p:outputLabel value="Nome do usuário"></p:outputLabel>
+				<p:column />
+				<p:column />
+				<p:column />
+
+				<p:inputText value="#{usuarioController.nome}"></p:inputText>
+				<p:column />
+				<p:column />
+				<p:column />
+
+
+
+			</p:panelGrid>
+
+			
+			<div align="right">
+				<p:panelGrid columns="2">
+					<p:commandButton action="#{usuarioController.consultar}" value="Pesquisar" update="tabela"/>
+					<p:commandButton action="#{usuarioController.cadastrar}" value="Novo" />
+				</p:panelGrid>
+			</div>
+			
+			<p:panelGrid columns="1">
+				<p:dataTable id="tabela" var="usu" value="#{usuarioController.usuarios}">
+					<p:column headerText="Nome">
+						<h:outputText value="#{usu.login}" />
+					</p:column>
+
+					<p:column headerText="Último acesso">
+						<h:outputText value="#{usu.ultimoLogin}"/>
+					</p:column>
+					
+					<p:column headerText="Alterar">
+						<div align="center">
+							<p:commandButton action="#{usuarioController.alterar(usu.idUsuario)}"  value="Alterar"/>
+						</div>
+					</p:column>
+					
+					<p:column headerText="Excluir">
+						<div align="center">
+							<p:commandButton action="#{usuarioController.excluir(usu.idUsuario)}" value="Excluir" />
+						</div>
+					</p:column>
+				</p:dataTable>
+			</p:panelGrid>
+			<p:panel>
+				<div align="right">
+					<p:commandButton action="#{usuarioController.voltar}" value="Voltar" />
+				</div>
+			</p:panel>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

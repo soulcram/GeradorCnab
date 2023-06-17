@@ -1,0 +1,172 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Aquisição Dinâmico
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:column />
+					
+					<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{cnabAquisicaoDinamicoController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoBase}" process="@this" update="fundos bancos"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{cnabAquisicaoDinamicoController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Data Gravação" />
+					
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoFundo}" 
+							    update="geral" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.layoutSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoLayout}" process="@this" update="geral" />
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataGravacao" value="#{cnabAquisicaoDinamicoController.dataGravacao}" />
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Originador" />
+					<p:outputLabel value="Vencimento" />
+					
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="originadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.originadorSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.originadores}" var="originador" itemLabel="#{originador.nomeOriginador}" itemValue="#{originador.idOriginador}"/>
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataVencimento" value="#{cnabAquisicaoDinamicoController.dataVencimento}" />
+					
+					<p:outputLabel value="Cedente" />
+					<p:outputLabel value="Sacado" />
+					<p:outputLabel value="Coobrigação" />
+					
+					<p:selectOneMenu id="cedentes" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.cedenteSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.cedentes}" var="cedente" itemLabel="#{cedente.nomeCedente}" itemValue="#{cedente.idCedente}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoCedente}" process="@this" update="coob"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="sacados" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.sacadoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.sacados}" var="sacado" itemLabel="#{sacado.nomeSacado}" itemValue="#{sacado.idSacado}"/>
+
+					</p:selectOneMenu>
+					<p:selectBooleanButton id="coob" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoDinamicoController.coobrigacao}"      
+						                                            onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:outputLabel value="Tipo Recebivel" />
+					<p:outputLabel value="Risco" rendered="#{cnabAquisicaoDinamicoController.exibirRisco}"/>
+					<p:column rendered="#{!cnabAquisicaoDinamicoController.exibirRisco}"/>
+					
+					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoDinamicoController.movimentoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.movimentos}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<h:panelGroup id="groupEspecies">
+						<p:selectOneMenu id="tiposRecebiveis" autoWidth="false" style="width: 90% !important" 
+							rendered="#{cnabAquisicaoDinamicoController.exibirEspecieNormal}"
+							value="#{cnabAquisicaoDinamicoController.tipoRecebivelSelecionado}">
+							<f:selectItems value="#{cnabAquisicaoDinamicoController.tiposRecebiveis}" var="item" itemLabel="#{item.cdEspecie} - #{item.nmTipoRecebivel}" itemValue="#{item.idTipoRecebivel}"/>
+	
+						</p:selectOneMenu>
+						<p:selectOneMenu id="tiposEspecies" autoWidth="false" style="width: 90% !important"
+							rendered="#{!cnabAquisicaoDinamicoController.exibirEspecieNormal}"
+							value="#{cnabAquisicaoDinamicoController.especieSelecionado}">
+							<f:selectItems value="#{cnabAquisicaoDinamicoController.tiposRecebiveisLayout47}" var="item" itemLabel="#{item}" itemValue="#{item}"/>
+	
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:selectOneMenu id="riscos" autoWidth="false" style="width: 90% !important"
+						rendered="#{cnabAquisicaoDinamicoController.exibirRisco}"
+						value="#{cnabAquisicaoDinamicoController.riscoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoDinamicoController.riscos}" var="item" itemLabel="#{item.codRisco} - #{item.nomeRisco}" itemValue="#{item.idRisco}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoDinamicoController.exibirRisco}"/>
+
+					<p:outputLabel value="Quantidade de Arquivos" />
+					<p:outputLabel value="Quantidade de Títulos" />
+					<p:column/>
+					
+					<p:inputNumber id="quatArquivo" value="#{cnabAquisicaoDinamicoController.quantidadeArquivos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
+					<p:inputNumber id="quatTitulo" value="#{cnabAquisicaoDinamicoController.quantidadeTitulos}" thousandSeparator="." decimalPlaces="0" maxValue="999997" minValue="1"/> 
+					<p:column/>
+					
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoDinamicoController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabAquisicaoDinamicoController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabAquisicaoDinamicoController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabAquisicaoDinamicoController.gerar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabAquisicaoDinamicoController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

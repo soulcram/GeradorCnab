@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -62,7 +62,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 	}
 
 	@Override
-	public List<ResultadoTesteDto> testarProcedures(Connection con, FundoDto fundo, Base base) {
+	public List<ResultadoTesteDto> testarProcedures(Base base, FundoDto fundo) {
 		
 		List<ResultadoTesteDto> retorno = Lists.newArrayList();
 		
@@ -70,51 +70,51 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 		
 		
-		FundoDto fundoAntes = fundoService.findOneById(con, fundo.getIdFundo());
+		FundoDto fundoAntes = fundoService.findOneById(base, fundo.getIdFundo());
 
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando a data do fundo" , "O fundo " + fundo.getNomeFundo()+ " está na data: " + fundoAntes.getDataFundo().toString()));
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Processando o fundo " + fundo.getNomeFundo()+ " para a data: " + hoje.toString(), executarProcessarFundo(con, hoje, fundo.getIdFundo())));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Processando o fundo " + fundo.getNomeFundo()+ " para a data: " + hoje.toString(), executarProcessarFundo(base, hoje, fundo.getIdFundo())));
 
-		FundoDto fundoDepois = fundoService.findOneById(con, fundo.getIdFundo());
+		FundoDto fundoDepois = fundoService.findOneById(base, fundo.getIdFundo());
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando a data do fundo" , "O fundo " + fundo.getNomeFundo()+ " está na data: " + fundoDepois.getDataFundo().toString()));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Gerando arquivo de aquisição" , gerarCnabAquisicao(con, fundoDepois, base)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Gerando arquivo de aquisição" , gerarCnabAquisicao(base, fundoDepois)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Inserindo arquivo na base" , inserirArquivoNaBase(con, fundoDepois)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Inserindo arquivo na base" , inserirArquivoNaBase(base, fundoDepois)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Executando proc Gerar Movimentação" , executarGerarMovimentacao(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Executando proc Gerar Movimentação" , executarGerarMovimentacao(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Operação Recebivel" , verificarSeArquivoExisteNaOperacaoRecebivel(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Operação Recebivel" , verificarSeArquivoExisteNaOperacaoRecebivel(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Staging Remessa" , verificarSeArquivoExisteNaStgRemessa(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Staging Remessa" , verificarSeArquivoExisteNaStgRemessa(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Executando proc Intg Movimento" , executarIntgMovimento(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Executando proc Intg Movimento" , executarIntgMovimento(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Movimento" , verificarSeArquivoExisteNaMovimento(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Movimento" , verificarSeArquivoExisteNaMovimento(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Recebivel" , verificarSeArquivoExisteNaRecebivel(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o arquivo na Recebivel" , verificarSeArquivoExisteNaRecebivel(base)));
 		
 		LocalDate amanha = LocalDateUtils.getDiaUtil(hoje).plusDays(2);
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Processando o fundo " + fundo.getNomeFundo()+ " para a data: " + amanha.toString(), executarProcessarFundo(con, amanha, fundo.getIdFundo())));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Processando o fundo " + fundo.getNomeFundo()+ " para a data: " + amanha.toString(), executarProcessarFundo(base, amanha, fundo.getIdFundo())));
 		
-		FundoDto fundoAmanha = fundoService.findOneById(con, fundo.getIdFundo());
+		FundoDto fundoAmanha = fundoService.findOneById(base, fundo.getIdFundo());
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando a data do fundo" , "O fundo " + fundo.getNomeFundo()+ " está na data: " + fundoAmanha.getDataFundo().toString()));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o recebivel na Estoque" , verificarSeRecebivelExisteNaEstoque(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando o recebivel na Estoque" , verificarSeRecebivelExisteNaEstoque(base)));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Revertendo o fundo " + fundo.getNomeFundo()+ " para a data: " + fundoAntes.getDataFundo().toString(), executarReverterFundo(con, fundoAntes.getDataFundo(), fundo.getIdFundo())));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Revertendo o fundo " + fundo.getNomeFundo()+ " para a data: " + fundoAntes.getDataFundo().toString(), executarReverterFundo(base, fundoAntes.getDataFundo(), fundo.getIdFundo())));
 		
-		FundoDto fundoRevertido = fundoService.findOneById(con, fundo.getIdFundo());
+		FundoDto fundoRevertido = fundoService.findOneById(base, fundo.getIdFundo());
 		retorno.add(new ResultadoTesteDto("Testar Procedures", "Verificando a data do fundo" , "O fundo " + fundo.getNomeFundo()+ " está na data: " + fundoRevertido.getDataFundo().toString()));
 		
-		retorno.add(new ResultadoTesteDto("Testar Procedures", "Removendo Arquivo" , executarRemoverArquivo(con)));
+		retorno.add(new ResultadoTesteDto("Testar Procedures", "Removendo Arquivo" , executarRemoverArquivo(base)));
 		
 		
 		return retorno;
 	}
 	
-	private String inserirArquivoNaBase(Connection con, FundoDto fundo)  {
+	private String inserirArquivoNaBase(Base base, FundoDto fundo)  {
 		
 		try {
 			File diretorio = new File(confGlobal.getPath());
@@ -129,9 +129,9 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 				cnab = Files.readAllLines(f.toPath(), Charsets.UTF_8);
 			}
 			
-			arquivo = arquivoService.inserirTbArquivo(con, fundo, nomeArquivo);
+			arquivo = arquivoService.inserirTbArquivo(base, fundo, nomeArquivo);
 			
-			if(arquivoService.inserirTbArquivoImportado(con, cnab, arquivo)) {
+			if(arquivoService.inserirTbArquivoImportado(base, cnab, arquivo)) {
 				return "Arquivo inserido na Base com sucesso.";
 			}else {
 				return "O arquivo não foi inserido na base.";
@@ -142,11 +142,15 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String verificarSeRecebivelExisteNaEstoque(Connection con) {
+	private String verificarSeRecebivelExisteNaEstoque(Base base) {
 		
 		try {
 			String sqlQuery = "select * from TB_ESTOQUE where ID_RECEBIVEL = " + idRecebivel ;
 
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -154,9 +158,10 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			ResultSet rs = ps.getResultSet();
 
 			if (rs.next()) {
-				
+				con.close();
 				return "O recebivel com id: " + idRecebivel + " encontrado na TB_ESTOQUE.";
 			} else {
+				con.close();
 				return "ERRO: O recebivel com id: " + idRecebivel + " não foi encontrado na TB_ESTOQUE.";
 			}
 
@@ -166,12 +171,16 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String verificarSeArquivoExisteNaOperacaoRecebivel(Connection con) {
+	private String verificarSeArquivoExisteNaOperacaoRecebivel(Base base) {
 		
 		try {
 			String sqlQuery = "select ID_OPERACAO_RECEBIVEL, ID_LIQ_DC,ST_OPERACAO, * from TB_OPERACAO_RECEBIVEL where ID_ARQUIVO = "
 					+ arquivo.getIdArquivo();
 
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -181,9 +190,10 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			if (rs.next()) {
 				
 				idOperacaoRecebivel = rs.getInt("ID_OPERACAO_RECEBIVEL");
-				
+				con.close();
 				return "O arquivo com id: " + arquivo.getIdArquivo() + " encontrado na TB_OPERACAO_RECEBIVEL.";
 			} else {
+				con.close();
 				return "ERRO: O arquivo com id: " + arquivo.getIdArquivo()
 						+ " não foi encontrado na TB_OPERACAO_RECEBIVEL.";
 			}
@@ -194,11 +204,15 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String verificarSeArquivoExisteNaStgRemessa(Connection con) {
+	private String verificarSeArquivoExisteNaStgRemessa(Base base) {
 		try {
 			String sqlQuery = "select * from TB_STG_REMESSA where ID_ARQUIVO = "
 					+ arquivo.getIdArquivo();
 
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -206,8 +220,10 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			ResultSet rs = ps.getResultSet();
 
 			if (rs.next()) {
+				con.close();
 				return "O arquivo com id: " + arquivo.getIdArquivo() + " encontrado na TB_STG_REMESSA.";
 			} else {
+				con.close();
 				return "ERRO: O arquivo com id: " + arquivo.getIdArquivo()
 						+ " não foi encontrado na TB_STG_REMESSA.";
 			}
@@ -218,12 +234,16 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String verificarSeArquivoExisteNaRecebivel(Connection con) {
+	private String verificarSeArquivoExisteNaRecebivel(Base base) {
 		
 		try {
 			String sqlQuery = "select ID_RECEBIVEL from TB_RECEBIVEL where ID_ARQUIVO = "
 					+ arquivo.getIdArquivo();
 
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -233,9 +253,10 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			if (rs.next()) {
 				
 				idRecebivel = rs.getInt("ID_RECEBIVEL");
-				
+				con.close();
 				return "O arquivo com id: " + arquivo.getIdArquivo() + " encontrado na TB_RECEBIVEL.";
 			} else {
+				con.close();
 				return "ERRO: O arquivo com id: " + arquivo.getIdArquivo()
 						+ " não foi encontrado na TB_RECEBIVEL.";
 			}
@@ -246,11 +267,15 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String verificarSeArquivoExisteNaMovimento(Connection con) {
+	private String verificarSeArquivoExisteNaMovimento(Base base) {
 		try {
 			String sqlQuery = "select * from TB_MOVIMENTO where ID_ARQUIVO = "
 					+ arquivo.getIdArquivo();
 
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -258,8 +283,10 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			ResultSet rs = ps.getResultSet();
 
 			if (rs.next()) {
+				con.close();
 				return "O arquivo com id: " + arquivo.getIdArquivo() + " encontrado na TB_MOVIMENTO.";
 			} else {
+				con.close();
 				return "ERRO: O arquivo com id: " + arquivo.getIdArquivo()
 						+ " não foi encontrado na TB_MOVIMENTO.";
 			}
@@ -270,7 +297,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		}
 	}
 	
-	private String gerarCnabAquisicao(Connection con, FundoDto fundo, Base base) {
+	private String gerarCnabAquisicao(Base base, FundoDto fundo) {
 		
 		try {
 			
@@ -278,7 +305,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 			
 			FileUtil.limparDiretorio(confGlobal.getPath());
 			
-			geracaoCnabPadrao.gerarCnabAquisicao(con, fundo, base);
+			geracaoCnabPadrao.gerarCnabAquisicao(base, fundo);
 			
 			File diretorio = new File(confGlobal.getPath());
 			
@@ -296,18 +323,22 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 	}
 	
-	private String executarIntgMovimento(Connection con) {
+	private String executarIntgMovimento(Base base) {
 		
 		String sqlQuery ="exec SP_INTG_MOVIMENTO " + idOperacaoRecebivel + ", 'soulcram', 'testeSolucoesFromtis'";
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
-	
+			con.close();
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 		
@@ -315,18 +346,22 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 	}
 	
-	private String executarProcessarFundo(Connection con, LocalDate ateAData, Integer idFundo) {
+	private String executarProcessarFundo(Base base, LocalDate ateAData, Integer idFundo) {
 		
 		String sqlQuery ="exec sp_ProcessarFundo " + idFundo + ", '" +ateAData.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+ "'";
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
 	
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 		
@@ -334,16 +369,20 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 	}
 	
-	private String executarRemoverArquivo(Connection con) {
+	private String executarRemoverArquivo(Base base) {
 
 		String sqlQuery = "exec sp_removerArquivo " + arquivo.getIdArquivo();
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
-
-		} catch (SQLException e) {
+			con.close();
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 
@@ -351,18 +390,22 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 
 	}
 	
-	private String executarGerarMovimentacao(Connection con) {
+	private String executarGerarMovimentacao(Base base) {
 		
 		String sqlQuery ="exec sp_gerarMovimentacao " + arquivo.getIdArquivo();
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
-	
+			con.close();
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 		
@@ -370,18 +413,22 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 	}
 	
-	private String executarReverterFundo(Connection con, LocalDate ateAData, Integer idFundo) {
+	private String executarReverterFundo(Base base, LocalDate ateAData, Integer idFundo) {
 		
 		String sqlQuery ="exec sp_reverterFundo " + idFundo + ", '" +ateAData.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+ "'";
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
-	
+			con.close();
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			return e.getMessage();
 		}
 		
@@ -389,7 +436,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 		
 	}
 
-//	public List<TipoRecebivelDto> findAllTipoRecebivel(Connection con, Integer cdLayout) {
+//	public List<TipoRecebivelDto> findAllTipoRecebivel(Base base, Integer cdLayout) {
 //		
 //		List<TipoRecebivelDto> retorno = new ArrayList<TipoRecebivelDto>();
 //		
@@ -416,7 +463,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 //			}
 //			
 //		} catch (SQLException e) {
-//			
+//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		
@@ -427,7 +474,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 //		return retorno;
 //	}
 //
-//	public TipoRecebivelDto findOneTipoRecebivelById(Connection con, Integer idTipoRecebivel) {
+//	public TipoRecebivelDto findOneTipoRecebivelById(Base base, Integer idTipoRecebivel) {
 //		TipoRecebivelDto retorno = null;
 //		
 //		String sqlQuery = "SELECT DISTINCT TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n" + 
@@ -452,7 +499,7 @@ public class TesteServiceImpl implements ITesteService, Serializable{
 //			}
 //			
 //		} catch (SQLException e) {
-//			
+//			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
 //		

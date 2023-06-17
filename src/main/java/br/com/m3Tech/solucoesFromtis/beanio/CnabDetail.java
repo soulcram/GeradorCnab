@@ -6,7 +6,9 @@ import java.time.format.DateTimeFormatter;
 
 import br.com.m3Tech.solucoesFromtis.dto.TituloDto;
 import br.com.m3Tech.solucoesFromtis.enuns.LayoutEnum;
+import br.com.m3Tech.solucoesFromtis.service.impl.GeradorCpfCnpjRgFake;
 import br.com.m3Tech.solucoesFromtis.util.StringUtils;
+import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,8 +37,14 @@ public class CnabDetail {
 	private String termoCessao;
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
+	private BigDecimal valorParcial;
 	private BigDecimal taxaJurosIndexador;
+	private BigDecimal taxaSpread;
+	private BigDecimal taxaContrato;
 	private BigDecimal taxaJuros;
+	private BigDecimal taxaJurosMensal;
+	private BigDecimal jurosMora;
+	private BigDecimal multa;
 	private String tipoPessoaSacado;
 	private String docSacado;
 	private String nomeSacado;
@@ -50,12 +58,42 @@ public class CnabDetail {
 	private String tipoPessoaOrigRecebivel;
 	private String cpfCnpjOrigRecebivel;
 	private String nomeOrigRecebivel;
+	private String qtdLastros;
+	private String cet;
+	private String notaFiscal;
+	private String idOperacaoBanco;
+	private String idLote;
+	private String tpContrato;
+	private String cnpjEnteConsignante;
+	private String caracteristicaEspecial;
+	private String modalidade;
+	private String natureza;
+	private String origemRecurso;
+	private String anoVeiculo;
+	private BigDecimal valorVeiculo;
+	private BigDecimal valorContrato;
+	private String chassi;
+	private String numeroContratoC3;
+	private String numeroParcelaC3;
+	private LocalDate dataNascimentoSacado;
+	private String classificacaoRiscoCedente;
+	private String qtdParcelas;
+	private BigDecimal valorJurosDiaAtraso;
+	private String ltv;
+	private String agio;
+	private String codBancoCobranca;
+	private String numeroNotaFiscal;
+	private String numeroSerieNotaFiscalDuplicada;
+	private String bancoCobranca;
+	private String agenciaCobranca;
+	private String cnpjOriginador;
 	
 	public CnabDetail(TituloDto dto,Integer numSeq, LayoutEnum layout) {
 		
 		this.dataCarencia = dto.getDataCarencia();
 		this.risco = dto.getRisco() != null ? dto.getRisco().getCodRisco() : null;
 		this.taxaJurosIndexador = dto.getTaxaJurosIndexador();
+		this.taxaSpread = dto.getTaxaSpread();
 		this.taxaJuros = dto.getTaxaJuros();
 		this.tipoJuros = dto.getIndexador() != null && dto.getIndexador().getCodIndexador() != null ? dto.getIndexador().getCodIndexador().toString() : null;
 		this.variacaoCambial = dto.getVariacaoCambial();
@@ -64,7 +102,7 @@ public class CnabDetail {
 		this.numeroBanco = dto.getNumBanco();
 		this.nossoNumero = dto.getNossoNumero();
 		this.valorPago = dto.getValorPago();
-		this.dataLiquidacao = dto.getDataLiquidacao();
+		this.dataLiquidacao = dto.getDataLiquidacao() == null ? LocalDate.now() : dto.getDataLiquidacao();
 		this.identOcorrencia = dto.getMovimento().getCdOcorrencia();
 		this.numDocumento = dto.getNumeroDocumento(); 
 		this.dataVencimento = dto.getDataVencimento();
@@ -77,7 +115,8 @@ public class CnabDetail {
 		this.termoCessao = dto.getTermoCessao();
 		this.valorAquisicao = dto.getValorAquisicao();
 		this.valorAbatimento = dto.getValorAbatimento();
-		this.tipoPessoaSacado = dto.getSacado().getDocSacado().length() == 11 ? "01" : "02";
+		this.valorParcial = dto.getValorAbatimento();
+		this.tipoPessoaSacado = LayoutEnum.CNAB_550_REMESSA_COMUM_CM_V2.equals(layout) ?  (dto.getSacado().getDocSacado().length() == 11 ? "1" : "2") : (dto.getSacado().getDocSacado().length() == 11 ? "01" : "02");
 		this.docSacado = dto.getSacado().getDocSacado();
 		this.nomeSacado = StringUtils.removerAcentos(dto.getSacado().getNomeSacado());
 		this.enderecoSacado = dto.getSacado().getEndereco();
@@ -86,7 +125,42 @@ public class CnabDetail {
 //		this.tipoPessoaOrigRecebivel = dto.getDocOrigRecebivel().length() == 11 ? "01" : "02";;
 //		this.cpfCnpjOrigRecebivel = dto.getDocOrigRecebivel();
 //		this.nomeOrigRecebivel = dto.getNomeOrigRecebivel();
-		this.numSeqRegistro = StringUtils.getNumeroComZerosAEsquerda(numSeq,6) ;
+		this.qtdLastros = dto.getQtdLastros();
+		this.taxaJurosMensal =ValorAleatorioUtil.getTaxaDecimal();
+		this.taxaContrato =ValorAleatorioUtil.getTaxaDecimal();
+		this.jurosMora = (LayoutEnum.CNAB_450_REMESSA_BRASIL_PLURAL.equals(layout) ) ? ValorAleatorioUtil.getValorDecimal(1, 99) : ValorAleatorioUtil.getTaxaDecimal();
+		this.multa = ValorAleatorioUtil.getTaxaDecimal();
+		this.cet = ValorAleatorioUtil.getStringNumeros(5);
+		this.notaFiscal = ValorAleatorioUtil.getStringNumeros(9);
+		this.numSeqRegistro = StringUtils.getNumeroComZerosAEsquerda(numSeq,(LayoutEnum.CNAB_450_REMESSA_GENIAL.equals(layout) || LayoutEnum.CNAB_450_REMESSA_BRASIL_PLURAL.equals(layout) ) ? 10 : 6) ;
+		this.idOperacaoBanco = ValorAleatorioUtil.getStringNumeros(5);
+		this.idLote = ValorAleatorioUtil.getStringNumeros(5);
+		this.tpContrato = ValorAleatorioUtil.getStringNumeros(4);
+		this.cnpjEnteConsignante = new GeradorCpfCnpjRgFake().cnpj(false);
+		this.caracteristicaEspecial = ValorAleatorioUtil.getStringNumeros(2);
+		this.modalidade = ValorAleatorioUtil.getStringNumeros(4);
+		this.natureza = ValorAleatorioUtil.getStringNumeros(2);
+		this.origemRecurso = ValorAleatorioUtil.getStringNumeros(4);
+		this.anoVeiculo = ValorAleatorioUtil.getStringNumeros(4);
+		this.valorVeiculo = ValorAleatorioUtil.getValorDecimal(10, 1000);
+		this.valorContrato = ValorAleatorioUtil.getValorDecimal(10, 10000);
+		this.chassi = ValorAleatorioUtil.getStringNumeros(17);
+		this.numeroContratoC3 = ValorAleatorioUtil.getStringNumeros(20);
+		this.numeroParcelaC3 = ValorAleatorioUtil.getStringNumeros(20);
+		this.dataNascimentoSacado = LocalDate.now().minusYears(20);
+		this.classificacaoRiscoCedente = "A";
+		this.qtdParcelas = "003";
+		this.valorJurosDiaAtraso = ValorAleatorioUtil.getValorDecimal(10, 1000);
+		this.codBancoCobranca = ValorAleatorioUtil.getStringNumeros(1);
+		this.numeroNotaFiscal = ValorAleatorioUtil.getStringNumeros(10);
+		this.numeroSerieNotaFiscalDuplicada = ValorAleatorioUtil.getStringNumeros(3);
+		this.agio = ValorAleatorioUtil.getStringNumeros(3);
+		this.ltv = ValorAleatorioUtil.getStringNumeros(3);
+		this.bancoCobranca = ValorAleatorioUtil.getStringNumeros(3);
+		this.agenciaCobranca = ValorAleatorioUtil.getStringNumeros(5);
+		this.cnpjOriginador = (new  GeradorCpfCnpjRgFake().cnpj(false)).substring(0, 8);
+		
+		
 		
 		
 	}

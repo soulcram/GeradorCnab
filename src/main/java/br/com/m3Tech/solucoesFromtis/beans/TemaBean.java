@@ -12,7 +12,7 @@ public class TemaBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String tema = "blitzer";
+    private String tema = "hot-sneaks";
 
     public String getTema() {
         return tema;

@@ -1,0 +1,66 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Importação de Cnab Via Portal
+    			</f:facet>
+
+
+				<p:dataTable id="tabela" var="item"
+					value="#{simularImportacaoCnabPortalController.simulacoes}"
+					emptyMessage="Sem dados">
+					
+					<p:column headerText="Selecionar" style="width:10%;">
+						<p:selectBooleanCheckbox value="#{item.selecionado}" />
+					</p:column>
+
+					<p:column headerText="Tipo de Movimentação" style="width:20%;">
+						<h:outputText value="#{item.tipoMovimentacao.nome}" />
+					</p:column>
+
+					<p:column headerText="Quant. Arquivos" style="width:20%;">
+						<p:inputNumber value="#{item.quantArquivos}" thousandSeparator="."
+							decimalPlaces="0" maxValue="999997" minValue="0" />
+					</p:column>
+
+					<p:column headerText="Quant. Títulos por Arquivo"
+						style="width:20%;">
+						<p:inputNumber value="#{item.quantTitulosPorArquivo}"
+							thousandSeparator="." decimalPlaces="0" maxValue="999997"
+							minValue="0" />
+					</p:column>
+				</p:dataTable>
+
+				<f:facet name="footer">
+					<div align="right">
+						<p:commandButton
+							action="#{simularImportacaoCnabPortalController.gerar}"
+							onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Importar Cnab" />
+					</div>
+				</f:facet>
+
+
+			</p:panelGrid>
+
+
+		</h:form>
+
+
+	</ui:define>
+</ui:composition>

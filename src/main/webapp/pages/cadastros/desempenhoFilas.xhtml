@@ -1,0 +1,109 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+				
+				<f:facet name="header">
+        			Desempenhos das filas
+    			</f:facet>
+
+    
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:outputLabel value="Data" />
+					
+					<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{desempenhoFilasController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{desempenhoFilasController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{desempenhoFilasController.selecionandoBase}" process="@this"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{desempenhoFilasController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
+					<p:column />
+					<p:datePicker id="dataGravacao" value="#{desempenhoFilasController.data}" immediate="true" />
+					
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid id="termometroValidacao" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Validação Portal 
+        				<p:commandButton update="termometroValidacao" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" icon="pi pi-refresh"/>
+    				</f:facet>
+    								
+					<p:chart id="statusValidacaoPortal" type="pie" model="#{desempenhoFilasController.statusPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoValidacaoPortal" type="pie" model="#{desempenhoFilasController.porMinutoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposValidacaoPortal" type="pie" model="#{desempenhoFilasController.tempoPieModelValidacaoPortal}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+			
+			<p:panelGrid id="termometroCarregarCnab" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Carregar Cnab para Importados
+        				<p:commandButton update="termometroCarregarCnab" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" icon="pi pi-refresh"/>
+    				</f:facet>
+				
+					<p:chart id="statusCarregarCnab" type="pie" model="#{desempenhoFilasController.statusPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoCarregarCnab" type="pie" model="#{desempenhoFilasController.porMinutoPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposCarregarCnab" type="pie" model="#{desempenhoFilasController.tempoPieModelCarregarCnab}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+			
+			<p:panelGrid id="termometroMovimentacao" columns="1" layout="grid">
+				<p:panelGrid columns="3" layout="grid">
+					<f:facet name="header">
+        				Gerar Movimentação
+        				<p:commandButton update="termometroMovimentacao" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" icon="pi pi-refresh"/>
+    				</f:facet>
+				
+					<p:chart id="statusMovimentacao" type="pie" model="#{desempenhoFilasController.statusPieModelMovimentacao}" style="width:400px;height:300px"/>
+					
+					<p:chart id="quantPorMinutoMovimentacao" type="pie" model="#{desempenhoFilasController.porMinutoPieModelMovimentacao}" style="width:400px;height:300px"/>
+					
+					<p:chart id="temposMovimentacao" type="pie" model="#{desempenhoFilasController.tempoPieModelMovimentacao}" style="width:400px;height:300px"/>
+					
+					
+				</p:panelGrid>
+
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -4,9 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class CadastrarPddFaixaUnica implements ICadastroAutomatizado {
@@ -19,9 +21,13 @@ public class CadastrarPddFaixaUnica implements ICadastroAutomatizado {
 		
 			WebDriverManager.chromedriver().setup();
 			
-			ChromeDriver driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+	    	options.addArguments("--remote-allow-origins=*");
+			ChromeDriver driver = new ChromeDriver(options);
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/login.xhtml");
+			String url = parametros.getUrl()+ (StringUtils.isEmpty(parametros.getContextoCustodia()) ? "" : parametros.getContextoCustodia());
+			
+			driver.get(url + "/login.xhtml");
 			driver.manage().window().maximize();
 	        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			
@@ -30,7 +36,7 @@ public class CadastrarPddFaixaUnica implements ICadastroAutomatizado {
 	
 			driver.findElement(By.xpath("//input[@id='j_password']")).submit();
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/pages/consultaPdd.xhtml");
+			driver.get(url + "/pages/consultaPdd.xhtml");
 			
 //			WebElement tabela = driver.findElement(By.id("j_idt209:tabelaPdd"));
 //			WebElement linha = tabela.findElement(By.xpath("//*[contains(text(), 'PddFaixaUnica')]"));
@@ -39,13 +45,21 @@ public class CadastrarPddFaixaUnica implements ICadastroAutomatizado {
 			driver.findElement(By.xpath("//*[contains(text(), 'Novo')]")).click();
 
 			
-			driver.findElement(By.id("j_idt209:nomePdd")).sendKeys("PddFaixaUnica");
+			driver.findElement(By.id("form:nomePdd")).sendKeys("PddFaixaUnica");
 			
-			driver.findElement(By.id("j_idt209:j_idt228")).click();
+			driver.findElement(By.id("form:pddFaixaUnica")).click();
+			
+//			driver.findElement(By.id("form:adicionarPdd")).click();
 				
 			driver.findElement(By.xpath("//*[contains(text(), 'Salvar')]")).click();
 			
-			driver.close();
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			driver.quit();
 					
 			return "";
 	}

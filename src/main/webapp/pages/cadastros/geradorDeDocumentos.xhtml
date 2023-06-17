@@ -1,0 +1,58 @@
+<ui:composition template="/pages/cadastros/home.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+
+		<h:form id="formRequisicao">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+			
+
+			<p:panelGrid columns="1" layout="grid">
+				<f:facet name="header">
+	        			Gerador Documento
+	    		</f:facet>
+	    		
+	    		<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Gerar com Pontuação?"/>
+					<p:column />
+					<p:column />
+					
+					<p:selectBooleanCheckbox value="#{gerarDocumentosController.formatado}" itemLabel="Gerar com Pontuação?" />
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Cnpj"/>
+					<p:outputLabel value="Cpf"/>
+					<p:column />
+					<h:panelGroup >
+						<p:inputText id="cnpj" value="#{gerarDocumentosController.cnpj}" />
+						<p:commandButton  action="#{gerarDocumentosController.gerarCnpj}" ajax="false"
+						 			     update="geral" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<h:panelGroup >
+						<p:inputText id="cpf" value="#{gerarDocumentosController.cpf}" />
+						<p:commandButton  action="#{gerarDocumentosController.gerarCpf}" ajax="false"
+						 			     update="geral" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+
+				</p:panelGrid>
+
+			</p:panelGrid>
+
+			
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,63 @@
+<ui:composition template="/pages/cadastros/home.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+
+		<h:form id="formRequisicao">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+			
+
+			<p:panelGrid columns="1" layout="grid">
+				<f:facet name="header">
+	        			Integração Pagamentos Genial
+	    		</f:facet>
+	    		<h:outputText value="Url: http://localhost:5584/solucoesFromtis"/>
+
+				<p:commandButton value="Atualizar"
+					action="#{integracaoPagamentoGenialController.atualizaOperacoes}"
+					update=":formRequisicao:resultadoOperacoes" />
+
+				<p:commandButton value="Remover Todos"
+								 action="#{integracaoPagamentoGenialController.removerTudo}"
+								 update=":formRequisicao:resultadoOperacoes" />
+			</p:panelGrid>
+
+			<p:dataTable id="resultadoOperacoes"
+					value="#{integracaoPagamentoGenialController.operacoes}" var="item" paginator="true"
+					rows="10" widgetVar="tabela">
+			
+				<p:column headerText="Documento Cedente" >
+					<h:outputText value="#{item.CPFCNPJ}" />
+				</p:column>
+
+				<p:column headerText="Valor da TED">
+					<h:outputText value="#{item.value}" />
+				</p:column>
+
+				<p:column headerText="Agencia">
+					<h:outputText value="#{item.agencyDestination}" />
+				</p:column>
+				
+				<p:column headerText="Conta">
+					<h:outputText value="#{item.accountDestination}" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton id="btnDownloadJson" value="Download" action="#{integracaoPagamentoGenialController.download(item)}" ajax="false" />
+					<p:commandButton id="btnDeleta" value="Deleta" action="#{integracaoPagamentoGenialController.removeOperacao(item)}" update=":formRequisicao:resultadoOperacoes"  />
+					
+				</p:column>
+				
+			</p:dataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

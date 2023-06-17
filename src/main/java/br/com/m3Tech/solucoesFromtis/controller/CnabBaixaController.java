@@ -1,7 +1,6 @@
 package br.com.m3Tech.solucoesFromtis.controller;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,13 +10,12 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import com.google.common.base.Preconditions;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
-import br.com.m3Tech.solucoesFromtis.dao.Conexao;
+import com.google.common.base.Preconditions;
+
 import br.com.m3Tech.solucoesFromtis.dto.BancoDto;
 import br.com.m3Tech.solucoesFromtis.dto.CnabDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
@@ -46,7 +44,7 @@ public class CnabBaixaController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 
-	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
 
 
 	@Autowired
@@ -62,7 +60,7 @@ public class CnabBaixaController implements Serializable {
 	@Autowired
 	private IConfGlobalService confGlobalService;
 	@Autowired
-	private  IGeradorCnab geradorCnab;
+	private IGeradorCnab geradorCnab;
 		
 	
 	
@@ -130,15 +128,14 @@ public class CnabBaixaController implements Serializable {
 			try {
 				Base base = baseService.findById(baseSelecionada);
 				
-				Connection con = Conexao.getConnection(base);
 				FundoDto fundo = optional.get();
 
 				dataGravacao = fundo.getDataFundo();
 				layoutSelecionado = fundo.getLayoutAquisicao();
 				
 
-				originadores = originadorService.findAll(con, fundo.getIdFundo());
-				movimentos = movimentoService.findAllMovimentosBaixa(con, layoutSelecionado);
+				originadores = originadorService.findAll(base, fundo.getIdFundo());
+				movimentos = movimentoService.findAllMovimentosBaixa(base, layoutSelecionado);
 				atualizarTitulosEmEstoque();
 				
 			} catch (Exception e) {
@@ -159,9 +156,8 @@ public class CnabBaixaController implements Serializable {
 			
 			Base base = baseService.findById(baseSelecionada);
 			
-			Connection con = Conexao.getConnection(base);
 			
-			movimentos = movimentoService.findAllMovimentosBaixa(con, layoutSelecionado);
+			movimentos = movimentoService.findAllMovimentosBaixa(base, layoutSelecionado);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -180,7 +176,7 @@ public class CnabBaixaController implements Serializable {
 			if(optional.isPresent()) {
 				FundoDto fundoSelecionado = optional.get();
 				
-				path = (confGlobalService.getPathSalvarArquivo(Conexao.getConnection(base), importacaoAutomatica, base.getVersaoMercado(), fundoSelecionado));
+				path = (confGlobalService.getPathSalvarArquivo(base, importacaoAutomatica, base.getVersaoMercado(), fundoSelecionado));
 			}
 			
 
@@ -196,7 +192,7 @@ public class CnabBaixaController implements Serializable {
 		
 			Base base = baseService.findById(baseSelecionada);
 		
-			fundos = fundoService.findAll(Conexao.getConnection(base));
+			fundos = fundoService.findAll(base);
 			
 			
 		} catch (Exception e) {
@@ -210,7 +206,7 @@ public class CnabBaixaController implements Serializable {
 
 		try {
 			Base base = baseService.findById(baseSelecionada);
-			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo( Conexao.getConnection(base),fundoSelecionado,false);
+			titulosEmEstoque = movimentoService.findAllTituloEmEstoqueByFundo( base,fundoSelecionado,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -222,7 +218,7 @@ public class CnabBaixaController implements Serializable {
 
 			Base base = baseService.findById(baseSelecionada);
 
-			bancos = bancoService.findAll(Conexao.getConnection(base));
+			bancos = bancoService.findAll(base);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,7 +268,7 @@ public class CnabBaixaController implements Serializable {
 			}
 		
 		
-//			confGlobal.save(); TODO
+			confGlobalService.salvar(confGlobal);
 			
 			geradorCnab.gerar(cnab, "BAIXA", importacaoAutomatica, path);
 			

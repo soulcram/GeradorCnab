@@ -8,13 +8,15 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import org.primefaces.PrimeFaces;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
 import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.model.ConfGlobal;
+import br.com.m3Tech.solucoesFromtis.scheduled.ExecucaoAutomaticaConsultoria;
 import br.com.m3Tech.solucoesFromtis.service.IBaseService;
 import br.com.m3Tech.solucoesFromtis.service.IConfGlobalService;
 import lombok.Getter;
@@ -24,32 +26,34 @@ import lombok.Setter;
 @Getter
 @Setter
 @Controller
-public class ConfiguracaoGlobalController extends CrudControlller implements Serializable {
+public class ConfiguracaoGlobalController implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1027832672342233204L;
 
-    private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+	private static final Logger logger = LoggerFactory.getLogger(ConfiguracaoGlobalController.class);
+
+	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
 
 
-    @Autowired
-    private IConfGlobalService configuracaoGlobalService;
-
-    @Autowired
-    private IBaseService baseService;
-
-    private ConfGlobal configuracaoGlobal;
-
-    private String temaSelecionado = "cupertino";
+	@Autowired
+	private IConfGlobalService configuracaoGlobalService;
+	
+	@Autowired
+	private IBaseService baseService;
+	
+	private ConfGlobal configuracaoGlobal;
+	
+	private String temaSelecionado = "cupertino";
     private List<String> temasDisponiveis = new ArrayList<String>();
     private List<Base> bases;
 
-
-    @PostConstruct
-    public void init() {
-
-        this.configuracaoGlobal = configuracaoGlobalService.getConfGlobal();
-        atualizarBases();
-        //Populando os temas
+	
+	@PostConstruct
+	public void init() {
+		logger.info("Iniciando Global Config");
+		this.configuracaoGlobal = configuracaoGlobalService.getConfGlobal();
+		atualizarBases();
+		 //Populando os temas
         temasDisponiveis.add("afterdark");
         temasDisponiveis.add("afternoon");
         temasDisponiveis.add("afterwork");
@@ -88,28 +92,32 @@ public class ConfiguracaoGlobalController extends CrudControlller implements Ser
         temasDisponiveis.add("ui-darkness");
         temasDisponiveis.add("ui-lightness");
         temasDisponiveis.add("vader");
+				
+	}
+	
+	public void atualizarBases() {
+		
+		bases = baseService.findAll();
+	}
+	
+	public String salvar() {
+				
+		try {			
+			configuracaoGlobalService.salvar(this.configuracaoGlobal);
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+		
+		
+		return VOLTAR;
+	}
+	
 
-    }
+	
 
-    public void atualizarBases() {
-
-        bases = baseService.findAll();
-    }
-
-    public String salvar() {
-
-        try {
-            configuracaoGlobalService.salvar(this.configuracaoGlobal);
-            addSuccessMsg();
-        } catch (Exception e) {
-            addErrorMsg(e.getMessage());
-        }
-        return null;
-    }
-
-
-    public String voltar() {
-        return VOLTAR;
-    }
+	public String voltar() {
+		return VOLTAR;
+	}
 
 }

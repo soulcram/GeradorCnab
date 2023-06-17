@@ -2,8 +2,6 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -69,7 +67,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 	private TituloDto titulo;
 
 	@Override
-	public void gerarCnabAquisicao(Connection con, FundoDto fundo, Base base) throws Exception {
+	public void gerarCnabAquisicao(Base base, FundoDto fundo) throws Exception {
 		
 			cnab = new CnabDto();
 			titulo = new TituloDto();
@@ -77,12 +75,12 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 			cnab.setTitulos(new ArrayList<>());
 			
 			cnab.setDataGravacao(LocalDate.now());
-			cnab.setBanco(bancoService.findOneById(con, 2));
+			cnab.setBanco(bancoService.findOneById(base, 2));
 			
 	
 			BigDecimal valor = ValorAleatorioUtil.getValorDecimal(null,null);
-			CedenteDto cedenteSelecionado = getCedenteSelecionado(con, fundo.getIdFundo(), base);
-			SacadoDto sacadoSelecionado = getSacadoSelecionado(con, fundo.getIdFundo());
+			CedenteDto cedenteSelecionado = getCedenteSelecionado(base, fundo.getIdFundo());
+			SacadoDto sacadoSelecionado = getSacadoSelecionado(base, fundo.getIdFundo());
 	
 			titulo.setValorTitulo(valor);
 			titulo.setValorAquisicao(NumericUtils.getValorMenos10PorCento(valor));
@@ -90,8 +88,8 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 			titulo.setNumeroDocumento(ValorAleatorioUtil.getValor(10));
 			titulo.setTermoCessao(ValorAleatorioUtil.getValor(10));
 			titulo.setDataVencimento(cnab.getDataGravacao().plusDays(35));
-			titulo.setEspecie(getTipoRecebivelDto(con, fundo.getLayoutAquisicao()).getCdEspecie());
-			titulo.setMovimento(getMovimentoAquisicaoDto(con, fundo.getLayoutAquisicao()));
+			titulo.setEspecie(getTipoRecebivelDto(base, fundo.getLayoutAquisicao()).getCdEspecie());
+			titulo.setMovimento(getMovimentoAquisicaoDto(base, fundo.getLayoutAquisicao()));
 			titulo.setCedente(cedenteSelecionado);
 			titulo.setSacado(sacadoSelecionado);
 			titulo.setCoobrigacao("N".equals(cedenteSelecionado.getCoobrigacao()) ? "02" : "01");
@@ -107,7 +105,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 		cnab.setDataGravacao(fundo.getDataFundo());
 		cnab.setFundo(fundo);
 		cnab.setLayout(LayoutEnum.parse(fundo.getLayoutAquisicao()));
-		cnab.setOriginador(originadorService.getPrimeiroOriginador(con, fundo.getIdFundo()));
+		cnab.setOriginador(originadorService.getPrimeiroOriginador(base, fundo.getIdFundo()));
 		
 		
 		
@@ -122,7 +120,7 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 		ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 		cnab.setNumSeqArquivo(confGlobal.getSeqArquivo());
 		confGlobal.setSeqArquivo(confGlobal.getSeqArquivo() + 1);
-		this.confGlobalService.salvar(confGlobal);
+		confGlobalService.salvar(confGlobal);
 		
 		StreamFactory factory = StreamFactory.newInstance();
         
@@ -158,20 +156,20 @@ public class GeracaoCnabPadrao implements IGeracaoCnabPadrao {
 				+ LocalDate.now().toString().replaceAll("-", "") + "_" + seq + ".txt";
 	}
 
-	private TipoRecebivelDto getTipoRecebivelDto(Connection con, Integer cdLayout) throws SQLException{
-		return tipoRecebivelService.getPrimeiroTipoRecebivelAquisicao(con,cdLayout);
+	private TipoRecebivelDto getTipoRecebivelDto(Base base, Integer cdLayout) throws Exception{
+		return tipoRecebivelService.getPrimeiroTipoRecebivelAquisicao(base,cdLayout);
 	}
 
-	private MovimentoDto getMovimentoAquisicaoDto(Connection con, Integer cdLayout) throws SQLException {
-		return movimentoService.getPrimeiroMovimentoAquisicao(con, cdLayout);
+	private MovimentoDto getMovimentoAquisicaoDto(Base base, Integer cdLayout) throws Exception {
+		return movimentoService.getPrimeiroMovimentoAquisicao(base, cdLayout);
 	}
 
-	private SacadoDto getSacadoSelecionado(Connection con, Integer idFundo) throws SQLException{
-		return sacadoService.getPrimeiroSacado(con, idFundo);
+	private SacadoDto getSacadoSelecionado(Base base, Integer idFundo) throws Exception{
+		return sacadoService.getPrimeiroSacado(base, idFundo);
 	}
 
-	private CedenteDto getCedenteSelecionado(Connection con, Integer idFundo, Base base) throws SQLException {
-		return cedenteService.getPrimeiroCedente(con, idFundo, base);
+	private CedenteDto getCedenteSelecionado(Base base, Integer idFundo) throws Exception {
+		return cedenteService.getPrimeiroCedente(base, idFundo);
 	}
 
 }

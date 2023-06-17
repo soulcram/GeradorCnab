@@ -37,12 +37,15 @@ public class TituloDto {
 	private BigDecimal valorAquisicao;
 	private BigDecimal valorAbatimento;
 	private BigDecimal taxaJurosIndexador;
+	private BigDecimal taxaSpread;
 	private BigDecimal taxaJuros;
 	private String agenciaCobranca;
 	private String idCobranca;
 	private BigDecimal  valorDesconto;
 	private BigDecimal  valorJuros;
 	private BigDecimal  valorDespesas;
+	private String qtdLastros;
+	private Integer idFundo;
 
 	public TituloDto getCopy() {
 		return new TituloDto(cedente, 
@@ -70,12 +73,15 @@ public class TituloDto {
 							 valorAquisicao, 
 							 valorAbatimento,
 							 taxaJurosIndexador,
+							 taxaSpread,
 							 taxaJuros,
 							 agenciaCobranca,
 							 idCobranca,
 							 valorDesconto,
 							 valorJuros,
-							 valorDespesas);
+							 valorDespesas,
+							 qtdLastros,
+							 idFundo);
 	}
 
 }

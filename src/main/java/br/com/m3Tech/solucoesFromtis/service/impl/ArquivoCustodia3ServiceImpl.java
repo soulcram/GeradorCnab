@@ -2,6 +2,7 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,10 @@ import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.dto.MovimentoDto;
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.service.IArquivoCustodia3Service;
 import br.com.m3Tech.solucoesFromtis.service.IMovimentoService;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
-
-import javax.swing.*;
 
 
 @Service
@@ -39,9 +40,9 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 	private IMovimentoService movimentoService;
 	
 	@Override
-	public void processar(Connection con, FundoDto fundo, String nomeArquivo, List<String> readAllLines) throws SQLException {
+	public void processar(Base base, FundoDto fundo, String nomeArquivo, List<String> readAllLines) throws Exception {
 
-		Integer id = inserirTB_IM_STG_ARQ(con, fundo.getIdFundo(), nomeArquivo);
+		Integer id = inserirTB_IM_STG_ARQ(base, fundo.getIdFundo(), nomeArquivo);
 		
 		for(String s : readAllLines) {
 			
@@ -50,83 +51,101 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 			String sqlQuery = "INSERT INTO TB_IM_STG_ARQ_IMP (ID_IM_STG_ARQ, DS_REGISTRO, NU_SEQ_REGISTRO)\r\n" + 
 					"VALUES("+ id +",'" + s + "',"+seqRegistro+")";
 			
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
 			ps.close();
-			
+			con.close();
 		}
 		
-		executarProcSp_im_arq_validador(con, id);
-		executarProcSP_IM_REMESSA(con);
+		executarProcSp_im_arq_validador(base, id);
+		executarProcSP_IM_REMESSA(base);
 		
 	}
 
 	@Override
-	public void processar(Connection con, FundoDto fundo,OriginadorDto originador, String nomeArquivo, CnabHeader header,
-			List<CnabDetail> listaDetail, CnabTrailler cnabTrailler) throws SQLException {
-		Integer id = inserirTB_IM_STG_ARQ(con, fundo.getIdFundo(), nomeArquivo);
+	public void processar(Base base, FundoDto fundo,OriginadorDto originador, String nomeArquivo, CnabHeader header,
+			List<CnabDetail> listaDetail, CnabTrailler cnabTrailler) throws Exception {
+		Integer id = inserirTB_IM_STG_ARQ(base, fundo.getIdFundo(), nomeArquivo);
 		
-		inserirTB_IM_STG_ARQ_TEMP(con, fundo, header, listaDetail, cnabTrailler, id, originador);
+		inserirTB_IM_STG_ARQ_TEMP(base, fundo, header, listaDetail, cnabTrailler, id, originador);
 		
-		executarProcSP_IM_REMESSA(con);
+		executarProcSP_IM_REMESSA(base);
 		
 		
 		
 	}
 
-	private void executarProcSp_im_arq_validador(Connection con, Integer idArquivo) {
+	private void executarProcSp_im_arq_validador(Base base, Integer idArquivo) {
 		String sqlQuery ="exec sp_im_arq_validador " + idArquivo;
 		
 		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
 			ps.close();
 	
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
 		
 	}
 	
-	private void executarProcSP_IM_REMESSA(Connection con) {
+	private void executarProcSP_IM_REMESSA(Base base) {
 		String sqlQuery ="exec SP_IM_REMESSA ";
 		
 		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
 
 			ps.close();
 	
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
 			System.out.println(e.getMessage());
 		}
 		
 	}
 
-	private void inserirTB_IM_STG_ARQ_TEMP(Connection con, FundoDto fundo, CnabHeader header,
-			List<CnabDetail> listaDetail, CnabTrailler cnabTrailler, Integer id, OriginadorDto originador) throws SQLException {
+	private void inserirTB_IM_STG_ARQ_TEMP(Base base, FundoDto fundo, CnabHeader header,
+			List<CnabDetail> listaDetail, CnabTrailler cnabTrailler, Integer id, OriginadorDto originador) throws Exception {
 		
 		
 		for(CnabDetail detail : listaDetail) {
 			
-			TipoRecebivelDto tipoRecebivel = tipoRecebivelService.findTipoRecebivel(con, 24, Integer.parseInt(detail.getEspecieTitulo()));
+			TipoRecebivelDto tipoRecebivel = tipoRecebivelService.findTipoRecebivel(base, 24, Integer.parseInt(detail.getEspecieTitulo()));
 			
 			if(tipoRecebivel == null) {
 				
+				JOptionPane.showMessageDialog(null,"Especie recebivel " +detail.getEspecieTitulo()+ " não cadastrada para o Layout 24");
 				return;
 			}
 			
-			MovimentoDto movimentoDto = movimentoService.findMovimento(con, 24, Integer.parseInt(detail.getIdentOcorrencia()));
+			MovimentoDto movimentoDto = movimentoService.findMovimento(base, 24, Integer.parseInt(detail.getIdentOcorrencia()));
 			
 			if(movimentoDto == null) {
 				
+				JOptionPane.showMessageDialog(null,"Ocorrencia " +detail.getIdentOcorrencia()+ "  não cadastrada para o Layout 24");
 				return;
 			}
 		
@@ -198,16 +217,21 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 					",'05'	--CODIGO_OPERACAO\r\n" + 
 					")";
 			
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.execute();
 	        ps.close();
-			
+	        con.close();
 			}
 		
 	}
 
-	private Integer inserirTB_IM_STG_ARQ(Connection con, Integer idFundo, String nomeArquivo) throws SQLException {
+	private Integer inserirTB_IM_STG_ARQ(Base base, Integer idFundo, String nomeArquivo) throws Exception {
 
 		String sqlQuery = "INSERT INTO TB_IM_STG_ARQ(\r\n" + 
 				"ID_FUNDO\r\n" + 
@@ -220,6 +244,11 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 				",'" + LocalDate.now().toString() +"'\r\n" + 
 				",1\r\n" + 
 				")";
+		
+
+		Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		
+		Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
 		
 		PreparedStatement ps = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
 //		
@@ -236,7 +265,7 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 		
         rs.close();
         ps.close();
-        
+        con.close();
 		return id;
 	}
 
@@ -244,7 +273,7 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 
 //
 //	@Override
-//	public ArquivoDto inserirTbArquivo(Connection con, FundoDto fundo, String nomeArquivo) throws SQLException {
+//	public ArquivoDto inserirTbArquivo(Base base, FundoDto fundo, String nomeArquivo) throws SQLException {
 //		
 //		Map<String,String> parametros = new HashMap<>();
 //		
@@ -271,7 +300,7 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 //	}
 //
 //	@Override
-//	public boolean inserirTbArquivoImportado(Connection con, List<String> cnab, ArquivoDto arquivo) throws SQLException {	
+//	public boolean inserirTbArquivoImportado(Base base, List<String> cnab, ArquivoDto arquivo) throws SQLException {	
 //		
 //		String sqlQuery = "INSERT INTO TB_ARQUIVO_IMPORTADO(ID_ARQUIVO,TP_REGISTRO,DS_REGISTRO,NU_SEQ_REGISTRO,ID_MOTIVO_REJEICAO,TP_REG_ARQUIVO_IMPORTADO)\r\n" + 
 //				"SELECT " +arquivo.getIdArquivo() + ",0,'"+cnab.get(0)+"',1,null,'R'\r\n" + 
@@ -292,7 +321,7 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 //		return confirmarArquivoImportado(con, arquivo.getIdArquivo());
 //	}
 //
-//	private boolean confirmarArquivoImportado(Connection con, Integer idArquivo) {
+//	private boolean confirmarArquivoImportado(Base base, Integer idArquivo) {
 //
 //		try {
 //		String sqlQuery = "select * from TB_ARQUIVO_IMPORTADO where ID_ARQUIVO = " + idArquivo;
@@ -316,7 +345,7 @@ public class ArquivoCustodia3ServiceImpl implements IArquivoCustodia3Service, Se
 //	}
 //
 //	@Override
-//	public ArquivoDto findArquivoByNomeArquivo(Connection con, String nomeArquivo) throws SQLException {
+//	public ArquivoDto findArquivoByNomeArquivo(Base base, String nomeArquivo) throws SQLException {
 //		
 //		ArquivoDto retorno = null;
 //		

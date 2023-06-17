@@ -1,0 +1,83 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid id="cadastro" columns="4" layout="grid" style="text-align: center;">
+
+				<f:facet name="header">
+        			Cadastrar Base
+    			</f:facet>
+
+				<p:outputLabel value="Url"></p:outputLabel>
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="url" value="#{baseController.base.url}" required="true" size="40" requiredMessage="Campo Url obrigatório"/>
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+				
+				<p:outputLabel value="Usuario"/>
+				<p:outputLabel value="Senha"/>
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText value="#{baseController.base.usuario}" required="true" style="width:100%;" requiredMessage="Campo Usuario obrigatório"/>
+				<p:inputText value="#{baseController.base.senha}" required="true" style="width:100%;" requiredMessage="Campo Senha obrigatório"/>
+				<p:selectBooleanCheckbox value="#{baseController.base.versaoMercado}" itemLabel="Versão Mercado?" />
+				<p:commandButton action="#{baseController.salvar}" value="Salvar" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" update="@all" />
+
+			</p:panelGrid>
+			
+			
+				<p:dataTable id="tabela" var="base" value="#{baseController.bases}" emptyMessage="Sem dados">
+		            <p:column headerText="Url" style="width:40%;">
+		                <h:outputText value="#{base.url}"  />
+		            </p:column>
+		
+		            <p:column headerText="Usuario" style="width:10%;">
+		                <h:outputText value="#{base.usuario}" />
+		            </p:column>
+		
+		            <p:column headerText="Senha" style="width:10%;">
+		                <h:outputText value="#{base.senha}" />
+		            </p:column>
+		
+		            <p:column headerText="Versão Mercado" style="width:5%;">
+		            	<div align="center">
+		            		<p:selectBooleanCheckbox value="#{base.versaoMercado}" disabled="true"/>
+		            	</div>
+		            </p:column>
+		            
+		            <p:column headerText="Alterar" style="width:5%;">
+						<div align="center">
+							<p:commandButton action="#{baseController.alterar(base)}" process="@this" immediate="true"  update="@all" icon="pi pi-pencil" />
+						</div>
+					</p:column>
+					
+					<p:column headerText="Excluir" style="width:5%;">
+						<div align="center">
+							<p:commandButton action="#{baseController.excluir(base)}" process="@this" immediate="true" update="tabela" icon="pi pi-trash" />
+						</div>
+					</p:column>
+		        </p:dataTable>
+			
+
+		</h:form>
+	</ui:define>
+</ui:composition>

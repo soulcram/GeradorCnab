@@ -1,0 +1,101 @@
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Arquivo de Retorno B3  SNG
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados"/>
+					<p:column />
+					<p:column />
+
+					<h:panelGroup >
+						<p:selectOneMenu id="bases" style="width: 85% !important"
+							value="#{sngController.baseSelecionada}">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{sngController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+							<p:ajax event="change" listener="#{sngController.selecionandoBase}" process="@this" update="tabela1"/>
+
+						</p:selectOneMenu>
+						<p:commandButton  action="#{sngController.atualizarBases}" ajax="false"
+						 			      immediate="true" update="bases" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+
+				</p:panelGrid>
+
+				
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Chassis no Banco" />
+					<p:commandButton  action="#{sngController.atualizarTabela}" ajax="false"
+						 			      immediate="true" update="tabela1" icon="pi pi-refresh"/>
+					<p:dataTable id="tabela1" var="item" value="#{sngController.titulosNoBanco}">
+						
+						<p:column headerText="Chassi">
+							<h:outputText value="#{item}"/>
+						</p:column>
+						
+						<p:column headerText="adicionar">
+							<div align="center">
+								<p:commandButton action="#{sngController.adicionarTitulo(item)}" update="form:tabela"  icon="pi pi-plus"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Chassis adicionados" />
+					<p:dataTable id="tabela" var="item" value="#{sngController.cnab.titulos}">
+						
+						<p:column headerText="Chassi">
+							<h:outputText value="#{item.chassi}"/>
+						</p:column>
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{sngController.adicionarTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{sngController.path}"  size="40"/> 
+				<p:commandButton action="#{sngController.gerar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{sngController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

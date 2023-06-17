@@ -13,6 +13,7 @@ import lombok.Setter;
 public class ParametrosCadastrosAutomaticos {
 	
 	private String url;
+	private String contextoCustodia;
 	private String usuario;
 	private String senha;
 	private FundoDto fundo;

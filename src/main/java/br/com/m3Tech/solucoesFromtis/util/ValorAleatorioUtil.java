@@ -59,9 +59,9 @@ public class ValorAleatorioUtil {
 		
 		Random gerador = new Random();
 		
-		Integer nextInteger = gerador.nextInt();
+		Integer nextInteger = gerador. nextInt(max - min);
 		
-		return (nextInteger * (getValorNumerico(max))) + min; 
+		return nextInteger + min; 
 	}
 
 	public static BigDecimal getValorDecimal(Integer min, Integer max) {

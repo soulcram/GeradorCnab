@@ -2,6 +2,7 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.querys.Querys;
 import br.com.m3Tech.solucoesFromtis.service.IOriginadorService;
 
@@ -20,16 +22,22 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	public List<OriginadorDto> findAll(Connection con, Integer idFundo) {
+	public List<OriginadorDto> findAll(Base base, Integer idFundo) {
 		
 		List<OriginadorDto> originadores = new ArrayList<OriginadorDto>();
 		
 		String sqlQuery = " SELECT ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA, NU_CPF_CNPJ\r\n" + 
 				" FROM TB_FUNDO_ORIGINADOR FO \r\n" + 
 				" INNER JOIN TB_PESSOA P ON P.ID_PESSOA = FO.ID_ORIGINADOR  \r\n" + 
-				" WHERE ID_FUNDO = ?";
+				" WHERE ID_FUNDO = ? \r\n" + 
+				"AND FO.DT_FIM_RELACIONAMENTO IS NULL \r\n";
 		
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, idFundo);
@@ -46,20 +54,25 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 				
 				originadores.add(originador);
 			}
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		
 		return originadores;
 	}
 
-	public OriginadorDto findOneById(Connection con, Integer idOriginador) {
+	public OriginadorDto findOneById(Base base, Integer idOriginador) {
 		OriginadorDto originador = null;
 		
 		// String sqlQuery = "";
 		
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(Querys.ONE_ORIGINADOR);
 			
 			ps.setInt(1, idOriginador);
@@ -76,7 +89,8 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 				
 			}
 			
-		} catch (SQLException e) {
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		
@@ -84,12 +98,17 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 	}
 
 	@Override
-	public OriginadorDto getPrimeiroOriginador(Connection con, Integer idFundo) throws SQLException {
+	public OriginadorDto getPrimeiroOriginador(Base base, Integer idFundo) throws Exception {
 		OriginadorDto originador = null;
 
 		String sqlQuery = "SELECT TOP 1 ID_FUNDO_ORIGINADOR, DS_CODIGO_CEDENTE,NM_PESSOA,NU_CPF_CNPJ\r\n"
 				+ "FROM TB_FUNDO_ORIGINADOR FO \r\n" + "INNER JOIN TB_PESSOA P ON P.ID_PESSOA = FO.ID_ORIGINADOR  \r\n"
-				+ "WHERE ID_FUNDO = " + idFundo;
+				+ "WHERE ID_FUNDO = " + idFundo + "\r\n "
+				+ "AND FO.DT_FIM_RELACIONAMENTO IS NULL \r\n";
+		
+		Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		
+		Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
 		
 		PreparedStatement ps = con.prepareStatement(sqlQuery);
 
@@ -102,7 +121,7 @@ public class OriginadorServiceImpl implements IOriginadorService, Serializable{
 					rs.getString("NM_PESSOA"),rs.getString("NU_CPF_CNPJ"));
 
 		}
-
+		con.close();
 		return originador;
 	}
 	

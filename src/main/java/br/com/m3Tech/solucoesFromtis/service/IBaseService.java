@@ -5,15 +5,17 @@ import java.util.List;
 import br.com.m3Tech.solucoesFromtis.model.Base;
 
 
- public interface IBaseService {
+public interface IBaseService {
 	
-	 void salvar(Base base) throws Exception;
+	public void salvar(Base base) throws Exception;
 
-	 List<Base> findAll();
+	public List<Base> findAll();
 
-	 void delete(Base base);
+	public void delete(Base base);
 
-	 Base findById(Integer id);
+	public Base findById(String id);
+
+	public Base findById(Integer id);
 	
 
 }

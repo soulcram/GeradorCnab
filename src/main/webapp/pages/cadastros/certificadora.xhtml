@@ -1,0 +1,74 @@
+<ui:composition template="/pages/cadastros/home.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+
+		<h:form id="formRequisicao">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+			
+
+			<p:panelGrid columns="1" layout="grid">
+				<f:facet name="header">
+	        			Certificadora
+	    		</f:facet>
+				<p:commandButton value="Atualizar"
+					action="#{certificadoraController.atualizaRequisicoes}"
+					update=":formRequisicao:resultadoRequisicoes" />
+
+				<p:commandButton value="Remover Todos"
+								 action="#{certificadoraController.removerTudo}"
+								 update=":formRequisicao:resultadoRequisicoes" />
+			</p:panelGrid>
+
+			<p:dataTable id="resultadoRequisicoes"
+					value="#{certificadoraController.requisicoes}" var="item" paginator="true"
+					rows="10" widgetVar="tabela">
+			
+				<p:column headerText="id Operacao Recebivel" sortBy="#{item.requisicao.id}" filterBy="#{item.requisicao.id}" filterMatchMode="contains">
+					<h:outputText value="#{item.requisicao.id}" />
+				</p:column>
+
+				<p:column headerText="Nome Fundo">
+					<h:outputText value="#{item.requisicao.id}" />
+				</p:column>
+
+				<p:column headerText="Nome Cedente">
+					<h:outputText value="#{item.requisicao.cedente.nome}" />
+				</p:column>
+
+				<p:column headerText="Nome Custodiante">
+					<h:outputText value="#{item.requisicao.custodiante.nomeCustodiante}" />
+				</p:column>
+				
+				<p:column headerText="Nome Consultoria">
+					<h:outputText value="#{item.requisicao.consultoria.nomeConsultoria}" />
+				</p:column>
+				
+				<p:column headerText="Status" sortBy="#{item.statusRequisicao.status}" filterBy="#{item.statusRequisicao.status}" filterMatchMode="contains">
+					<h:outputText value="#{item.statusRequisicao.status}" />
+				</p:column>
+
+				<p:column headerText="Data" sortBy="#{item.data}">
+					<h:outputText value="#{item.data}" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton id="btnEnviarRetorno" value="Enviar Retorno" action="#{certificadoraController.enviarRetorno(item)}" ajax="false" />
+					<p:commandButton id="btnDownloadXml" value="Download" action="#{certificadoraController.download(item)}" ajax="false" />
+					<p:commandButton id="btnDeleta" value="Deleta" action="#{certificadoraController.removeAquisicao(item)}" update=":formRequisicao:resultadoRequisicoes"  />
+					
+				</p:column>
+				
+			</p:dataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

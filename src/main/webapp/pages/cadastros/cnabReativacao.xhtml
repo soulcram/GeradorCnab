@@ -1,0 +1,182 @@
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Prorrogação de Vencimentos
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:column />
+
+					<h:panelGroup >
+						<p:selectOneMenu id="bases" style="width: 85% !important"
+							value="#{cnabReativacaoController.baseSelecionada}">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{cnabReativacaoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+							<p:ajax event="change" listener="#{cnabReativacaoController.selecionandoBase}" process="@this" update="fundos bancos titulosEmEstoque"/>
+
+						</p:selectOneMenu>
+						<p:commandButton  action="#{cnabReativacaoController.atualizarBases}" ajax="false"
+						 			      immediate="true" update="bases" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Data Gravação" />
+					
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabReativacaoController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabReativacaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabReativacaoController.selecionandoFundo}" 
+							    update="geral titulosEmEstoque" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabReativacaoController.layoutSelecionado}">
+						<f:selectItems value="#{cnabReativacaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabReativacaoController.selecionandoLayout}" process="@this" update="geral" />
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataGravacao" value="#{cnabReativacaoController.dataGravacao}" />
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Originador" />
+					<p:column />
+					
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabReativacaoController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabReativacaoController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="originadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabReativacaoController.originadorSelecionado}">
+						<f:selectItems value="#{cnabReativacaoController.originadores}" var="originador" itemLabel="#{originador.nomeOriginador}" itemValue="#{originador.idOriginador}"/>
+
+					</p:selectOneMenu>
+					<p:column />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:column />
+					<p:column />
+					
+					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabReativacaoController.movimentoSelecionado}" >
+						<f:selectItems value="#{cnabReativacaoController.movimentos}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<p:column />
+					<p:column />
+					
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos disponíveis para reativação" />
+					<p:dataTable id="titulosEmEstoque" var="item" value="#{cnabReativacaoController.titulosDesativados}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						<p:column headerText="Adicionar Titulo">
+							<div align="center">
+								<p:commandButton value="Adicionar Título" action="#{cnabReativacaoController.addTitulo(item)}" update="form"  icon="pi pi-plus"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+								
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos que serão Reativados" />
+					<p:dataTable id="tabela" var="item" value="#{cnabReativacaoController.cnab.titulos}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabReativacaoController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabReativacaoController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabReativacaoController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabReativacaoController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabReativacaoController.gerar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabReativacaoController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

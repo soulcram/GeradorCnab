@@ -1,0 +1,63 @@
+<ui:composition template="/pages/cadastros/home.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+
+		<h:form id="formRequisicao">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+			
+
+			<p:panelGrid columns="1" layout="grid">
+				<f:facet name="header">
+	        			Integração Pagamentos Azumi
+	    		</f:facet>
+	    		<h:outputText value="Url: http://localhost:5584/solucoesFromtis"/>
+
+				<p:commandButton value="Atualizar"
+					action="#{integracaoPagamentoAzumiController.atualizaOperacoes}"
+					update=":formRequisicao:resultadoOperacoes" />
+
+				<p:commandButton value="Remover Todos"
+								 action="#{integracaoPagamentoAzumiController.removerTudo}"
+								 update=":formRequisicao:resultadoOperacoes" />
+			</p:panelGrid>
+
+			<p:dataTable id="resultadoOperacoes"
+					value="#{integracaoPagamentoAzumiController.operacoes}" var="item" paginator="true"
+					rows="10" widgetVar="tabela">
+			
+				<p:column headerText="Documento Cedente" >
+					<h:outputText value="#{item.documento}" />
+				</p:column>
+
+				<p:column headerText="Valor da TED">
+					<h:outputText value="#{item.valor}" />
+				</p:column>
+
+				<p:column headerText="Agencia">
+					<h:outputText value="#{item.agencia}" />
+				</p:column>
+				
+				<p:column headerText="Conta">
+					<h:outputText value="#{item.conta}" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton id="btnDownloadJson" value="Download" action="#{integracaoPagamentoAzumiController.download(item)}" ajax="false" />
+					<p:commandButton id="btnDeleta" value="Deleta" action="#{integracaoPagamentoAzumiController.removeOperacao(item)}" update=":formRequisicao:resultadoOperacoes"  />
+					
+				</p:column>
+				
+			</p:dataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

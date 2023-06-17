@@ -2,6 +2,7 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.TipoRecebivelDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.service.ITipoRecebivelService;
 
 
@@ -19,7 +21,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 
 	private static final long serialVersionUID = 1L;
 
-	public List<TipoRecebivelDto> findAllTipoRecebivel(Connection con, Integer cdLayout) {
+	public List<TipoRecebivelDto> findAllTipoRecebivel(Base base, Integer cdLayout) {
 		
 		List<TipoRecebivelDto> retorno = new ArrayList<TipoRecebivelDto>();
 		
@@ -29,6 +31,11 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				"WHERE LR.CD_LAYOUT = ?";
 		
 		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, cdLayout);
@@ -44,9 +51,9 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				
 				retorno.add(TipoRecebivel);
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -58,7 +65,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 	}
 	
 	@Override
-	public TipoRecebivelDto findTipoRecebivel(Connection con, Integer cdLayout, Integer especie) {
+	public TipoRecebivelDto findTipoRecebivel(Base base, Integer cdLayout, Integer especie) {
 		
 		
 		String sqlQuery ="SELECT DISTINCT TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n" + 
@@ -68,6 +75,11 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				"AND LR.ID_TIPO_ESPECIE = ?";
 		
 		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, cdLayout);
@@ -84,16 +96,16 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				
 				
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return null	;
 	}
 
-	public TipoRecebivelDto findOneTipoRecebivelById(Connection con, Integer idTipoRecebivel) {
+	public TipoRecebivelDto findOneTipoRecebivelById(Base base, Integer idTipoRecebivel) {
 		TipoRecebivelDto retorno = null;
 		
 		String sqlQuery = "SELECT DISTINCT TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n" + 
@@ -102,6 +114,11 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				"WHERE LR.ID_TIPO_RECEBIVEL = ?";
 		
 		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.setInt(1, idTipoRecebivel);
@@ -116,9 +133,9 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 						  					  rs.getString("NM_TIPO_RECEBIVEL"));
 				
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -126,7 +143,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 	}
 
 	@Override
-	public TipoRecebivelDto getPrimeiroTipoRecebivelAquisicao(Connection con, Integer cdLayout) throws SQLException {
+	public TipoRecebivelDto getPrimeiroTipoRecebivelAquisicao(Base base, Integer cdLayout) throws Exception {
 		TipoRecebivelDto retorno = null;
 
 		String sqlQuery = "SELECT DISTINCT TOP 1 TR.ID_TIPO_RECEBIVEL, TR.NM_TIPO_RECEBIVEL, LR.ID_TIPO_ESPECIE\r\n"
@@ -134,6 +151,12 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 				+ "INNER JOIN TB_TIPO_RECEBIVEL TR ON LR.ID_TIPO_RECEBIVEL = TR.ID_TIPO_RECEBIVEL\r\n"
 				+ "WHERE LR.CD_LAYOUT = " + cdLayout;
 
+
+		Class.forName("net.sourceforge.jtds.jdbc.Driver");
+		
+		Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+		
+		
 		PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 		ps.execute();
@@ -145,7 +168,7 @@ public class TipoRecebivelServiceImpl implements ITipoRecebivelService, Serializ
 					rs.getString("NM_TIPO_RECEBIVEL"));
 
 		}
-
+		con.close();
 		return retorno;
 	}
 

@@ -31,12 +31,12 @@ public class FromtisDateTypeHandler implements ConfigurableTypeHandler {
     		return null;
     	}
     	
-    	if(StringUtils.EmptyOrNull(text.replaceAll("0", "").trim())){
+    	if(StringUtils.emptyOrNull(text.replaceAll("0", "").trim())){
     		return null;
     	}
     	
         try {
-        	if(!StringUtils.EmptyOrNull(pattern)){
+        	if(!StringUtils.emptyOrNull(pattern)){
         		return LocalDate.parse(text).format(DateTimeFormatter.ofPattern(pattern));
         	}
         	return LocalDate.parse(text);

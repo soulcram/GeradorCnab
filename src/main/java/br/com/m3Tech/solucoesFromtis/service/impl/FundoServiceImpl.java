@@ -2,6 +2,7 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,24 +10,33 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.dto.FundoCobrancaDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.querys.Querys;
 import br.com.m3Tech.solucoesFromtis.service.IFundoService;
+import br.com.m3Tech.solucoesFromtis.util.CpfCnpjUtils;
 
 
 @Service
 public class FundoServiceImpl implements IFundoService, Serializable{
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(FundoServiceImpl.class);
 
-	public List<FundoDto> findAll(Connection con) {
+	public List<FundoDto> findAll(Base base) {
 		
 		List<FundoDto> fundos = new ArrayList<FundoDto>();
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(Querys.ALL_FUNDOS);
 			
 			ps.execute();
@@ -46,9 +56,9 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				fundos.add(fundo);
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -56,13 +66,17 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 	}
 	
 	@Override
-	public List<FundoDto> findAllComDataAtual(Connection con) {
+	public List<FundoDto> findAllComDataAtual(Base base) {
 		
 		List<FundoDto> fundos = new ArrayList<FundoDto>();
 		
-		String sqlQuery = " SELECT ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO  FROM TB_FUNDO WHERE DT_FUNDO = '" + LocalDate.now() + "'\r\n";
+		String sqlQuery = " SELECT ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO  FROM TB_FUNDO WHERE CONVERT(DATE,DT_FUNDO) = '" + LocalDate.now() + "'\r\n";
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.execute();
@@ -82,9 +96,9 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				fundos.add(fundo);
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -92,7 +106,7 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 	}
 	
 	@Override
-	public List<FundoDto> findAllProrrogacao(Connection con) {
+	public List<FundoDto> findAllProrrogacao(Base base) {
 		
 		List<FundoDto> fundos = new ArrayList<FundoDto>();
 		
@@ -102,6 +116,10 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 					"FROM TB_FUNDO F\r\n" + 
 					"WHERE F.IC_PERMITIR_PRORROGACAO = 1";
 			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 			
 			ps.execute();
@@ -121,18 +139,23 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				fundos.add(fundo);
 			}
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return fundos;
 	}
 
-	public FundoDto findOneById(Connection con, Integer id) {
+	@Override
+	public FundoDto findOneById(Base base, Integer id) {
 		FundoDto fundo = null;
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(Querys.ONE_FUNDO);
 			
 			ps.setInt(1, id);
@@ -153,9 +176,8 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
 				
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -163,7 +185,45 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 	}
 	
 	@Override
-	public List<FundoCobrancaDto> findCodCobrancas(Connection con, Integer id) {
+	public FundoDto findFundoByCnpj(Base base, String cnpj) {
+		FundoDto fundo = null;
+		
+		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
+			String sqlQuery = " SELECT ID_FUNDO, NM_FUNDO, NU_CNPJ, CODIGO_ISIN, DT_FUNDO, LAYOUT_AQUISICAO \r\n" + 
+				    " FROM TB_FUNDO WHERE NU_CNPJ = '" + CpfCnpjUtils.removerFormatacao(cnpj) +"'";
+			
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+						
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			if(rs.next()) {
+				
+				String dataFundo = rs.getString("DT_FUNDO");
+				
+				fundo = new FundoDto(rs.getInt("ID_FUNDO"), 
+											  rs.getString("NM_FUNDO"), 
+											  rs.getString("NU_CNPJ"),
+											  rs.getString("CODIGO_ISIN"),
+											  rs.getInt("LAYOUT_AQUISICAO"),
+											  LocalDate.parse(dataFundo.length() > 10 ? dataFundo.substring(0,10) : dataFundo));
+				
+			}
+			con.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return fundo;
+	}
+	
+	@Override
+	public List<FundoCobrancaDto> findCodCobrancas(Base base, Integer id) {
 		List<FundoCobrancaDto> retorno = new ArrayList<>();
 		
 		try {
@@ -174,6 +234,10 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 					"WHERE (DT_FIM_RELACIONAMENTO IS NULL OR DT_FIM_RELACIONAMENTO > GETDATE())\r\n" + 
 					"AND DT_INI_RELACIONAMENTO <= GETDATE()\r\n" + 
 					"AND ID_FUNDO = " + id;
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
 			
 			PreparedStatement ps = con.prepareStatement(query);
 						
@@ -190,8 +254,8 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				retorno.add(cobranca);
 				
 			}
-			
-		} catch (SQLException e) {
+			con.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -199,13 +263,17 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 	}
 
 	@Override
-	public Integer findDiasMaxProrrogacao(Connection con, Integer idFundo) {
+	public Integer findDiasMaxProrrogacao(Base base, Integer idFundo) {
 
 		Integer retorno = null;
 		
 		String sqlQuery = "SELECT PZ_MAX_ALTERACAO_DT_VCTO FROM TB_FUNDO WHERE ID_FUNDO = " + idFundo;
 		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 						
 			ps.execute();
@@ -218,16 +286,52 @@ public class FundoServiceImpl implements IFundoService, Serializable{
 				
 				
 			}
-			
-		} catch (SQLException e) {
-			
+			con.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		return retorno;
 	}
 	
-	
+	@Override
+	public void deleteByIdFundo(Base base,Integer idFundo) {
+
+		logger.info("deletando fundo. {}",idFundo);
+		String sqlQuery = "DECLARE @ID_FUNDO INT = "+idFundo+"\r\n"
+
+				+ "DECLARE @ID_REPRESENTANTE INT\r\n"
+				+ "\r\n"
+				+ "SELECT @ID_REPRESENTANTE = ID_REPRESENTANTE FROM TB_ASSOC_FUNDO_REPRESENTANTE WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "\r\n"
+				+ "DELETE TB_ASSOC_FUNDO_REPRESENTANTE WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_REPRESENTANTE WHERE ID_REPRESENTANTE = @ID_REPRESENTANTE\r\n"
+				+ "DELETE TB_ATIVO WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_CARTEIRA_SAC WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_SEG_PERMISSAO_FUNDO WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_FUNDO_COBRANCA WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_FUNDO_ORIGINADOR WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "DELETE TB_FUNDO_PERFIL_PDD WHERE ID_FUNDO = @ID_FUNDO\r\n"
+				+ "\r\n"
+				+ "DELETE TB_FUNDO WHERE ID_FUNDO = @ID_FUNDO";
+		
+		try {
+
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
+			PreparedStatement ps = con.prepareStatement(sqlQuery);
+			
+			ps.execute();
+			
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
+			logger.error(e.getMessage());
+		}
+		
+	}
 
 
 }

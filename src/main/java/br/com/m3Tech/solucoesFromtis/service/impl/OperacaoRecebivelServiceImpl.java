@@ -3,6 +3,7 @@ package br.com.m3Tech.solucoesFromtis.service.impl;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import br.com.m3Tech.solucoesFromtis.dto.ParteRepresentanteDto;
 import br.com.m3Tech.solucoesFromtis.dto.SacadoDto;
 import br.com.m3Tech.solucoesFromtis.dto.TestemunhaDto;
 import br.com.m3Tech.solucoesFromtis.dto.TituloRetornoDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 import br.com.m3Tech.solucoesFromtis.service.IOperacaoRecebivelService;
 
 @Service
@@ -34,7 +36,9 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public List<DadosOperacaoParaAprovacaoDto> findAllOperacoesAguardandoAprovacao(Connection con, String situacao) {
+	public List<DadosOperacaoParaAprovacaoDto> findAllOperacoesAguardandoAprovacao(Base base, String situacao) {
+		
+
 
 		List<DadosOperacaoParaAprovacaoDto> retorno = new ArrayList<>();
 
@@ -49,6 +53,11 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "GROUP BY F.NU_CNPJ, FC.NU_CPF_CNPJ, A.NM_ARQUIVO, CC.NU_AGENCIA, CC.NU_CONTA, B.NU_BANCO";
 
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -69,13 +78,15 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 
 		return retorno;
 	}
 
 	@Override
-	public List<DadosRetornoCertificadoDigitalDto> findAllOperacoesAguardandoRetorno(Connection con) {
+	public List<DadosRetornoCertificadoDigitalDto> findAllOperacoesAguardandoRetorno(Base base) {
 		
 		List<DadosRetornoCertificadoDigitalDto> retorno = new ArrayList<>();
 		
@@ -125,6 +136,11 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				"AND A.DT_ENTRADA = CONVERT(DATE, GETDATE())";
 
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -139,7 +155,7 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				Integer idCedente = rs.getInt("ID_CEDENTE");
 				Integer idArquivo = rs.getInt("ID_ARQUIVO");
 				
-				OperacaoDto operacao = getOperacao(con, idOperacao);
+				OperacaoDto operacao = getOperacao(base, idOperacao);
 				
 				
 				CustodianteDto custodiante = new CustodianteDto(rs.getString("NM_CUSTODIANTE"), rs.getString("DOC_CUSTODIANTE"));
@@ -147,15 +163,15 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				
 				FundoDto fundo = new FundoDto(idFundo, rs.getString("NM_FUNDO"), rs.getString("NU_CNPJ"), 
 						rs.getString("CODIGO_ISIN"), rs.getInt("LAYOUT_AQUISICAO"), 
-						LocalDate.parse(rs.getString("DT_FUNDO")), getPartesFundo(con, idFundo), getTestemunhasFundo(con, idFundo));
+						LocalDate.parse(rs.getString("DT_FUNDO")), getPartesFundo(base, idFundo), getTestemunhasFundo(base, idFundo));
 				
-				ConsultoriaDto consultoria = new ConsultoriaDto(rs.getString("NM_CONSULTORIA"), rs.getString("DOC_CONSULTORIA"), getPartesConsultoria(con, idOriginador));
+				ConsultoriaDto consultoria = new ConsultoriaDto(rs.getString("NM_CONSULTORIA"), rs.getString("DOC_CONSULTORIA"), getPartesConsultoria(base, idOriginador));
 				
 				CedenteRetornoDto cedente = new CedenteRetornoDto(rs.getString("DOC_CEDENTE"), rs.getString("NM_CEDENTE"), rs.getString("NU_BANCO"), 
 						rs.getString("NU_AGENCIA"), rs.getString("NU_CONTA"), rs.getString("DS_LOGRADOURO"), rs.getString("NU_LOGRADOURO"), 
 						rs.getString("DS_COMPLEMENTO"), rs.getString("DS_BAIRRO"), rs.getString("DS_CIDADE"), rs.getString("DS_ESTADO"), 
 						rs.getString("NU_CEP"), rs.getString("NU_TELEFONE"), rs.getString("INSCRICAO_ESTADUAL"), 
-						rs.getString("INSCRICAO_MUNICIPAL"), getPartesCedente(con, idCedente), getAvalistas(con, idOperacao), getTitulos(con, idArquivo), getTitulosRecompra(con, idArquivo));
+						rs.getString("INSCRICAO_MUNICIPAL"), getPartesCedente(base, idCedente), getAvalistas(base, idOperacao), getTitulos(base, idArquivo), getTitulosRecompra(base, idArquivo));
 						
 				retorno.add(new DadosRetornoCertificadoDigitalDto(idOperacao, 
 						operacao, 
@@ -166,14 +182,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 
 		return retorno;
 	}
 
-	private OperacaoDto getOperacao(Connection con, Integer idOperacao) {
+	private OperacaoDto getOperacao(Base base, Integer idOperacao) {
 
 		String sqlQuery = "SELECT \r\n"
 				+ "	SUM(S.VL_PAGO)                                                                      AS  VALOR_LIQUIDO, \r\n"
@@ -188,6 +204,11 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "WHERE O.ID_OPERACAO_RECEBIVEL = " + idOperacao;
 
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -204,14 +225,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;
 
 	}
 
-	private OperacaoDto getCustodiante(Connection con, Integer idOperacao) {
+	private OperacaoDto getCustodiante(Base base, Integer idOperacao) {
 
 		String sqlQuery = "SELECT \r\n"
 				+ "	SUM(S.VL_PAGO)                                                                      AS  VALOR_LIQUIDO, \r\n"
@@ -226,6 +247,10 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "WHERE O.ID_OPERACAO_RECEBIVEL = " + idOperacao;
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -242,14 +267,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return null;
 
 	}
 
-	private List<ParteDto> getPartesFundo(Connection con, Integer idFundo) {
+	private List<ParteDto> getPartesFundo(Base base, Integer idFundo) {
 
 		List<ParteDto> retorno = new ArrayList<>();
 
@@ -260,6 +285,10 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "  WHERE FR.ID_FUNDO = " + idFundo;
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -275,14 +304,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<ParteDto> getPartesConsultoria(Connection con, Integer idOriginador) {
+	private List<ParteDto> getPartesConsultoria(Base base, Integer idOriginador) {
 
 		List<ParteDto> retorno = new ArrayList<>();
 
@@ -294,6 +323,10 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "WHERE ORI.ID_PESSOA = " + idOriginador;
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -310,14 +343,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<TestemunhaDto> getTestemunhasFundo(Connection con, Integer idFundo) {
+	private List<TestemunhaDto> getTestemunhasFundo(Base base, Integer idFundo) {
 
 		List<TestemunhaDto> retorno = new ArrayList<>();
 
@@ -325,6 +358,10 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "    , FR.DS_EMAIL \r\n" + "  FROM TB_FUNDO_TESTEMUNHA FR \r\n" + "  WHERE FR.ID_FUNDO = " + idFundo;
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -340,14 +377,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<ParteRepresentanteDto> getPartesCedente(Connection con, Integer idCedente) {
+	private List<ParteRepresentanteDto> getPartesCedente(Base base, Integer idCedente) {
 
 		List<ParteRepresentanteDto> retorno = new ArrayList<>();
 
@@ -359,6 +396,11 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "WHERE ACR.ID_CEDENTE =" + idCedente;
 
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -376,14 +418,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<AvalistaDto> getAvalistas(Connection con, Integer idOperacao) {
+	private List<AvalistaDto> getAvalistas(Base base, Integer idOperacao) {
 
 		List<AvalistaDto> retorno = new ArrayList<>();
 
@@ -392,6 +434,11 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "	WHERE AOR.ID_OPERACAO_RECEBIVEL = " + idOperacao;
 
 		try {
+			
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -407,14 +454,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<TituloRetornoDto> getTitulos(Connection con, Integer idArquivo) {
+	private List<TituloRetornoDto> getTitulos(Base base, Integer idArquivo) {
 
 		List<TituloRetornoDto> retorno = new ArrayList<>();
 
@@ -436,6 +483,10 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ idArquivo;
 
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -463,14 +514,14 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				count++;
 			}
 
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;
 
 	}
 
-	private List<TituloRetornoDto> getTitulosRecompra(Connection con, Integer idArquivo) {
+	private List<TituloRetornoDto> getTitulosRecompra(Base base, Integer idArquivo) {
 
 		List<TituloRetornoDto> retorno = new ArrayList<>();
 
@@ -491,7 +542,13 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 				+ "    WHERE TM.IC_RECOMPRA = 1\r\n" + "	 AND TM.IC_AQUISICAO = 1 \r\n" + "	 AND ST.ID_ARQUIVO = "
 				+ idArquivo;
 
+		
+		
 		try {
+			Class.forName("net.sourceforge.jtds.jdbc.Driver");
+			
+			Connection con = DriverManager.getConnection("jdbc:jtds:sqlserver://"+base.getUrl(), base.getUsuario(), base.getSenha());
+			
 			PreparedStatement ps = con.prepareStatement(sqlQuery);
 
 			ps.execute();
@@ -520,7 +577,8 @@ public class OperacaoRecebivelServiceImpl implements IOperacaoRecebivelService, 
 
 			}
 
-		} catch (SQLException e) {
+			con.close();
+		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return retorno;

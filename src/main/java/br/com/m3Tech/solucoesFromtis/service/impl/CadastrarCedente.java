@@ -7,10 +7,12 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -23,10 +25,13 @@ public class CadastrarCedente implements ICadastroAutomatizado {
 		GeradorCpfCnpjRgFake gerarDoc = new GeradorCpfCnpjRgFake();
 		
 			WebDriverManager.chromedriver().setup();
+			ChromeOptions options = new ChromeOptions();
+	    	options.addArguments("--remote-allow-origins=*");
+			ChromeDriver driver = new ChromeDriver(options);
 			
-			ChromeDriver driver = new ChromeDriver();
-			
-			driver.get(parametros.getUrl() + "/fidcCustodia/login.xhtml");
+			String url = parametros.getUrl()+ (StringUtils.isEmpty(parametros.getContextoCustodia()) ? "" : parametros.getContextoCustodia());
+						
+			driver.get(url + "/login.xhtml");
 			driver.manage().window().maximize();
 	        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			
@@ -39,7 +44,7 @@ public class CadastrarCedente implements ICadastroAutomatizado {
 			
 			for(int i = 0; i < parametros.getRepeticoes(); i++) {
 			
-				driver.get(parametros.getUrl() + "/fidcCustodia/pages/consultaCedente.xhtml");
+				driver.get(url + "/pages/consultaCedente.xhtml");
 				
 				driver.findElement(By.xpath("//*[contains(text(), 'Novo')]")).click();
 				
@@ -130,16 +135,7 @@ public class CadastrarCedente implements ICadastroAutomatizado {
 		        driver.findElement(By.id("form:conta")).sendKeys("685734");
 	
 		        //Preenchimento do digito da conta
-		       
-	//	        try {
-	//	        	
-	//	        	 if(driver.findElements(By.id("form:digitoConta")).size() > 0) {
-	//	        		 driver.findElement(By.id("form:digitoConta")).sendKeys("4");
-	//	     		}
-	//	        	
-	//	        }catch(Exception e) {
-	//	        	
-	//	        }
+		        driver.findElement(By.id("form:digitoConta")).sendKeys("4");
 	
 		        //Preenchimento descrição da conta
 		        driver.findElement(By.id("form:descricao")).sendKeys("BANCO CEDENTE");
@@ -173,7 +169,11 @@ public class CadastrarCedente implements ICadastroAutomatizado {
 	
 		        driver.findElement(By.linkText("Salvar")).click();
 		        
-		        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		        try {
+					Thread.sleep(8000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 	        
 			}
 			

@@ -50,7 +50,7 @@ public class BigDecimalConvertTypeHandler implements ConfigurableTypeHandler{
 		
 			newvalue = newvalue.setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		
-			return removeCaracteresEspecial ? StringUtils.removerPontoEVirgula(newvalue.toString()) : handler.format(value);
+			return removeCaracteresEspecial ? StringUtils.removerNaoNumeros(newvalue.toString()) : handler.format(value);
 		}
 		
 		return null;

@@ -1,0 +1,324 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Aquisição
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:column />
+					<p:column />
+					
+					<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{cnabAquisicaoController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoBase}" process="@this" update="fundos bancos"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{cnabAquisicaoDinamicoController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:outputLabel value="Layout" />
+					<p:outputLabel value="Data Gravação" />
+					
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabAquisicaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoFundo}" 
+							    update="geral tabela auxiliares" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:selectOneMenu id="layout" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.layoutSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.layoutsRemessa}" var="layout" itemLabel="#{layout.cdLayout} - #{layout.nmLayout}" itemValue="#{layout.cdLayout}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoLayout}" process="@this" update="auxiliares geral" />
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataGravacao" value="#{cnabAquisicaoController.dataGravacao}" />
+					
+					<p:outputLabel value="Banco" />
+					<p:outputLabel value="Originador" />
+					<p:outputLabel value="Vencimento" />
+					
+					<p:selectOneMenu id="bancos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.bancoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.bancos}" var="banco" itemLabel="#{banco.nomeBanco}" itemValue="#{banco.idBanco}"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="originadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.originadorSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.originadores}" var="originador" itemLabel="#{originador.nomeOriginador}" itemValue="#{originador.idOriginador}"/>
+
+					</p:selectOneMenu>
+					<p:datePicker id="dataVencimento" value="#{cnabAquisicaoController.dataVencimento}" />
+					
+					<p:outputLabel value="Cedente" />
+					<p:outputLabel value="Sacado" />
+					<p:outputLabel value="Coobrigação" />
+					
+					<p:selectOneMenu id="cedentes" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.cedenteSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.cedentes}" var="cedente" itemLabel="#{cedente.nomeCedente}" itemValue="#{cedente.idCedente}"/>
+						<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoCedente}" process="@this" update="coob"/>
+					</p:selectOneMenu>
+					<p:selectOneMenu id="sacados" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.sacadoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.sacados}" var="sacado" itemLabel="#{sacado.nomeSacado}" itemValue="#{sacado.idSacado}"/>
+
+					</p:selectOneMenu>
+					<p:selectBooleanButton id="coob" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoController.coobrigacao}"      
+						                                            onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+						     
+					<p:outputLabel value="Movimento" />
+					<p:outputLabel value="Tipo Recebivel" />
+					<p:outputLabel value="Risco" rendered="#{cnabAquisicaoController.exibirRisco}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirRisco}"/>
+					
+					<p:selectOneMenu id="movimentos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.movimentoSelecionado}" >
+						<f:selectItems value="#{cnabAquisicaoController.movimentos}" var="item" itemLabel="#{item.cdOcorrencia} - #{item.nmMovimento}" itemValue="#{item.idMovimento}"/>
+					</p:selectOneMenu>
+					<h:panelGroup id="groupEspecies">
+						<p:selectOneMenu id="tiposRecebiveis" autoWidth="false" style="width: 90% !important"
+							rendered="#{cnabAquisicaoController.exibirEspecieNormal}"
+							value="#{cnabAquisicaoController.tipoRecebivelSelecionado}">
+							<f:selectItems value="#{cnabAquisicaoController.tiposRecebiveis}" var="item" itemLabel="#{item.cdEspecie} - #{item.nmTipoRecebivel}" itemValue="#{item.idTipoRecebivel}"/>
+	
+						</p:selectOneMenu>
+						<p:selectOneMenu id="tiposEspecies" autoWidth="false" style="width: 90% !important"
+							rendered="#{!cnabAquisicaoController.exibirEspecieNormal}"
+							value="#{cnabAquisicaoController.especieSelecionado}">
+							<f:selectItems value="#{cnabAquisicaoController.tiposRecebiveisLayout47}" var="item" itemLabel="#{item}" itemValue="#{item}"/>
+	
+						</p:selectOneMenu>
+					</h:panelGroup>
+					<p:selectOneMenu id="riscos" autoWidth="false" style="width: 90% !important"
+						rendered="#{cnabAquisicaoController.exibirRisco}"
+						value="#{cnabAquisicaoController.riscoSelecionado}">
+						<f:selectItems value="#{cnabAquisicaoController.riscos}" var="item" itemLabel="#{item.codRisco} - #{item.nomeRisco}" itemValue="#{item.idRisco}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoController.exibirRisco}"/>
+					
+					<p:outputLabel value="Seu Numero" />
+					<p:outputLabel value="Numero Documento" />
+					<p:outputLabel value="Termo Cessão" />
+					
+					<h:panelGroup>
+						<p:inputText id="seuNumero" value="#{cnabAquisicaoController.seuNumero}" size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarSeuNumero}" icon="pi pi-refresh" update="seuNumero" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="numeroDocumento" value="#{cnabAquisicaoController.numeroDocumento}"  size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarNumeroDocumento}" icon="pi pi-refresh" update="numeroDocumento" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputText id="termoCessao" value="#{cnabAquisicaoController.termoCessao}"  size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarTermoCessao}" icon="pi pi-refresh" update="termoCessao" />
+					</h:panelGroup>
+					
+					<p:outputLabel value="Valor Título" />
+					<p:outputLabel value="Valor Aquisição" rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+					<p:column rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+					<p:outputLabel value="Taxa de Juros" rendered="#{cnabAquisicaoController.exibirTaxaJuros}" />
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+					
+					<h:panelGroup>
+						<p:inputNumber id="valorTitulo" value="#{cnabAquisicaoController.valorTitulo}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarValorTitulo}" icon="pi pi-refresh" update="valorTitulo" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="valorAquisicao" value="#{cnabAquisicaoController.valorAquisicao}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarValorAquisicao}" icon="pi pi-refresh" update="valorAquisicao" rendered="#{!cnabAquisicaoController.exibirTaxaJuros}" />
+						<p:column rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:inputNumber id="taxaJuros" value="#{cnabAquisicaoController.taxaJuros}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:commandButton action="#{cnabAquisicaoController.gerarTaxaJuros}" icon="pi pi-refresh" update="taxaJuros" rendered="#{cnabAquisicaoController.exibirTaxaJuros}"/>
+						<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJuros}"/>
+						
+					</h:panelGroup>
+					<p:column/>
+					<p:column/>
+					<p:column/>
+					
+					
+				</p:panelGrid>
+				
+				<p:panelGrid id="auxiliares" columns="3" layout="grid">
+				
+					<p:outputLabel value="Chave NFe" rendered="#{cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:outputLabel value="Indexador" rendered="#{cnabAquisicaoController.exibirIndexadores}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirIndexadores}"/>
+					<p:outputLabel value="Data Carência" rendered="#{cnabAquisicaoController.exibirDataCarencia}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDataCarencia}"/>
+				
+					<h:panelGroup rendered="#{cnabAquisicaoController.exibirChaveNfe}">
+						<p:inputText id="chaveNfe" value="#{cnabAquisicaoController.chaveNfe}" size="40"/> 
+						<p:commandButton action="#{cnabAquisicaoController.gerarNfe}" icon="pi pi-refresh" update="chaveNfe"  />
+					</h:panelGroup>
+					<p:column rendered="#{!cnabAquisicaoController.exibirChaveNfe}"/>
+					<p:selectOneMenu id="indexadores" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.indexadorSelecionado}" rendered="#{cnabAquisicaoController.exibirIndexadores}">
+						<f:selectItem itemLabel="selecione" itemValue=""/>
+						<f:selectItems value="#{cnabAquisicaoController.indexadores}" var="item" itemLabel="#{item.codIndexador} - #{item.nomeIndexador}" itemValue="#{item.idIndexador}"/>
+
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoController.exibirIndexadores}"/>
+					<p:datePicker id="dataCarencia" value="#{cnabAquisicaoController.dataCarencia}" rendered="#{cnabAquisicaoController.exibirDataCarencia}" />
+					<p:column rendered="#{!cnabAquisicaoController.exibirDataCarencia}"/>
+				
+				
+					<p:outputLabel value="Taxa Juros Indexador" rendered="#{cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:outputLabel value="Variacao Cambial" rendered="#{cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:outputLabel value="Qtde Lastros" rendered="#{cnabAquisicaoController.exibirQtdeLastros}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirQtdeLastros}"/>
+					
+					<p:inputNumber id="taxaJurosIndexador" value="#{cnabAquisicaoController.taxaJurosIndexador}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaJurosIndexador}"/>
+					<p:inputText value="#{cnabAquisicaoController.variacaoCambial}" size="50" rendered="#{cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirVariacaoCambial}"/>
+					<p:inputNumber id="qtdeLastros" value="#{cnabAquisicaoController.qtdeLastros}"  minValue="1" maxValue="9"  decimalPlaces="0" rendered="#{cnabAquisicaoController.exibirQtdeLastros}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirQtdeLastros}"/>
+					
+					<p:outputLabel value="Tipo Pagamento" rendered="#{cnabAquisicaoController.exibirTipoPagamento}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTipoPagamento}"/>
+					<p:outputLabel value="Valor Retenção" rendered="#{cnabAquisicaoController.exibirValorRetencao}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirValorRetencao}"/>
+					<p:column/>
+					
+					<p:selectOneMenu id="tipoPagamento" autoWidth="false" style="width: 90% !important"
+						value="#{cnabAquisicaoController.tipoPagamento}" rendered="#{cnabAquisicaoController.exibirTipoPagamento}">
+						<f:selectItem itemLabel="selecione" itemValue="0"/>
+						<f:selectItem itemLabel="TED" itemValue="1"/>
+						<f:selectItem itemLabel="PIX" itemValue="2"/>
+					</p:selectOneMenu>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTipoPagamento}"/>
+					<p:inputNumber id="valorRetencao" value="#{cnabAquisicaoController.valorRetencao}" symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirValorRetencao}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirValorRetencao}"/>
+					<p:column/>
+					
+					<p:outputLabel value="Banco" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					<p:outputLabel value="Agencia" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					<p:outputLabel value="Conta" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					
+					<p:inputNumber id="nuBanco" value="#{cnabAquisicaoController.nuBanco}"  minValue="1" maxValue="999"  decimalPlaces="0" thousandSeparator="" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					<p:inputNumber id="nuAgencia" value="#{cnabAquisicaoController.nuAgencia}"  minValue="1" maxValue="9999"  decimalPlaces="0" thousandSeparator="" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					<p:inputNumber id="nuConta" value="#{cnabAquisicaoController.nuConta}"  minValue="1" maxValue="99999999999999"  decimalPlaces="0" thousandSeparator="" rendered="#{cnabAquisicaoController.exibirDadosConta}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirDadosConta}"/>
+					
+					<p:outputLabel value="Taxa Spread" rendered="#{cnabAquisicaoController.exibirTaxaSpread}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaSpread}"/>
+					<p:column/>
+					<p:column/>
+					
+					<p:inputNumber id="taxaSpread" value="#{cnabAquisicaoController.taxaSpread}"  maxValue="2"  decimalPlaces="4" decimalSeparator="," thousandSeparator="." rendered="#{cnabAquisicaoController.exibirTaxaSpread}"/>
+					<p:column rendered="#{!cnabAquisicaoController.exibirTaxaSpread}"/>
+					<p:column/>
+					<p:column/>
+					
+				</p:panelGrid>
+
+				<p:panelGrid id="addTitulo" columns="3" layout="grid">
+					<p:column/>
+					<p:column/>
+					<p:commandButton action="#{cnabAquisicaoController.adicionarTitulo}" icon="pi pi-plus" value="Adicionar Titulo" update="tabela"  />
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:dataTable id="tabela" var="item" value="#{cnabAquisicaoController.cnab.titulos}">
+						
+						<p:column headerText="Cedente">
+							<h:outputText value="#{item.cedente.nomeCedente}"/>
+						</p:column>
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.sacado.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Seu Numero">
+							<h:outputText value="#{item.seuNumero}" />
+						</p:column>
+		
+						<p:column headerText="Valor do titulo">
+							<h:outputText value="#{item.valorTitulo}" />
+						</p:column>
+	
+						
+						
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabAquisicaoController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				<p:outputLabel value="Importação Automática?" />
+				<p:column/>
+				<p:column/>
+					
+				<p:selectBooleanButton id="importAuto" onLabel="Sim" offLabel="Não"  value="#{cnabAquisicaoController.importacaoAutomatica}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" >
+					<p:ajax event="change" listener="#{cnabAquisicaoController.selecionandoImportacaoAutomatica}" process="@this" update="path"/>
+				</p:selectBooleanButton>
+				<p:column/>
+				<p:column/>
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabAquisicaoController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabAquisicaoController.gerar}" value="Gerar Cnab" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" update="@all" />
+				<p:commandButton action="#{cnabAquisicaoController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,19 +1,18 @@
 package br.com.m3Tech.solucoesFromtis.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import br.com.m3Tech.solucoesFromtis.dto.OriginadorDto;
+import br.com.m3Tech.solucoesFromtis.model.Base;
 
 
 public interface IOriginadorService {
 	
 	
-	public List<OriginadorDto> findAll(Connection con, Integer idFundo);
+	public List<OriginadorDto> findAll(Base base, Integer idFundo);
 
-	public OriginadorDto findOneById(Connection con, Integer idOriginador);
+	public OriginadorDto findOneById(Base base, Integer idOriginador);
 
-	public OriginadorDto getPrimeiroOriginador(Connection con, Integer idFundo) throws SQLException;
+	public OriginadorDto getPrimeiroOriginador(Base base, Integer idFundo) throws Exception;
 
 }

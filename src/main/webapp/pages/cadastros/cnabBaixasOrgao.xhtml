@@ -1,0 +1,134 @@
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Gerar Cnab de Baixas Orgão
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados"/>
+					<p:column />
+					<p:column />
+
+					<h:panelGroup >
+						<p:selectOneMenu id="bases" style="width: 85% !important"
+							value="#{cnabBaixasOrgaoController.baseSelecionada}">
+							<f:selectItem itemLabel="Selecione" itemValue="" />
+							<f:selectItems value="#{cnabBaixasOrgaoController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+							<p:ajax event="change" listener="#{cnabBaixasOrgaoController.selecionandoBase}" process="@this" update="fundos"/>
+
+						</p:selectOneMenu>
+						<p:commandButton  action="#{cnabBaixasOrgaoController.atualizarBases}" ajax="false"
+						 			      immediate="true" update="bases" icon="pi pi-refresh"/>
+					</h:panelGroup>
+					<p:column />
+					<p:column />
+					
+					
+					<p:outputLabel value="Fundos" />
+					<p:column />
+					<p:column />
+					
+					<p:selectOneMenu id="fundos" autoWidth="false" style="width: 90% !important"
+						value="#{cnabBaixasOrgaoController.fundoSelecionado}" >
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{cnabBaixasOrgaoController.fundos}" var="fundo" itemLabel="#{fundo.nomeFundo}" itemValue="#{fundo.idFundo}"/>
+						<p:ajax event="change" listener="#{cnabBaixasOrgaoController.selecionandoFundo}" 
+							    update="geral" 
+							    process="@this" />
+
+					</p:selectOneMenu>
+					<p:column />
+					<p:column />
+					
+					<p:outputLabel value="Sacado" />
+					<p:outputLabel value="Valor" />
+					<p:outputLabel value="Qtde Parcelas" />
+					
+					<p:selectOneMenu id="sacados" autoWidth="false" style="width: 90% !important"
+						value="#{cnabBaixasOrgaoController.sacadoSelecionado}">
+						<f:selectItems value="#{cnabBaixasOrgaoController.sacados}" var="sacado" itemLabel="#{sacado.nomeSacado}" itemValue="#{sacado.idSacado}"/>
+
+					</p:selectOneMenu>
+					<p:inputNumber id="valor" value="#{cnabBaixasOrgaoController.valor}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="." />
+					<p:inputNumber id="qtdeParcelas" value="#{cnabBaixasOrgaoController.qtdeParcelas}"  minValue="1" maxValue="999"  decimalPlaces="0" />
+					
+					<p:column />
+					<p:column />
+					<p:column />
+
+				</p:panelGrid>
+
+				<p:panelGrid id="addTitulo" columns="3" layout="grid">
+					<p:column/>
+					<p:column/>
+					<p:commandButton action="#{cnabBaixasOrgaoController.adicionarTitulo}" icon="pi pi-plus" value="Adicionar Titulo" update="tabela"  />
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="1">
+					<p:outputLabel value="Títulos adicionados" />
+					<p:dataTable id="tabela" var="item" value="#{cnabBaixasOrgaoController.cnab.titulos}">
+						
+						<p:column headerText="Sacado">
+							<h:outputText value="#{item.nomeSacado}"/>
+						</p:column>
+						
+						<p:column headerText="Cpf/Cnpj">
+							<h:outputText value="#{item.cpf}"/>
+						</p:column>
+						
+						<p:column headerText="Valor">
+							<h:outputText value="#{item.valor}" />
+						</p:column>
+		
+						<p:column headerText="Qtde Parcelas">
+							<h:outputText value="#{item.qtdeParcelas}" />
+						</p:column>
+	
+						<p:column headerText="remover">
+							<div align="center">
+								<p:commandButton action="#{cnabBaixasOrgaoController.removerTitulo(item)}" update="tabela"  icon="pi pi-trash"/>
+							</div>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			<p:panelGrid columns="3" layout="grid">
+				
+				<p:outputLabel value="Salvar Cnab em:" />
+				<p:column/>
+				<p:column/>
+				
+				<p:inputText id="path" value="#{cnabBaixasOrgaoController.path}"  size="40"/> 
+				<p:commandButton action="#{cnabBaixasOrgaoController.gerar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Gerar Cnab" update="@all" />
+				<p:commandButton action="#{cnabBaixasOrgaoController.voltar}" value="Voltar" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+			</p:panelGrid>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -6,11 +6,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -24,9 +26,13 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 		
 			WebDriverManager.chromedriver().setup();
 			
-			ChromeDriver driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+	    	options.addArguments("--remote-allow-origins=*");
+			ChromeDriver driver = new ChromeDriver(options);
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/login.xhtml");
+			String url = parametros.getUrl()+ (StringUtils.isEmpty(parametros.getContextoCustodia()) ? "" : parametros.getContextoCustodia());
+			
+			driver.get(url + "/login.xhtml");
 			driver.manage().window().maximize();
 	        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			
@@ -35,7 +41,7 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 	
 			driver.findElement(By.xpath("//input[@id='j_password']")).submit();
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/pages/consultaPessoa.xhtml");
+			driver.get(url + "/pages/consultaPessoa.xhtml");
 			
 			driver.findElement(By.xpath("//*[contains(text(), 'Novo')]")).click();
 			
@@ -95,7 +101,7 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 			
 			driver.findElement(By.id("form:descricao")).sendKeys("Conta padrao");
 
-			driver.findElement(By.xpath("//*[@id='form:j_idt285']")).click();
+			driver.findElement(By.xpath("//*[@id='form:adicionarConta']")).click();
 			
 			
 			//aba Representantes
@@ -111,7 +117,7 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 			
 			driver.findElement(By.id("form:telefoneRepresentante")).sendKeys(ValorAleatorioUtil.getStringNumeros(11));
 			
-			driver.findElement(By.xpath("//*[@id='form:j_idt335']")).click();
+			driver.findElement(By.xpath("//*[@id='form:adicionarRepresentante']")).click();
 			//*[@id='form:j_idt335']
 			
 			
@@ -123,14 +129,22 @@ public class CadastrarEntidade implements ICadastroAutomatizado {
 			
 			driver.findElement(By.id("form:cnpjParteRelacionada")).sendKeys(gerarDoc.cnpj(true));
 			
-			driver.findElement(By.xpath("//*[@id='form:j_idt403']")).click();
+			driver.findElement(By.xpath("//*[@id='form:adicionarParteRelacionada']")).click();
 			//*[@id='form:j_idt403']
 			
 			
 			
 			driver.findElement(By.xpath("//*[contains(text(), 'Salvar')]")).click();
 			
-			driver.close();
+//			driver.manage().timeouts().implicitlyWait(100, TimeUnit.SECONDS);
+			
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+			driver.quit();
 					
 			return nomeEntidade;
 	}

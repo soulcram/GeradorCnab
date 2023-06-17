@@ -6,11 +6,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
-import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
 import br.com.m3Tech.solucoesFromtis.service.ICadastroAutomatizado;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import br.com.m3Tech.solucoesFromtis.util.ValorAleatorioUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -24,9 +25,13 @@ public class CadastrarSacado implements ICadastroAutomatizado {
 		
 			WebDriverManager.chromedriver().setup();
 			
-			ChromeDriver driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+	    	options.addArguments("--remote-allow-origins=*");
+			ChromeDriver driver = new ChromeDriver(options);
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/login.xhtml");
+			String url = parametros.getUrl()+ (StringUtils.isEmpty(parametros.getContextoCustodia()) ? "" : parametros.getContextoCustodia());
+			
+			driver.get(url + "/login.xhtml");
 			driver.manage().window().maximize();
 	        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 			
@@ -35,7 +40,7 @@ public class CadastrarSacado implements ICadastroAutomatizado {
 	
 			driver.findElement(By.xpath("//input[@id='j_password']")).submit();
 			
-			driver.get(parametros.getUrl() + "/fidcCustodia/pages/consultaSacado.xhtml");
+			driver.get(url + "/pages/consultaSacado.xhtml");
 			
 			driver.findElement(By.xpath("//*[contains(text(), 'Novo')]")).click();
 			

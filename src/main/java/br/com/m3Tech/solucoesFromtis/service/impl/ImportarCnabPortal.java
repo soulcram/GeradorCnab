@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
 
 import br.com.m3Tech.solucoesFromtis.model.ParametrosCadastrosAutomaticos;
@@ -25,7 +26,9 @@ public class ImportarCnabPortal implements ICadastroAutomatizado {
 		
 			WebDriverManager.chromedriver().setup();
 			
-			ChromeDriver driver = new ChromeDriver();
+			ChromeOptions options = new ChromeOptions();
+	    	options.addArguments("--remote-allow-origins=*");
+			ChromeDriver driver = new ChromeDriver(options);
 			
 			driver.get(parametros.getUrl() + "/portal/login");
 			driver.manage().window().maximize();

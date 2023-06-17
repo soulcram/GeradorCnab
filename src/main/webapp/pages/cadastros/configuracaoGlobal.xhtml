@@ -1,0 +1,130 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+	
+			<p:messages id="messages" showDetail="true" closable="true">
+       			<p:autoUpdate/>
+    		</p:messages>
+			<p:panelGrid columns="4" layout="grid" contentStyleClass="p-align-baseline ui-fluid">
+
+				<f:facet name="header">
+        			Configurações Globais
+    			</f:facet>
+				
+				<p:outputLabel value="Sequecial do Arquivo"></p:outputLabel>
+				<p:outputLabel value="Path Default"></p:outputLabel>
+				<p:outputLabel value="Aparência preferida"></p:outputLabel>
+				<p:outputLabel value="Nome App"></p:outputLabel>
+				
+				
+				<p:inputText id="seqArquivo" value="#{configuracaoGlobalController.configuracaoGlobal.seqArquivo}" />
+		        <p:inputText id="pathDefault" value="#{configuracaoGlobalController.configuracaoGlobal.path}" />
+				<p:themeSwitcher value="#{configuracaoGlobalController.configuracaoGlobal.tema}">
+				    <f:selectItems value="#{configuracaoGlobalController.temasDisponiveis}" />
+				</p:themeSwitcher>
+				<p:inputText id="nomeApp" value="#{configuracaoGlobalController.configuracaoGlobal.nomeApp}" />
+				
+				<p:outputLabel value="Base de Dados Padrao" />
+				<p:outputLabel value="Aprovar Consultoria Automático" />
+				<p:outputLabel value="Aprovar Gestor Automático" />
+				<p:outputLabel value="Enviar Retorno Certificadora Automático" />
+				
+				<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 80% !important"
+						value="#{configuracaoGlobalController.configuracaoGlobal.idBasePadrao}">
+						<f:selectItem itemLabel="Selecione" itemValue="0" />
+						<f:selectItems value="#{configuracaoGlobalController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{configuracaoGlobalController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh" style="width: 10% !important"/>
+	
+					</h:panelGroup>
+				<p:selectBooleanButton id="aprovarConsultoriaAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.aprovarConsultoriaAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="aprovarGestorAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.aprovarGestorAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="enviarRetornoAuto" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.enviarRetornoAutomatico}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				<p:outputLabel value="Enviar P7s no Retorno Certificadora" />
+				
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				<p:selectBooleanButton id="enviarP7s" onLabel="Sim" offLabel="Não"  value="#{configuracaoGlobalController.configuracaoGlobal.enviarPk7s}" onIcon="pi pi-check" offIcon="pi pi-times" style="width:6rem" />
+				
+				<p:outputLabel value="Url Custódia"></p:outputLabel>
+				<p:outputLabel value="Contexto Custódia"></p:outputLabel>
+				<p:outputLabel value="Usuário Custódia"></p:outputLabel>
+				<p:outputLabel value="Senha Custódia"></p:outputLabel>
+				
+				<p:inputText id="urlCustodia" value="#{configuracaoGlobalController.configuracaoGlobal.urlCustodia}" />
+				<p:inputText id="contextoCustodia" value="#{configuracaoGlobalController.configuracaoGlobal.contextoCustodia}" />
+		        <p:inputText id="usuarioCustodia" value="#{configuracaoGlobalController.configuracaoGlobal.usuarioCustodia}" />
+		        <p:inputText id="senhaCustodia" value="#{configuracaoGlobalController.configuracaoGlobal.senhaCustodia}" />
+				
+				<p:outputLabel value="Url Portal"></p:outputLabel>
+				<p:outputLabel value="Usuário Portal"></p:outputLabel>
+				<p:outputLabel value="Senha Portal"></p:outputLabel>
+				<p:column/>
+				
+				<p:inputText id="urlCustodiaPortal" value="#{configuracaoGlobalController.configuracaoGlobal.urlPortal}" />
+		        <p:inputText id="usuarioCustodiaPortal" value="#{configuracaoGlobalController.configuracaoGlobal.usuarioPortal}" />
+		        <p:inputText id="senhaCustodiaPortal" value="#{configuracaoGlobalController.configuracaoGlobal.senhaPortal}" />
+		        <p:column/>
+		        
+		        <p:outputLabel value="Url Portal Serviços"></p:outputLabel>
+				<p:outputLabel value="Usuário Portal Serviços"></p:outputLabel>
+				<p:outputLabel value="Senha Portal Serviços"></p:outputLabel>
+				<p:column/>
+				
+				<p:inputText id="urlCustodiaPortalServicos" value="#{configuracaoGlobalController.configuracaoGlobal.urlPortalServicos}" />
+		        <p:inputText id="usuarioCustodiaServicos" value="#{configuracaoGlobalController.configuracaoGlobal.usuarioPortalServicos}" />
+		        <p:inputText id="senhaCustodiaServicos" value="#{configuracaoGlobalController.configuracaoGlobal.senhaPortalServicos}" />
+		        <p:column/>
+		        
+		        <p:outputLabel value="Minutos para Expirar Token" />
+		        <p:outputLabel value="Usuário Sinacor"></p:outputLabel>
+				<p:outputLabel value="Senha Sinacor"></p:outputLabel>
+				<p:column/>
+				
+				
+				<p:inputNumber id="quatTitulo" value="#{configuracaoGlobalController.configuracaoGlobal.minExpiracaoToken}" thousandSeparator="." decimalPlaces="0" maxValue="60" minValue="1"/> 
+				<p:inputText id="usuarioSinacor" value="#{configuracaoGlobalController.configuracaoGlobal.usuarioSinacor}" />
+		        <p:inputText id="senhaSinacor" value="#{configuracaoGlobalController.configuracaoGlobal.senhaSinacor}" />
+				<p:column/>
+				
+				<p:outputLabel value="Valor do PL" />
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+				<p:inputNumber id="valorPl" value="#{configuracaoGlobalController.configuracaoGlobal.valorPl}"  symbol="R$ " symbolPosition="p" decimalSeparator="," thousandSeparator="."/>
+				<p:column/>
+				<p:column/>
+				<p:column/>
+				
+
+
+
+			</p:panelGrid>
+
+			
+			<div align="right">
+	        	<p:commandButton action="#{configuracaoGlobalController.voltar}" value="Voltar"/>
+	        	<p:commandButton action="#{configuracaoGlobalController.salvar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="salvar"/>
+    		</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,33 @@
+server:
+  port: 5584
+  servlet:
+    context-path: /solucoesFromtis
+spring:
+  datasource:
+    url: jdbc:h2:file:~/data/solucoesFromtis
+    driverClassName: org.h2.Driver
+    username: sa
+    password: fromtis!Q@W#E
+  jpa: 
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+    ddl-auto: none
+  mvc:
+    servlet:
+      path: /
+  h2:
+    console:
+      enable: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+  
+
+

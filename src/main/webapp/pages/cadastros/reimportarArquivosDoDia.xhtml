@@ -1,0 +1,57 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+				
+				<f:facet name="header">
+        			Reimportar Arquivo do Dia
+    			</f:facet>
+
+    
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+
+					<p:outputLabel value="Base de Dados" />
+					<p:outputLabel value="Data" />
+					<p:column/>
+					
+					<h:panelGroup >
+					<p:selectOneMenu id="bases" style="width: 85% !important"
+						value="#{reimportarArquivosController.baseSelecionada}">
+						<f:selectItem itemLabel="Selecione" itemValue="" />
+						<f:selectItems value="#{reimportarArquivosController.bases}" var="base" itemLabel="#{base.url}" itemValue="#{base.id}"/>
+						<p:ajax event="change" listener="#{reimportarArquivosController.selecionandoBase}" process="@this"/>
+
+					</p:selectOneMenu>
+					<p:commandButton  action="#{reimportarArquivosController.atualizarBases}" ajax="false"
+						immediate="true" update="bases" icon="pi pi-refresh"/>
+	
+					</h:panelGroup>
+					<p:datePicker id="dataGravacao" value="#{reimportarArquivosController.data}" immediate="true" />
+		
+						
+					<p:commandButton action="#{reimportarArquivosController.gerar}" onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Reimportar" update="@all" />
+					
+				</p:panelGrid>
+	
+			</p:panelGrid>
+
+			
+
+		</h:form>
+	</ui:define>
+</ui:composition>

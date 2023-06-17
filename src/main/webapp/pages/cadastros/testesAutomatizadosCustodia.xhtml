@@ -1,0 +1,97 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="3" layout="grid">
+
+				<f:facet name="header">
+        			Testes Custódia
+    			</f:facet>
+
+				<p:outputLabel id="basePadrao"
+					value="#{testesAutomatizadosCustodiaController.base.url}" />
+				<p:column />
+				<p:column />
+				
+				<p:outputLabel value="Url Custódia"></p:outputLabel>
+				<p:outputLabel value="Usuário Custódia"></p:outputLabel>
+				<p:outputLabel value="Senha Custódia"></p:outputLabel>
+
+				<p:outputLabel id="urlCustodia"
+					value="#{testesAutomatizadosCustodiaController.urlCustodia}" />
+				<p:outputLabel id="usuarioCustodia"
+					value="#{testesAutomatizadosCustodiaController.usuarioCustodia}" />
+				<p:outputLabel id="senhaCustodia"
+					value="#{testesAutomatizadosCustodiaController.senhaCustodia}" />
+
+				<p:outputLabel value="Ações"></p:outputLabel>
+				<h:panelGroup>
+					<p:outputLabel value="Todos"></p:outputLabel>
+					<p:selectBooleanButton id="selecionarTodos"
+						value="#{testesAutomatizadosCustodiaController.selecionaTodos}"
+						onLabel="on" offLabel="off" onIcon="pi pi-check"
+						offIcon="pi pi-times" style="width:6rem">
+						<p:ajax event="change"
+							listener="#{testesAutomatizadosCustodiaController.selecionarTodos}"
+							update="@all" process="@this" />
+					</p:selectBooleanButton>
+				</h:panelGroup>
+				<p:commandButton
+					action="#{testesAutomatizadosCustodiaController.aplicarTestes}"
+					onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" value="Aplicar Testes" update="@all" />
+
+				<p:outputLabel value="Cadastro Fundo"></p:outputLabel>
+				<p:outputLabel value="Cadastro Cedente"></p:outputLabel>
+				<p:outputLabel value="Cadastro Sacado"></p:outputLabel>
+
+				<p:selectBooleanButton id="cadastroFundo"
+					value="#{testesAutomatizadosCustodiaController.testesAtivos.testarFundo}"
+					onLabel="sim" offLabel="não" onIcon="pi pi-check"
+					offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="cadastroCedente"
+					value="#{testesAutomatizadosCustodiaController.testesAtivos.testarCedente}"
+					onLabel="sim" offLabel="não" onIcon="pi pi-check"
+					offIcon="pi pi-times" style="width:6rem" />
+				<p:selectBooleanButton id="cadastroSacado"
+					value="#{testesAutomatizadosCustodiaController.testesAtivos.testarSacado}"
+					onLabel="sim" offLabel="não" onIcon="pi pi-check"
+					offIcon="pi pi-times" style="width:6rem" />
+
+				<p:column />
+				<p:column />
+				<p:column />
+
+			</p:panelGrid>
+
+			<p:dataTable id="tabela" var="item"
+				value="#{testesAutomatizadosCustodiaController.resultados}"
+				emptyMessage="Sem dados">
+				<p:column headerText="Processo" style="width:30%;">
+					<h:outputText value="#{item.processo}" />
+				</p:column>
+
+				<p:column headerText="Status" style="width:10%;">
+					<h:outputText value="#{item.status}" />
+				</p:column>
+				<p:column headerText="Mensagem" style="width:60%;">
+					<h:outputText value="#{item.mensagem}" />
+				</p:column>
+			</p:dataTable>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

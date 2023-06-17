@@ -1,0 +1,57 @@
+<ui:composition template="/pages/cadastros/home.xhtml"
+				xmlns="http://www.w3.org/1999/xhtml"
+				xmlns:h="http://java.sun.com/jsf/html"
+				xmlns:ui="http://java.sun.com/jsf/facelets"
+				xmlns:f="http://java.sun.com/jsf/core"
+				xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+
+		<h:form id="formRequisicao">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+			
+			
+
+			<p:panelGrid columns="1" layout="grid">
+				<f:facet name="header">
+	        			Integração Maps
+	    		</f:facet>
+	    		<h:outputText value="Linked Map: http://localhost:5584/solucoesFromtis/maps"/>
+				<p:commandButton value="Atualizar"
+					action="#{mapsController.atualizaCarteiras}"
+					update=":formRequisicao:resultadoCarteiras" />
+
+				<p:commandButton value="Remover Todos"
+								 action="#{mapsController.removerTudo}"
+								 update=":formRequisicao:resultadoCarteiras" />
+			</p:panelGrid>
+
+			<p:dataTable id="resultadoCarteiras"
+					value="#{mapsController.carteiras}" var="item" paginator="true"
+					rows="10" widgetVar="tabela">
+			
+				<p:column headerText="Codigo Carteira">
+					<h:outputText value="#{item.codigo}" />
+				</p:column>
+
+				<p:column headerText="Data Solicitada">
+					<h:outputText value="#{item.data}" />
+				</p:column>
+
+				<p:column headerText="Valor Pl">
+					<h:outputText value="#{item.valorPl}" />
+				</p:column>
+
+				<p:column headerText="Ações">
+					<p:commandButton id="btnDeleta" value="Deleta" action="#{mapsController.removeOperacao(item)}" update=":formRequisicao:resultadoCarteiras"  />
+					
+				</p:column>
+				
+			</p:dataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

@@ -1,14 +1,14 @@
 package br.com.m3Tech.solucoesFromtis.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import br.com.m3Tech.solucoesFromtis.repositories.BaseRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import br.com.m3Tech.solucoesFromtis.model.Base;
+import br.com.m3Tech.solucoesFromtis.repositories.BaseRepository;
 import br.com.m3Tech.solucoesFromtis.service.IBaseService;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,17 @@ public class BaseServiceImpl implements IBaseService {
     public Base findById(Integer id) {
         return this.baseRepository.findById(id).orElse(null);
     }
+
+	@Override
+	public Base findById(String id) {
+		
+		if(StringUtils.isNumeric(id)) {
+			return findById(Integer.valueOf(id));
+		}
+		return null;
+		
+		
+	}
 
 
 }

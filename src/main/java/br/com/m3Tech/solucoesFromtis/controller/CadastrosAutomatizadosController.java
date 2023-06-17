@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.annotation.SessionScope;
 
-import br.com.m3Tech.solucoesFromtis.dao.Conexao;
 import br.com.m3Tech.solucoesFromtis.dto.CedenteDto;
 import br.com.m3Tech.solucoesFromtis.dto.FundoDto;
 import br.com.m3Tech.solucoesFromtis.model.Base;
@@ -27,13 +26,14 @@ import br.com.m3Tech.solucoesFromtis.service.IFundoService;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedente;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarCedenteAprovado;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarEntidade;
+import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarFundo;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPdd;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarPddFaixaUnica;
 import br.com.m3Tech.solucoesFromtis.service.impl.CadastrarSacado;
 import br.com.m3Tech.solucoesFromtis.service.impl.ImportarCnabPortal;
 import br.com.m3Tech.solucoesFromtis.util.CpfCnpjUtils;
-import br.com.m3Tech.utils.IntegerUtils;
-import br.com.m3Tech.utils.StringUtils;
+import br.com.m3Tech.solucoesFromtis.util.IntegerUtils;
+import br.com.m3Tech.solucoesFromtis.util.StringUtils;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
@@ -50,7 +50,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 
-	private static final String VOLTAR = "/pages/cadastros/index.xhtml";
+	private static final String VOLTAR = "/pages/cadastros/home.xhtml";
 
 
 	@Autowired
@@ -61,8 +61,6 @@ public class CadastrosAutomatizadosController implements Serializable {
 	private IConfGlobalService confGlobalService;
 	@Autowired
 	private ICedenteService cedenteService;
-		
-	private Bucket bucket;
 	
 	private Integer baseSelecionada;
 	private Integer fundoSelecionado;
@@ -71,6 +69,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 	
 	
 	private String urlCustodia;
+	private String contextoCustodia;
 	private String usuarioCustodia;
 	private String senhaCustodia;
 	
@@ -88,17 +87,13 @@ public class CadastrosAutomatizadosController implements Serializable {
 		ConfGlobal confGlobal = confGlobalService.getConfGlobal();
 		
 		this.urlCustodia = confGlobal.getUrlCustodia();
+		this.contextoCustodia = confGlobal.getContextoCustodia();
 		this.usuarioCustodia = confGlobal.getUsuarioCustodia();
 		this.senhaCustodia = confGlobal.getSenhaCustodia();
 		
 		bases = baseService.findAll();
 		fundos = new ArrayList<>();
 		
-		Bandwidth limit = Bandwidth.classic(1, Refill.greedy(1, Duration.ofMinutes(1)));
-        this.bucket = Bucket4j.builder()
-            .addLimit(limit)
-            .build();
-
 				
 	}
 	
@@ -114,7 +109,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 		
 			Base base = baseService.findById(baseSelecionada);
 		
-			fundos = fundoService.findAll(Conexao.getConnection(base));
+			fundos = fundoService.findAll(base);
 			
 			
 		} catch (Exception e) {
@@ -138,14 +133,9 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado cadastrarSacado = new CadastrarSacado();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
 					usuarioCustodia, 
 					senhaCustodia, 
 					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get(),
@@ -168,15 +158,10 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedente();
 			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
 					usuarioCustodia, 
 					senhaCustodia, 
 					fundo,
@@ -191,7 +176,7 @@ public class CadastrosAutomatizadosController implements Serializable {
 			
 			Base base = baseService.findById(baseSelecionada);
 						
-			CedenteDto cedenteRetornado = cedenteService.getCedenteByCpfCnpj(Conexao.getConnection(base), fundo.getIdFundo(), CpfCnpjUtils.removerFormatacao(cnpjCedente), base);
+			CedenteDto cedenteRetornado = cedenteService.getCedenteByCpfCnpj(base, fundo.getIdFundo(), CpfCnpjUtils.removerFormatacao(cnpjCedente));
 			
 			if(cedenteRetornado != null && cedenteRetornado.getIdCedente() != null) {
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Cedentes Cadastrado com sucesso"));
@@ -211,15 +196,10 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado cadastroAutomatizado = new CadastrarCedenteAprovado();
 			FundoDto fundo = fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlPortalServicos, "",
 					usuarioPortalServicos, 
 					senhaPortalServicos, 
 					fundo,
@@ -245,14 +225,9 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado importar = new ImportarCnabPortal();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, "",
 					usuarioCustodia, 
 					senhaCustodia, 
 					fundos.stream().filter(f -> f.getIdFundo().equals(fundoSelecionado)).findFirst().get(),
@@ -275,14 +250,11 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
+
 			
 			ICadastroAutomatizado cadastrarEntidade = new CadastrarEntidade();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
 					usuarioCustodia, 
 					senhaCustodia, 
 					null,
@@ -298,6 +270,33 @@ public class CadastrosAutomatizadosController implements Serializable {
 		}
 	}
 	
+	public void cadastrarFundo() {
+		try {
+			
+			if(validar(false)) {
+				return;
+			}
+			
+
+			
+			ICadastroAutomatizado cadastrarFundo = new CadastrarFundo();
+			
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
+					usuarioCustodia, 
+					senhaCustodia, 
+					null,
+					repeticoes);
+			
+
+			String nome = cadastrarFundo.executar(param);
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Fundo " + nome + " Cadastrado com sucesso"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+			e.printStackTrace();
+		}
+	}
+	
 	public void cadastrarPddFaixaUnica() {
 		try {
 			
@@ -305,14 +304,10 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
 			
 			ICadastroAutomatizado cadastrarPdd = new CadastrarPddFaixaUnica();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
 					usuarioCustodia, 
 					senhaCustodia, 
 					null,
@@ -335,14 +330,9 @@ public class CadastrosAutomatizadosController implements Serializable {
 				return;
 			}
 			
-			if (!bucket.tryConsume(1)) {
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Excedeu limite de requisições por minuto"));
-				return;
-			}
-			
 			ICadastroAutomatizado cadastrarPdd = new CadastrarPdd();
 			
-			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, 
+			ParametrosCadastrosAutomaticos param = new ParametrosCadastrosAutomaticos(urlCustodia, contextoCustodia,
 					usuarioCustodia, 
 					senhaCustodia, 
 					null,

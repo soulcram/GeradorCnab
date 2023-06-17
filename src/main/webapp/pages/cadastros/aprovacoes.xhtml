@@ -1,0 +1,43 @@
+
+
+
+<ui:composition template="/pages/cadastros/home.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="conteudo">
+		<h:form id="form">
+
+			<p:messages id="messages" showDetail="true" closable="true">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid columns="1" layout="grid">
+
+				<f:facet name="header">
+        			Robô de Aprovações
+    			</f:facet>
+
+
+				<p:panelGrid id="geral" columns="3" layout="grid">
+
+					<p:outputLabel value="Ativar Aprovações" />
+					<p:column />
+					<p:column />
+					
+					<p:commandButton action="#{aprovacoesController.ativarAprovacoes}" value="Ativar Aprovações" />
+					<p:column />
+					<p:column />
+					
+					<p:column />
+					<p:column />
+					
+				</p:panelGrid>
+			</p:panelGrid>
+			
+			
+		</h:form>
+	</ui:define>
+</ui:composition>
